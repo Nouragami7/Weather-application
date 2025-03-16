@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.games.activity)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,7 +64,7 @@ dependencies {
     //Navigation animation
     implementation("com.exyte:animated-navigation-bar:1.0.0")
     //Lottie animation
-    implementation ("com.airbnb.android:lottie-compose:6.2.0")
+    implementation("com.airbnb.android:lottie-compose:6.2.0")
 
     //Navigation host
     implementation("androidx.navigation:navigation-compose:2.8.8")
@@ -86,7 +87,8 @@ dependencies {
     val compose_version = "1.0.0"
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-
+//constraint layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10")
 }
