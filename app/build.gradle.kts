@@ -91,4 +91,8 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 //constraint layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10")
+
+    //google maps services
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
 }
