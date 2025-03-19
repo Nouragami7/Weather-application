@@ -37,10 +37,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SkyBlue
-import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
-import com.example.weatherapplication.ui.theme.primaryContainerDarkMediumContrast
 import com.example.weatherapplication.ui.theme.primaryLight
 import com.example.weatherapplication.utils.getDayNameFromDate
 

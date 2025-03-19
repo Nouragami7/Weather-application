@@ -6,10 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapplication.ui.screen.FavouriteScreen
+import com.example.weatherapplication.ui.screen.favourite.FavouriteScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
 import com.example.weatherapplication.ui.screen.SearchScreen
-import com.example.weatherapplication.ui.screen.SettingsScreen
+import com.example.weatherapplication.ui.screen.settings.SettingsScreen
 
 @Composable
 fun SetupNavHost(
