@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -72,6 +73,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        if (!Places.isInitialized()) {
+            Places.initialize(this, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -245,7 +250,7 @@ private fun BottomNavigation() {
 enum class NavigationBarItems(val icon: ImageVector, val route: ScreensRoute) {
     Home(icon = Icons.Default.Home, route = ScreensRoute.HomeScreen),
     Favourite(icon = Icons.Default.Favorite, route = ScreensRoute.FavouriteScreen),
-    Map(icon = Icons.Default.Place, route = ScreensRoute.SearchScreen),
+    Alert(icon = Icons.Default.Notifications, route = ScreensRoute.SearchScreen),
     Settings(icon = Icons.Default.Settings, route = ScreensRoute.SettingsScreen)
 }
 

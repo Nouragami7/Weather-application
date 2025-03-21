@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapplication.ui.screen.Screen
+import com.example.weatherapplication.ui.screen.AlertScreen
 import com.example.weatherapplication.ui.screen.favourite.FavouriteScreen
 import com.example.weatherapplication.ui.screen.favourite.MapScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
@@ -32,7 +32,7 @@ fun SetupNavHost(
         }
         composable<ScreensRoute.SearchScreen> {
             isBottomNavigationVisible(true)
-            Screen()
+            AlertScreen()
         }
         composable<ScreensRoute.SettingsScreen> {
             isBottomNavigationVisible(true)

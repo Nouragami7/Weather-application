@@ -24,21 +24,13 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
-
-    /*  private val _location = MutableLiveData<Pair<Double, Double>?>()
-      val location: LiveData<Pair<Double, Double>?> get() = _location
-
-      fun setLocation(lat: Double, lon: Double) {
-          _location.value = Pair(lat, lon)
-      }*/
-
-
     fun fetchWeatherData(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {
             try {
                 val weatherData = repository.getCurrentWeather(lat, lon, apiKey)
                 weatherData.collect {
                     mutableWeatherData.value = ResponseState.Success(it)
+                    fetchForecastData(lat, lon, apiKey)
                     Log.i(TAG, "fetchWeatherData from api: $it")
                     mutableMessage.emit("Weather data fetched successfully")
                 }
@@ -46,7 +38,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 mutableWeatherData.value = ResponseState.Failure(e)
                 mutableMessage.emit("Error fetching weather data: ${e.message}")
                 Log.e(TAG, "fetchWeatherData: ${e.message}")
-
             }
         }
     }
