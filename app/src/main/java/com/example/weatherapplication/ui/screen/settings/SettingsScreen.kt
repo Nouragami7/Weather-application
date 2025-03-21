@@ -1,5 +1,6 @@
 package com.example.weatherapplication.ui.screen.settings
 
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,9 +21,13 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -33,14 +38,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
 import com.example.weatherapplication.ui.theme.primaryContainerLight
 import com.example.weatherapplication.ui.theme.primaryLight
-import com.example.weatherapplication.viewmodel.SettingsViewModel
+import com.example.weatherapplication.utils.SharedPreference
 
 @Composable
-fun SettingsScreen(settingsViewModel: SettingsViewModel) {
-    val language by settingsViewModel.language.collectAsStateWithLifecycle()
-    val temperatureUnit by settingsViewModel.tempUnit.collectAsStateWithLifecycle()
-    val location by settingsViewModel.location.collectAsStateWithLifecycle()
-    val windSpeedUnit by settingsViewModel.windSpeedUnit.collectAsStateWithLifecycle()
+fun SettingsScreen() {
+    val sharedPreference = SharedPreference()
+    val context = LocalContext.current
+
+    var selectedLanguage by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "language") ?: "English") }
+    var selectedTempUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
+    var selectedLocation by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "location") ?: "GPS") }
+    var selectedWindSpeedUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
+
 
     Column(
         modifier = Modifier
@@ -50,8 +59,12 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         SettingsCard(
             title = "Language",
             options = listOf("Arabic", "English"),
-            selectedOption = language,
-            onSelectedOption = {settingsViewModel.updateLanguage(it)},
+            selectedOption = selectedLanguage,
+            onSelectedOption = {
+                sharedPreference.deleteSharedPreference(context, "language")
+                sharedPreference.saveToSharedPreference(context, "language", it)
+                selectedLanguage = it
+            },
             iconRes = R.drawable.img_sun,
 
         )
@@ -59,24 +72,36 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         SettingsCard(
             title = "Temp Unit",
             options = listOf("Celsius °C", "Kelvin °K", "Fahrenheit °F"),
-            selectedOption = temperatureUnit,
-            onSelectedOption = {settingsViewModel.updateTempUnit(it)},
+            selectedOption = selectedTempUnit,
+            onSelectedOption = {
+                sharedPreference.deleteSharedPreference(context, "tempUnit")
+                sharedPreference.saveToSharedPreference(context, "tempUnit", it)
+                selectedTempUnit = it
+            },
             iconRes = R.drawable.ic_rain_chance
         )
 
         SettingsCard(
             title = "Location",
             options = listOf("GPS", "Map"),
-            selectedOption = location,
-            onSelectedOption = {settingsViewModel.updateLocation(it)},
+            selectedOption = selectedLocation,
+            onSelectedOption = {
+                sharedPreference.deleteSharedPreference(context, "location")
+                sharedPreference.saveToSharedPreference(context, "location", it)
+                selectedLocation = it
+            },
             iconRes = R.drawable.ic_air_quality_header
         )
 
         SettingsCard(
             title = "Wind Speed Unit",
             options = listOf("meter/sec", "mile/hour"),
-            selectedOption = windSpeedUnit,
-            onSelectedOption = {settingsViewModel.updateWindSpeedUnit(it)},
+            selectedOption = selectedWindSpeedUnit,
+            onSelectedOption = {
+                sharedPreference.deleteSharedPreference(context, "windSpeedUnit")
+                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", it)
+                selectedWindSpeedUnit = it
+            },
             iconRes = R.drawable.ic_wind
         )
     }

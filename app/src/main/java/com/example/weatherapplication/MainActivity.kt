@@ -49,7 +49,6 @@ import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
 import com.example.weatherapplication.utils.Constants.Companion.REQUEST_LOCATION_CODE
-import com.example.weatherapplication.viewmodel.SettingsViewModel
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -101,7 +100,6 @@ class MainActivity : ComponentActivity() {
                     SetupNavHost(
                         modifier = Modifier.padding(it),
                         locationState.value,
-                        settingsViewModel = SettingsViewModel(),
                         isBottomNavigationVisible={
                             visible ->
                             isBottomNavigationVisible.value = visible}

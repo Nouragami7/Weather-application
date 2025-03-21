@@ -66,20 +66,19 @@ fun getRandomColor(): Color {
 
 @Composable
 fun HourlyForecastCard(
-    viewModel: WeatherViewModel,
+    forecast: Forecast,
     modifier: Modifier = Modifier
 ) {
-    val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    /* LaunchedEffect(Unit) {
         viewModel.fetchForecastData(
             lat = 31.20663675,
             lon = 29.907445625,
             apiKey = Constants.API_KEY
         )
-    }
+    }*/
 
-    when (forecastState) {
+    /* when (forecastState) {
         is ResponseState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -127,6 +126,40 @@ fun HourlyForecastCard(
                 DaysForeCastContent(forecast)
             }
         }
+    }
+}
+*/
+
+    val currentDate = getCurrentDate().substring(0, 10)
+    val todayForecastList = forecast.list
+        .filter { it.dt_txt.startsWith(currentDate) }
+        .map { item ->
+            HourlyForecast(
+                hour = convertToHour(item.dt_txt),
+                temperature = "${item.main.temp.toInt()}",
+                icon = getWeatherIcon(item.weather.firstOrNull()?.icon ?: ""),
+                backgroundColor = getRandomColor(),
+            )
+        }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        LazyRow(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(todayForecastList) { forecast ->
+                HourlyForecastItem(
+                    hour = forecast.hour,
+                    temperature = forecast.temperature,
+                    icon = forecast.icon,
+                    backgroundColor = forecast.backgroundColor
+                )
+            }
+        }
+        DaysForeCastContent(forecast)
     }
 }
 

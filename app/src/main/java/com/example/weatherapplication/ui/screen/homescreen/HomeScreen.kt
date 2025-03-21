@@ -25,12 +25,16 @@ import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.remote.*
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
+import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.convertToEgyptTime
+import com.example.weatherapplication.utils.convertToHour
+import com.example.weatherapplication.utils.getCurrentDate
+
 
 @Composable
 fun HomeScreen(modifier: Modifier, location: Location) {
@@ -47,6 +51,7 @@ fun HomeScreen(modifier: Modifier, location: Location) {
     val viewModel: WeatherViewModel = viewModel(factory = factory)
 
     val weatherState by viewModel.weatherData.collectAsStateWithLifecycle()
+    val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.message.collect { message ->
@@ -55,12 +60,11 @@ fun HomeScreen(modifier: Modifier, location: Location) {
     }
 
     LaunchedEffect(location) {
-        viewModel.fetchWeatherData(
+        viewModel.fetchWeatherAndForecastData(
             lat = 31.20663675,
             lon = 29.907445625,
             apiKey = Constants.API_KEY
         )
-        Log.i(TAG, "HomeScreen: ${location.latitude}, ${location.longitude}")
     }
 
     Log.d(TAG, "Current weatherState: $weatherState")
@@ -73,32 +77,30 @@ fun HomeScreen(modifier: Modifier, location: Location) {
                 .fillMaxSize()
                 .padding(paddings)
                 .padding(horizontal = 24.dp, vertical = 10.dp)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            when (weatherState) {
-                is ResponseState.Loading -> {
-                    Log.i(TAG, "Loading")
-                    LoadingIndicator()
-                }
-                is ResponseState.Failure -> {
-                    val errorMessage = (weatherState as ResponseState.Failure).message.message ?: "Unknown error"
-                    Log.e(TAG, "Failure: $errorMessage")
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                }
-                is ResponseState.Success<*> -> {
-                    Log.i(TAG, "Success: ${(weatherState as ResponseState.Success<*>).data}")
-                    HomeContent(
-                        (weatherState as ResponseState.Success<CurrentWeather>).data,
-                        viewModel
-                    )
-                }
+            if (weatherState is ResponseState.Loading || forecastState is ResponseState.Loading) {
+                Log.i(TAG, "Loading...")
+                LoadingIndicator()
+            } else if (weatherState is ResponseState.Failure || forecastState is ResponseState.Failure) {
+                val errorMessage = when {
+                    weatherState is ResponseState.Failure -> (weatherState as ResponseState.Failure).message.message
+                    forecastState is ResponseState.Failure -> (forecastState as ResponseState.Failure).message.message
+                    else -> "Unknown error"
+                } ?: "Unknown error"
+                Log.e(TAG, "Failure: $errorMessage")
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            } else if (weatherState is ResponseState.Success<*> && forecastState is ResponseState.Success<*>) {
+                val weather = (weatherState as ResponseState.Success<CurrentWeather>).data
+                val forecast = (forecastState as ResponseState.Success<Forecast>).data
+                HomeContent(weather, forecast)
             }
-        }
-    }
+        }}
 }
-
 @Composable
-private fun HomeContent(weather: CurrentWeather?, viewModel: WeatherViewModel) {
+private fun HomeContent(weather: CurrentWeather?, forecast: Forecast) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,7 +152,7 @@ private fun HomeContent(weather: CurrentWeather?, viewModel: WeatherViewModel) {
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(12.dp))
-            HourlyForecastCard(viewModel = viewModel)
+            HourlyForecastCard(forecast)
 
         }
     }

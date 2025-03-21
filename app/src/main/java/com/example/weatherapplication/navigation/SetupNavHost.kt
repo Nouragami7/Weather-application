@@ -11,13 +11,11 @@ import com.example.weatherapplication.ui.screen.favourite.FavouriteScreen
 import com.example.weatherapplication.ui.screen.favourite.MapScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
 import com.example.weatherapplication.ui.screen.settings.SettingsScreen
-import com.example.weatherapplication.viewmodel.SettingsViewModel
 
 @Composable
 fun SetupNavHost(
     modifier: Modifier = Modifier,
     location: Location,
-    settingsViewModel: SettingsViewModel,
     isBottomNavigationVisible: (visibility:Boolean) -> Unit
 ) {
     val navController = rememberNavController()
@@ -36,7 +34,7 @@ fun SetupNavHost(
         }
         composable<ScreensRoute.SettingsScreen> {
             isBottomNavigationVisible(true)
-            SettingsScreen(settingsViewModel)
+            SettingsScreen()
         }
         composable<ScreensRoute.FavouriteScreen> {
             isBottomNavigationVisible(true)

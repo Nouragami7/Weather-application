@@ -2,7 +2,6 @@ package com.example.weatherapplication.ui.screen.favourite
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.location.Geocoder
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.maps.android.compose.*
@@ -46,7 +45,7 @@ fun MapScreen() {
 
     LaunchedEffect(Unit) {
         if (!Places.isInitialized()) {
-            Places.initialize(context, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
+            Places.initialize(context, API_KEY_Google)
         }
     }
 
@@ -65,7 +64,6 @@ fun MapScreen() {
             selectedPlaceName = place.name ?: "Unknown Place"
             markerState.position = selectedPoint
             cameraPositionState.position = CameraPosition.fromLatLngZoom(selectedPoint, 15f)
-
             fetchPlaceDetails(context, place.id) { bounds, country ->
                 bounds?.let {
                     polygonPoints = listOf(

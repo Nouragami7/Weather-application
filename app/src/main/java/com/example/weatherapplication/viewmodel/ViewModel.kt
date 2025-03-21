@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -23,6 +24,30 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
+
+    fun fetchWeatherAndForecastData(lat: Double, lon: Double, apiKey: String) {
+        viewModelScope.launch {
+            try{
+                mutableWeatherData.value = ResponseState.Loading
+                mutableForecastData.value = ResponseState.Loading
+
+               coroutineScope {
+                   launch {
+                       fetchWeatherData(lat, lon, apiKey)
+                   }
+                   launch {
+                       fetchForecastData(lat, lon, apiKey)
+                   }
+               }
+
+            }catch (e:Exception){
+                mutableWeatherData.value = ResponseState.Failure(e)
+                mutableForecastData.value = ResponseState.Failure(e)
+                mutableMessage.emit("Error fetching weather and forecast data: ${e.message}")
+            }
+        }
+    }
+
 
     fun fetchWeatherData(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {
