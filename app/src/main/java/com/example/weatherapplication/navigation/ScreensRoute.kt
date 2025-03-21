@@ -4,14 +4,16 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-sealed class ScreensRoute(val route: String){
+sealed class ScreensRoute(){
     @Serializable
-    data object HomeScreen : ScreensRoute("home")
+    data object HomeScreen : ScreensRoute()
     @Serializable
-    data object SearchScreen : ScreensRoute("search")
+    data object SearchScreen : ScreensRoute()
     @Serializable
-    data object SettingsScreen : ScreensRoute("settings")
+    data object SettingsScreen : ScreensRoute()
     @Serializable
-    data object FavouriteScreen : ScreensRoute("favourite")
+    data object FavouriteScreen : ScreensRoute()
+    @Serializable
+    data object MapScreen : ScreensRoute()
 
 }

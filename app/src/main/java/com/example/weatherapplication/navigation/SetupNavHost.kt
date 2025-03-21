@@ -6,33 +6,45 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.weatherapplication.ui.screen.Screen
 import com.example.weatherapplication.ui.screen.favourite.FavouriteScreen
+import com.example.weatherapplication.ui.screen.favourite.MapScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
-import com.example.weatherapplication.ui.screen.SearchScreen
 import com.example.weatherapplication.ui.screen.settings.SettingsScreen
+import com.example.weatherapplication.viewmodel.SettingsViewModel
 
 @Composable
 fun SetupNavHost(
     modifier: Modifier = Modifier,
-    location: Location
+    location: Location,
+    settingsViewModel: SettingsViewModel,
+    isBottomNavigationVisible: (visibility:Boolean) -> Unit
 ) {
     val navController = rememberNavController()
     NavigationManager.navController = navController
     NavHost(
         navController = navController,
-        startDestination = ScreensRoute.HomeScreen.route
+        startDestination = ScreensRoute.HomeScreen
     ) {
-        composable(ScreensRoute.HomeScreen.route) {
-           HomeScreen(modifier, location)
+        composable<ScreensRoute.HomeScreen> {
+            isBottomNavigationVisible(true)
+            HomeScreen(modifier, location)
         }
-        composable(ScreensRoute.SearchScreen.route) {
-            SearchScreen()
+        composable<ScreensRoute.SearchScreen> {
+            isBottomNavigationVisible(true)
+            Screen()
         }
-        composable(ScreensRoute.SettingsScreen.route) {
-            SettingsScreen()
+        composable<ScreensRoute.SettingsScreen> {
+            isBottomNavigationVisible(true)
+            SettingsScreen(settingsViewModel)
         }
-        composable(ScreensRoute.FavouriteScreen.route) {
+        composable<ScreensRoute.FavouriteScreen> {
+            isBottomNavigationVisible(true)
             FavouriteScreen()
+        }
+        composable<ScreensRoute.MapScreen> {
+            isBottomNavigationVisible(false)
+            MapScreen()
         }
     }
 }

@@ -13,53 +13,52 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.app.ActivityCompat
-import com.example.weatherapplication.navigation.ScreensRoute
-import com.example.weatherapplication.ui.screen.SplashScreen
-import com.example.weatherapplication.utils.Constants.Companion.REQUEST_LOCATION_CODE
-import com.exyte.animatednavbar.AnimatedNavigationBar
-import com.exyte.animatednavbar.animation.indendshape.Height
-import com.google.android.gms.location.*
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-
+import androidx.core.app.ActivityCompat
 import com.example.weatherapplication.navigation.NavigationManager
+import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.navigation.SetupNavHost
+import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
-import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
+import com.example.weatherapplication.utils.Constants.Companion.REQUEST_LOCATION_CODE
+import com.example.weatherapplication.viewmodel.SettingsViewModel
+import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
+import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-
+import com.google.android.gms.location.Priority
 
 
 class MainActivity : ComponentActivity() {
@@ -79,7 +78,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var displaySplashScreen by remember { mutableStateOf(true) }
             locationState = remember { mutableStateOf(Location("")) }
-
+            val isBottomNavigationVisible = remember { mutableStateOf(true) }
             if (displaySplashScreen) {
                 SplashScreen {
                     displaySplashScreen = false
@@ -89,9 +88,19 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     Modifier.padding(bottom = 54.dp),
                     bottomBar = {
-                        BottomNavigation() }
+                        if (isBottomNavigationVisible.value){
+                            BottomNavigation()
+                        }
+                    }
                 ) {
-                    SetupNavHost(modifier = Modifier.padding(it), locationState.value)
+                    SetupNavHost(
+                        modifier = Modifier.padding(it),
+                        locationState.value,
+                        settingsViewModel = SettingsViewModel(),
+                        isBottomNavigationVisible={
+                            visible ->
+                            isBottomNavigationVisible.value = visible}
+                    )
                 }
 
             }
@@ -194,9 +203,8 @@ class MainActivity : ComponentActivity() {
             mainLooper
         )
     }
-
-
 }
+
 @Composable
 private fun BottomNavigation() {
     val navigationBarItems = NavigationBarItems.values()
@@ -209,7 +217,7 @@ private fun BottomNavigation() {
         indentAnimation = Height(tween(300)),
         ballColor = inversePrimaryDarkHighContrast,
         barColor = LightSkyBlue
-        ) {
+    ) {
         navigationBarItems.forEachIndexed { index, item ->
             Box(
                 modifier = Modifier
@@ -234,11 +242,11 @@ private fun BottomNavigation() {
     }
 }
 
-enum class NavigationBarItems(val icon: ImageVector, val route: String) {
-    Home(icon = Icons.Default.Home, route = ScreensRoute.HomeScreen.route),
-    Search(icon = Icons.Default.Search, route = ScreensRoute.SearchScreen.route),
-    Settings(icon = Icons.Default.Settings, route = ScreensRoute.SettingsScreen.route),
-    Favourite(icon = Icons.Default.Favorite, route = ScreensRoute.FavouriteScreen.route)
+enum class NavigationBarItems(val icon: ImageVector, val route: ScreensRoute) {
+    Home(icon = Icons.Default.Home, route = ScreensRoute.HomeScreen),
+    Favourite(icon = Icons.Default.Favorite, route = ScreensRoute.FavouriteScreen),
+    Map(icon = Icons.Default.Place, route = ScreensRoute.SearchScreen),
+    Settings(icon = Icons.Default.Settings, route = ScreensRoute.SettingsScreen)
 }
 
 private fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {

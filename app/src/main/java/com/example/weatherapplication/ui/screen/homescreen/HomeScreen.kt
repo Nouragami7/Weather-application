@@ -26,13 +26,11 @@ import com.example.weatherapplication.datasource.remote.*
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
-import com.example.weatherapplication.ui.theme.inversePrimaryDark
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.convertToEgyptTime
-import com.example.weatherapplication.utils.convertToHour
 
 @Composable
 fun HomeScreen(modifier: Modifier, location: Location) {

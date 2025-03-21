@@ -1,40 +1,55 @@
 package com.example.weatherapplication.ui.screen.favourite
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
+import com.example.weatherapplication.navigation.NavigationManager
+import com.example.weatherapplication.navigation.ScreensRoute
 
 @Composable
 fun FavouriteScreen() {
     var showMap by remember { mutableStateOf(false) }
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showMap = !showMap },
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text(if (showMap) "Hide" else "Show")
+                Icon(
+                    modifier = Modifier.size(26.dp),
+                    imageVector = if (!showMap) Icons.Default.FavoriteBorder
+                    else
+                        Icons.Default.Favorite,
+                    contentDescription = "favourite",
+
+                    )
             }
         }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Prevent FAB from overlapping map
+                .padding(paddingValues)
         ) {
             if (showMap) {
-                MapScreen(Modifier.fillMaxSize())
+                NavigationManager.navigateTo(ScreensRoute.MapScreen)
+
             } else {
                 Text(
                     text = "Tap the button to view the map",
@@ -44,25 +59,4 @@ fun FavouriteScreen() {
         }
     }
 }
-
-
-@Composable
-fun MapScreen(modifier: Modifier = Modifier) {
-    val singapore = LatLng(31.20663675, 29.907445625)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
-    }
-
-    GoogleMap(
-        modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
-    ) {
-        Marker(
-            state = rememberMarkerState(position = singapore),
-            title = "Singapore",
-            snippet = "A beautiful place"
-        )
-    }
-}
-
 

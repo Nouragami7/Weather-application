@@ -4,7 +4,7 @@ import androidx.navigation.NavHostController
 object NavigationManager {
     lateinit var navController: NavHostController
 
-    fun navigateTo(route: String) {
+    fun navigateTo(route: ScreensRoute) {
         navController.navigate(route)
     }
 }
