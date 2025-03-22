@@ -6,7 +6,7 @@ import com.example.weatherapplication.domain.model.Forecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class CurrentWeatherRemoteDataSource(private val apiService: ApiService) :
+class WeatherRemoteDataSource(private val apiService: ApiService) :
     IWeatherRemoteDataSource {
     private val TAG = "tag"
     override suspend fun getCurrentWeather(

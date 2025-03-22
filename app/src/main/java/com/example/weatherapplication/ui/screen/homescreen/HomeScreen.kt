@@ -1,6 +1,5 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
-import android.content.Context
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
@@ -47,7 +46,7 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 
     val factory = WeatherViewModel.WeatherFactory(
         WeatherRepository.getInstance(
-            CurrentWeatherRemoteDataSource(
+            WeatherRemoteDataSource(
                 RetrofitHelper.retrofitInstance.create(ApiService::class.java)
             )
         )

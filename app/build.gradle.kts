@@ -71,25 +71,25 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
-    //Retrofit
+//Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    //Room
+//Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
-    // Kotlin Symbol Processing (KSP)
+// Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
-    // optional - Kotlin Extensions and Coroutines support for Room
+// optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
-    //Glide
+//Glide
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    //LiveData & Compose
+//LiveData & Compose
     val compose_version = "1.0.0"
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    //constraint layout
+//constraint layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10")
 
     //google maps services
