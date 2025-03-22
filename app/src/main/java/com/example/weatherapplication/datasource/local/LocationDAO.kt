@@ -17,7 +17,7 @@ interface LocationDAO{
     @Query("SELECT * FROM Weather")
      fun getAllLocations(): Flow<List<LocationData>>
 
-    @Query("DELETE FROM Weather WHERE id = :id")
-    suspend fun deleteLocation(id: Int)
+    @Query("DELETE FROM Weather WHERE latitude = :lat AND longitude = :lng")
+    suspend fun deleteLocation(lat: Double, lng: Double)
 
 }

@@ -10,6 +10,6 @@ interface IRepository {
     suspend fun getForecast(lat: Double, lon: Double,lang: String,unit: String, apiKey: String): Flow<Forecast?>
     suspend fun getAllLocations(): Flow<List<LocationData>>
     suspend fun insertLocation(locationData: LocationData)
-    suspend fun deleteLocation(id: Int)
+    suspend fun deleteLocation(lat: Double, lng: Double)
 
 }

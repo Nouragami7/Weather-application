@@ -2,34 +2,109 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapplication.datasource.local.WeatherDatabase
+import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
+import com.example.weatherapplication.datasource.remote.ApiService
+import com.example.weatherapplication.datasource.remote.RetrofitHelper
+import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
+import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.ui.screen.favourite.Map.MapViewModel
 import com.example.weatherapplication.ui.screen.favourite.Map.PlacesHelper
 import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.*
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.Polygon
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
 
 @Composable
-fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
+fun MapScreen() {
+
     val context = LocalContext.current
     val geocoderHelper = remember { GeocoderHelper(context) }
     val placesHelper = remember { PlacesHelper(context) }
+
+    val factory = MapViewModel.MapViewModelFactory(
+        WeatherRepository.getInstance(
+            WeatherRemoteDataSource(
+                RetrofitHelper.retrofitInstance.create(ApiService::class.java)
+            ), WeatherLocalDataSource(WeatherDatabase.getDatabase(context).locationDao())
+        )
+    )
+    val mapViewModel: MapViewModel = viewModel(factory = factory)
+
 
     val selectedPoint by remember { derivedStateOf { mapViewModel.selectedPoint } }
     val selectedPlaceName by remember { derivedStateOf { mapViewModel.selectedPlaceName } }
     val selectedCountry by remember { derivedStateOf { mapViewModel.selectedCountry } }
     val polygonPoints by remember { derivedStateOf { mapViewModel.polygonPoints } }
+
+    val favLocationsState by mapViewModel.favLocations.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        mapViewModel.toastEvent.collect { message ->
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+   /* when (favLocationsState) {
+        is ResponseState.Failure -> Toast.makeText(
+            context,
+            "An error occurred: ${(favLocationsState as ResponseState.Failure)}",
+            Toast.LENGTH_SHORT
+        ).show(
+        )
+
+        ResponseState.Loading -> TODO()
+        is ResponseState.Success<*> -> AddToFavorites(
+            data = (favLocationsState as ResponseState.Success<LocationData>).data,
+            mapViewModel = mapViewModel,
+            snackbarHostState = snackbarHostState ,
+            selectedPoint = selectedPoint,
+            selectedCountry = selectedCountry
+
+        )
+    }
+*/
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(selectedPoint, 10f)
@@ -47,7 +122,7 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val place = com.google.android.libraries.places.widget.Autocomplete.getPlaceFromIntent(
+            val place = Autocomplete.getPlaceFromIntent(
                 result.data ?: return@rememberLauncherForActivityResult
             )
             mapViewModel.updateSelectedPoint(
@@ -61,83 +136,80 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            onMapClick = { latLng ->
-                mapViewModel.updateSelectedPoint(latLng)
-                markerState.position = latLng
-            }
-        ) {
-            Marker(
-                state = markerState,
-                title = selectedPlaceName,
-                snippet = "Lat: ${markerState.position.latitude}, Lng: ${markerState.position.longitude}"
-            )
-
-            if (polygonPoints.isNotEmpty()) {
-                Polygon(
-                    points = polygonPoints,
-                    strokeWidth = 5f,
-                    strokeColor = Color.Blue,
-                    fillColor = Color(0x550000FF)
-                )
-            }
-        }
-
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
         Box(
             modifier = Modifier
-                .padding(16.dp)
-                .wrapContentSize()
-                .background(Color.White, shape = RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.TopStart
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            IconButton(onClick = {
-                val intent = com.google.android.libraries.places.widget.Autocomplete.IntentBuilder(
-                    com.google.android.libraries.places.widget.model.AutocompleteActivityMode.OVERLAY,
-                    listOf(
-                        com.google.android.libraries.places.api.model.Place.Field.ID,
-                        com.google.android.libraries.places.api.model.Place.Field.NAME,
-                        com.google.android.libraries.places.api.model.Place.Field.LAT_LNG,
-                        com.google.android.libraries.places.api.model.Place.Field.ADDRESS_COMPONENTS,
-                        com.google.android.libraries.places.api.model.Place.Field.VIEWPORT
-                    )
-                ).build(context)
-                launcher.launch(intent)
-            }) {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-            }
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .align(Alignment.BottomCenter),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.elevatedCardElevation(6.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(text = "Country: $selectedCountry", color = Color.Gray)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Lat: ${selectedPoint.latitude}, Lng: ${selectedPoint.longitude}",
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = { /* Add to favorites logic */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Add to Favorites")
+            GoogleMap(
+                modifier = Modifier.matchParentSize(),
+                cameraPositionState = cameraPositionState,
+                onMapClick = { latLng ->
+                    mapViewModel.updateSelectedPoint(latLng)
+                    markerState.position = latLng
                 }
+            ) {
+                Marker(
+                    state = markerState,
+                    title = selectedPlaceName,
+                    snippet = "Lat: ${markerState.position.latitude}, Lng: ${markerState.position.longitude}"
+                )
+
+                if (polygonPoints.isNotEmpty()) {
+                    Polygon(
+                        points = polygonPoints,
+                        strokeWidth = 5f,
+                        strokeColor = Color.Blue,
+                        fillColor = Color(0x550000FF)
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(Color.White, shape = RoundedCornerShape(16.dp))
+                    .wrapContentSize(),
+                contentAlignment = Alignment.TopStart
+            ) {
+                IconButton(onClick = {
+                    val intent = Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.OVERLAY,
+                        listOf(
+                            Place.Field.ID,
+                            Place.Field.NAME,
+                            Place.Field.LAT_LNG,
+                            Place.Field.ADDRESS_COMPONENTS,
+                            Place.Field.VIEWPORT
+                        )
+                    ).build(context)
+                    launcher.launch(intent)
+                }) {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                AddToFavorites(
+                    longitude = selectedPoint.longitude,
+                    latitude = selectedPoint.latitude,
+                    mapViewModel = mapViewModel,
+                    selectedPoint = selectedPoint,
+                    selectedCountry = selectedCountry
+                )
             }
         }
     }
+
+
 }
+
+
 

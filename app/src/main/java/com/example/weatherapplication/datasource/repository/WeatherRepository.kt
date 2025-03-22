@@ -33,15 +33,15 @@ class WeatherRepository private constructor(
     }
 
     override suspend fun getAllLocations(): Flow<List<LocationData>> {
-        TODO("Not yet implemented")
+      return localDataSource.getAllLocations()
     }
 
     override suspend fun insertLocation(locationData: LocationData) {
-        TODO("Not yet implemented")
+        return localDataSource.insertLocation(locationData)
     }
 
-    override suspend fun deleteLocation(id: Int) {
-        TODO("Not yet implemented")
+    override suspend fun deleteLocation(lat: Double, lng: Double) {
+       return localDataSource.deleteLocation(lat, lng)
     }
 
     companion object { // do not need to make an object of this class to call getInstance fun

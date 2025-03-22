@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.favourite
+package com.example.weatherapplication.ui.screen.favourite.favouritescreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

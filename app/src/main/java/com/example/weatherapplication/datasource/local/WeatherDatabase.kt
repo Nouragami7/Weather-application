@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.weatherapplication.domain.model.LocationData
 
-@Database(entities = [LocationData::class], version = 1)
+@Database(entities = [LocationData::class], version = 2, exportSchema = false)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDAO
 

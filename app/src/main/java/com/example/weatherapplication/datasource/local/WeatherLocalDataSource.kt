@@ -12,8 +12,8 @@ class WeatherLocalDataSource (private val locationDAO: LocationDAO):IWeatherLoca
         return locationDAO.insertLocation(locationData)
     }
 
-    override suspend fun deleteLocation(id: Int) {
-        return locationDAO.deleteLocation(id)
+    override suspend fun deleteLocation(lat: Double, lng: Double) {
+        return locationDAO.deleteLocation(lat, lng)
     }
 
 }

@@ -1,14 +1,11 @@
 package com.example.weatherapplication.domain.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "Weather")
+@Entity(tableName = "Weather", primaryKeys = ["latitude", "longitude"])
 data class LocationData(
-    @PrimaryKey var id: Int,
-    var latitude: Long,
-    var longitude: Long
+    val latitude: Double,
+    val longitude: Double
 )
-
 
 

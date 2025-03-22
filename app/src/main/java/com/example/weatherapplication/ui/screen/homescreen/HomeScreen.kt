@@ -22,10 +22,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
+import com.example.weatherapplication.datasource.local.WeatherDatabase
+import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
 import com.example.weatherapplication.datasource.remote.*
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -48,7 +51,7 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
         WeatherRepository.getInstance(
             WeatherRemoteDataSource(
                 RetrofitHelper.retrofitInstance.create(ApiService::class.java)
-            )
+            ),WeatherLocalDataSource(WeatherDatabase.getDatabase(context).locationDao())
         )
     )
     val viewModel: WeatherViewModel = viewModel(factory = factory)
