@@ -85,25 +85,7 @@ fun MapScreen() {
             }
         }
     }
-   /* when (favLocationsState) {
-        is ResponseState.Failure -> Toast.makeText(
-            context,
-            "An error occurred: ${(favLocationsState as ResponseState.Failure)}",
-            Toast.LENGTH_SHORT
-        ).show(
-        )
 
-        ResponseState.Loading -> TODO()
-        is ResponseState.Success<*> -> AddToFavorites(
-            data = (favLocationsState as ResponseState.Success<LocationData>).data,
-            mapViewModel = mapViewModel,
-            snackbarHostState = snackbarHostState ,
-            selectedPoint = selectedPoint,
-            selectedCountry = selectedCountry
-
-        )
-    }
-*/
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(selectedPoint, 10f)

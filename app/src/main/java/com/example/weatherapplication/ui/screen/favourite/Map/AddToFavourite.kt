@@ -49,7 +49,6 @@ fun AddToFavorites(
                 LottieAnimationView(resId = R.raw.location, modifier = Modifier.size(70.dp))
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Country Info (Smaller Text)
                 Text(
                     text = "Country: $selectedCountry",
                     color = Color.Gray,
@@ -91,13 +90,12 @@ fun AddToFavorites(
     }
 }
 
-
 @Composable
 fun LottieAnimationView(resId: Int, modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))
     val progress by animateLottieCompositionAsState(
         composition,
-        iterations = LottieConstants.IterateForever // Keeps animation looping
+        iterations = LottieConstants.IterateForever
     )
 
     LottieAnimation(

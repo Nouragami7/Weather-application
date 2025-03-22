@@ -27,9 +27,6 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
     var selectedCountry by mutableStateOf("Unknown Country")
     var polygonPoints by mutableStateOf<List<LatLng>>(emptyList())
 
-    private val favMutableLocations = MutableStateFlow<Location?>(null)
-    val favLocations = favMutableLocations.asStateFlow()
-
 
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
@@ -60,22 +57,6 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
         }
     }
 
-    /*fun getAllFavouriteLocations() {
-        viewModelScope.launch {
-            try {
-                val locations = repository.getAllLocations()
-                locations.catch { e ->
-                    favMutableLocations.value = ResponseState.Failure(e)
-                    _toastEvent.emit("An error occurred: ${e.message}")
-                }.collect {
-                    favMutableLocations.value = ResponseState.Success(it)
-                }
-            } catch (e: Exception) {
-                _toastEvent.emit("An error occurred: ${e.message}")
-            }
-
-        }
-    }*/
 
     fun addLocationToFavourite(longitude: Double, latitude: Double) {
         val locationData = LocationData(latitude, longitude)
@@ -89,17 +70,6 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
             }
         }
 
-    }
-
-    fun deleteLocationFromFavourite(lat: Double, lng: Double) {
-        viewModelScope.launch {
-            try {
-                repository.deleteLocation(lat, lng)
-                _toastEvent.emit("Location deleted from favourites")
-            } catch (e: Exception) {
-                _toastEvent.emit("An error occurred: ${e.message}")
-            }
-        }
     }
 
     class MapViewModelFactory(

@@ -4,7 +4,7 @@ import com.example.weatherapplication.domain.model.LocationData
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSource (private val locationDAO: LocationDAO):IWeatherLocalDataSource{
-    override  fun getAllLocations(): Flow<List<LocationData>> {
+    override suspend fun getAllLocations(): Flow<List<LocationData>> {
         return locationDAO.getAllLocations()
     }
 
