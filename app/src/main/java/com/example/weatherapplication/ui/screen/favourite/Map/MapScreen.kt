@@ -72,7 +72,6 @@ fun MapScreen() {
     val selectedCountry by remember { derivedStateOf { mapViewModel.selectedCountry } }
     val polygonPoints by remember { derivedStateOf { mapViewModel.polygonPoints } }
 
-    val favLocationsState by mapViewModel.favLocations.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
