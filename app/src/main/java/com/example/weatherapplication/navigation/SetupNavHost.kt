@@ -1,5 +1,6 @@
 package com.example.weatherapplication.navigation
 
+import MapScreen
 import android.location.Location
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapplication.ui.screen.AlertScreen
 import com.example.weatherapplication.ui.screen.favourite.FavouriteScreen
-import com.example.weatherapplication.ui.screen.favourite.MapScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
 import com.example.weatherapplication.ui.screen.settings.SettingsScreen
 

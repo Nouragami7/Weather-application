@@ -1,5 +1,6 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
@@ -32,14 +33,17 @@ import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.convertToEgyptTime
-import com.example.weatherapplication.utils.convertToHour
-import com.example.weatherapplication.utils.getCurrentDate
-
+import com.example.weatherapplication.utils.SharedPreference
 
 @Composable
-fun HomeScreen(modifier: Modifier, location: Location) {
-    val TAG = "tag"
+fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
+    val TAG = "HomeScreen"
     val context = LocalContext.current
+    val sharedPreferences = SharedPreference()
+
+    var lang by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "language") ?: "en") }
+    var tempUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
+    var windSpeedUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
 
     val factory = WeatherViewModel.WeatherFactory(
         WeatherRepository.getInstance(
@@ -54,20 +58,29 @@ fun HomeScreen(modifier: Modifier, location: Location) {
     val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.message.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
+        lang = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
+        tempUnit = sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C"
+        windSpeedUnit = sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec"
     }
 
-    LaunchedEffect(location) {
+    LaunchedEffect(location, lang, tempUnit, windSpeedUnit) {
+        val unit = when (tempUnit) {
+            "Celsius °C" -> "metric"
+            "Kelvin °K" -> "standard"
+            "Fahrenheit °F" -> "imperial"
+            else -> "metric"
+        }
+
+        Log.d(TAG, "Fetching data with lang: $lang, unit: $unit, windSpeed: $windSpeedUnit")
+
         viewModel.fetchWeatherAndForecastData(
-            lat = 31.20663675,
-            lon = 29.907445625,
+            lat = location.latitude,
+            lon = location.longitude,
+            lang = lang,
+            unit = unit,
             apiKey = Constants.API_KEY
         )
     }
-
-    Log.d(TAG, "Current weatherState: $weatherState")
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -81,26 +94,39 @@ fun HomeScreen(modifier: Modifier, location: Location) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (weatherState is ResponseState.Loading || forecastState is ResponseState.Loading) {
-                Log.i(TAG, "Loading...")
-                LoadingIndicator()
-            } else if (weatherState is ResponseState.Failure || forecastState is ResponseState.Failure) {
-                val errorMessage = when {
-                    weatherState is ResponseState.Failure -> (weatherState as ResponseState.Failure).message.message
-                    forecastState is ResponseState.Failure -> (forecastState as ResponseState.Failure).message.message
-                    else -> "Unknown error"
-                } ?: "Unknown error"
-                Log.e(TAG, "Failure: $errorMessage")
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            } else if (weatherState is ResponseState.Success<*> && forecastState is ResponseState.Success<*>) {
-                val weather = (weatherState as ResponseState.Success<CurrentWeather>).data
-                val forecast = (forecastState as ResponseState.Success<Forecast>).data
-                HomeContent(weather, forecast)
+            when {
+                weatherState is ResponseState.Loading || forecastState is ResponseState.Loading -> {
+                    Log.i(TAG, "Loading...")
+                    LoadingIndicator()
+                }
+                weatherState is ResponseState.Failure || forecastState is ResponseState.Failure -> {
+                    val errorMessage = (weatherState as? ResponseState.Failure)?.message?.message
+                        ?: (forecastState as? ResponseState.Failure)?.message?.message
+                        ?: "Unknown error"
+
+                    Log.e(TAG, "Failure: $errorMessage")
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                weatherState is ResponseState.Success<*> && forecastState is ResponseState.Success<*> -> {
+                    val weather = (weatherState as ResponseState.Success<CurrentWeather>).data
+                    val forecast = (forecastState as ResponseState.Success<Forecast>).data
+                    HomeContent(weather, forecast, tempUnit, windSpeedUnit)
+                }
             }
-        }}
+        }
+    }
 }
+
 @Composable
-private fun HomeContent(weather: CurrentWeather?, forecast: Forecast) {
+private fun HomeContent(weather: CurrentWeather?, forecast: Forecast, tempUnit: String, windSpeedUnit: String) {
+
+    val tempUnitAbbreviation = when (tempUnit) {
+        "Celsius °C" -> "°C"
+        "Kelvin °K" -> "°K"
+        "Fahrenheit °F" -> "°F"
+        else -> "metric"
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,27 +136,28 @@ private fun HomeContent(weather: CurrentWeather?, forecast: Forecast) {
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.TopCenter
         ) {
-            if (weather != null) {
-                LocationInfo(location = (weather.name))
+            weather?.let {
+                LocationInfo(location = weather.name)
             }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-        if (weather != null) {
+        weather?.let {
             val (date, time) = convertToEgyptTime(weather.dt.toLong())
             DailyWeatherCard(
                 modifier = Modifier.padding(bottom = 24.dp),
                 forecast = weather.weather.firstOrNull()?.description ?: "Unknown",
-                feelsLike="${weather.main.feels_like}",
+                feelsLike = "${weather.main.feels_like} $tempUnitAbbreviation",
                 pressure = "${weather.main.pressure} hPa",
                 clouds = "${weather.clouds.all}%",
-                windSpeed = "${weather.wind.speed} km/h",
+                windSpeed = "${weather.wind.speed} $windSpeedUnit",
                 humidity = "${weather.main.humidity}%",
-                currentTemperature = "${weather.main.temp}°C",
+                currentTemperature = "${weather.main.temp} $tempUnitAbbreviation",
                 currentDate = date,
                 currentTime = time
             )
         }
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Column(
@@ -153,10 +180,10 @@ private fun HomeContent(weather: CurrentWeather?, forecast: Forecast) {
             )
             Spacer(modifier = Modifier.height(12.dp))
             HourlyForecastCard(forecast)
-
         }
     }
 }
+
 
 @Composable
 fun LoadingIndicator() {

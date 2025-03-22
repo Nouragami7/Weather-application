@@ -6,14 +6,17 @@ import com.example.weatherapplication.domain.model.Forecast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class CurrentWeatherRemoteDataSource(private val apiService: ApiService) : IWeatherRemoteDataSource {
+class CurrentWeatherRemoteDataSource(private val apiService: ApiService) :
+    IWeatherRemoteDataSource {
     private val TAG = "tag"
     override suspend fun getCurrentWeather(
         lat: Double,
         lon: Double,
+        lang: String,
+        unit: String,
         apiKey: String
     ): Flow<CurrentWeather?> {
-        val response = apiService.getCurrentWeather(lat, lon, apiKey)
+        val response = apiService.getCurrentWeather(lat, lon, lang, unit, apiKey)
         if (response.isSuccessful) {
             Log.i(TAG, "Response successful: ${response.body()}")
         } else {
@@ -25,9 +28,11 @@ class CurrentWeatherRemoteDataSource(private val apiService: ApiService) : IWeat
     override suspend fun getForecast(
         lat: Double,
         lon: Double,
+        lang: String,
+        unit: String,
         apiKey: String
     ): Flow<Forecast?> {
-        val response = apiService.getForecast(lat, lon, apiKey)
+        val response = apiService.getForecast(lat, lon, lang, unit, apiKey)
         if (response.isSuccessful) {
             Log.i(TAG, "Response successful: ${response.body()}")
         } else {

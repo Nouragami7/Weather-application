@@ -12,17 +12,21 @@ class WeatherRepository private constructor(
     override suspend fun getCurrentWeather(
         lat: Double,
         lon: Double,
+        lang: String,
+        unit: String,
         apiKey: String
     ): Flow<CurrentWeather?> {
-       return remoteDataSource.getCurrentWeather(lat, lon, apiKey)
+       return remoteDataSource.getCurrentWeather(lat, lon,lang,unit, apiKey)
     }
 
     override suspend fun getForecast(
         lat: Double,
         lon: Double,
+        lang: String,
+        unit: String,
         apiKey: String
     ): Flow<Forecast?> {
-        return remoteDataSource.getForecast(lat, lon, apiKey)
+        return remoteDataSource.getForecast(lat, lon, lang, unit, apiKey)
     }
 
     companion object { // do not need to make an object of this class to call getInstance fun

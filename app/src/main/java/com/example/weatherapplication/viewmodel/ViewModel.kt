@@ -25,22 +25,28 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
-    fun fetchWeatherAndForecastData(lat: Double, lon: Double, apiKey: String) {
+    fun fetchWeatherAndForecastData(
+        lat: Double,
+        lon: Double,
+        lang: String,
+        unit: String,
+        apiKey: String
+    ) {
         viewModelScope.launch {
-            try{
+            try {
                 mutableWeatherData.value = ResponseState.Loading
                 mutableForecastData.value = ResponseState.Loading
 
-               coroutineScope {
-                   launch {
-                       fetchWeatherData(lat, lon, apiKey)
-                   }
-                   launch {
-                       fetchForecastData(lat, lon, apiKey)
-                   }
-               }
+                coroutineScope {
+                    launch {
+                        fetchWeatherData(lat, lon, lang, unit, apiKey)
+                    }
+                    launch {
+                        fetchForecastData(lat, lon, lang, unit, apiKey)
+                    }
+                }
 
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 mutableWeatherData.value = ResponseState.Failure(e)
                 mutableForecastData.value = ResponseState.Failure(e)
                 mutableMessage.emit("Error fetching weather and forecast data: ${e.message}")
@@ -49,13 +55,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     }
 
 
-    fun fetchWeatherData(lat: Double, lon: Double, apiKey: String) {
+    fun fetchWeatherData(lat: Double, lon: Double, lang: String, unit: String, apiKey: String) {
         viewModelScope.launch {
             try {
-                val weatherData = repository.getCurrentWeather(lat, lon, apiKey)
+                val weatherData = repository.getCurrentWeather(lat, lon, lang, unit, apiKey)
                 weatherData.collect {
                     mutableWeatherData.value = ResponseState.Success(it)
-                    fetchForecastData(lat, lon, apiKey)
                     Log.i(TAG, "fetchWeatherData from api: $it")
                     mutableMessage.emit("Weather data fetched successfully")
                 }
@@ -67,10 +72,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
-    fun fetchForecastData(lat: Double, lon: Double, apiKey: String) {
+    fun fetchForecastData(lat: Double, lon: Double, lang: String, unit: String, apiKey: String) {
         viewModelScope.launch {
             try {
-                val forecastData = repository.getForecast(lat, lon, apiKey)
+                val forecastData = repository.getForecast(lat, lon, lang, unit, apiKey)
                 forecastData.collect {
                     mutableForecastData.value = ResponseState.Success(it)
                     Log.i(TAG, "fetchForecastData from forecast: $it")

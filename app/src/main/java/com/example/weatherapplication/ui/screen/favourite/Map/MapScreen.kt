@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapplication.ui.screen.favourite.Map.MapViewModel
+import com.example.weatherapplication.ui.screen.favourite.Map.PlacesHelper
 import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.*
@@ -48,7 +50,10 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
             val place = com.google.android.libraries.places.widget.Autocomplete.getPlaceFromIntent(
                 result.data ?: return@rememberLauncherForActivityResult
             )
-            mapViewModel.updateSelectedPoint(place.latLng ?: selectedPoint, place.name ?: "Unknown Place")
+            mapViewModel.updateSelectedPoint(
+                place.latLng ?: selectedPoint,
+                place.name ?: "Unknown Place"
+            )
             markerState.position = selectedPoint
             cameraPositionState.position = CameraPosition.fromLatLngZoom(selectedPoint, 15f)
 
@@ -104,5 +109,35 @@ fun MapScreen(mapViewModel: MapViewModel = viewModel()) {
                 Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
             }
         }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .align(Alignment.BottomCenter),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.elevatedCardElevation(6.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = "Country: $selectedCountry", color = Color.Gray)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Lat: ${selectedPoint.latitude}, Lng: ${selectedPoint.longitude}",
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { /* Add to favorites logic */ },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "Add to Favorites")
+                }
+            }
+        }
     }
 }
+
