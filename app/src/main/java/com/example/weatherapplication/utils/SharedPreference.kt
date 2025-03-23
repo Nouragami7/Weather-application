@@ -1,7 +1,6 @@
 package com.example.weatherapplication.utils
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 
 class SharedPreference {

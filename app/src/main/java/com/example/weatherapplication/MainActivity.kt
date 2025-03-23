@@ -6,9 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -72,7 +75,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        hideSystemUI()
         if (!Places.isInitialized()) {
             Places.initialize(this, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
         }
@@ -83,6 +86,7 @@ class MainActivity : ComponentActivity() {
             var displaySplashScreen by remember { mutableStateOf(true) }
             locationState = remember { mutableStateOf(Location("")) }
             val isBottomNavigationVisible = remember { mutableStateOf(true) }
+            var selectedIndex = remember { mutableStateOf(0) }
             if (displaySplashScreen) {
                 SplashScreen {
                     displaySplashScreen = false
@@ -90,10 +94,9 @@ class MainActivity : ComponentActivity() {
                 }
             } else {
                 Scaffold(
-                    Modifier.padding(bottom = 54.dp),
                     bottomBar = {
                         if (isBottomNavigationVisible.value){
-                            BottomNavigation()
+                            BottomNavigation(selectedIndex)
                         }
                     }
                 ) {
@@ -107,6 +110,23 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+        }
+    }
+
+
+    private fun hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.let {
+                it.hide(WindowInsets.Type.navigationBars()) // Hide only navigation bar
+                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    )
         }
     }
 
@@ -209,12 +229,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun BottomNavigation() {
+private fun BottomNavigation(selectedIndex: MutableState<Int>) {
     val navigationBarItems = NavigationBarItems.values()
-    var selectedIndex by remember { mutableStateOf(0) }
     AnimatedNavigationBar(
         modifier = Modifier.height(64.dp),
-        selectedIndex = selectedIndex,
+        selectedIndex = selectedIndex.value,
         cornerRadius = shapeCornerRadius(cornerRadius = 34.dp),
         ballAnimation = Parabolic(tween(300)),
         indentAnimation = Height(tween(300)),
@@ -226,7 +245,7 @@ private fun BottomNavigation() {
                 modifier = Modifier
                     .fillMaxSize()
                     .noRippleClickable {
-                        selectedIndex = index
+                        selectedIndex.value = index
                         NavigationManager.navigateTo(item.route)
                     },
                 contentAlignment = Alignment.Center
@@ -235,7 +254,7 @@ private fun BottomNavigation() {
                     modifier = Modifier.size(26.dp),
                     imageVector = item.icon,
                     contentDescription = item.name,
-                    tint = if (selectedIndex == index)
+                    tint = if (selectedIndex.value == index)
                         MaterialTheme.colorScheme.inversePrimary
                     else
                         MaterialTheme.colorScheme.onSurface

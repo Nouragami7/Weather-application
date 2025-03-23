@@ -206,7 +206,7 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
     var isVisible by remember { mutableStateOf(true) }
     val offsetX = remember { Animatable(0f) }
 
-    AnimatedVisibility(visible = isVisible) {
+    if (isVisible) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,8 +224,8 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
                         detectHorizontalDragGestures(
                             onDragEnd = {
                                 launch {
-                                    if (offsetX.value < -300) {
-                                        offsetX.animateTo(-600f, tween(300))
+                                    if (offsetX.value < -300 || offsetX.value > 300) {
+                                        offsetX.animateTo(if (offsetX.value < 0) -600f else 600f, tween(300))
                                         isVisible = false
                                         favViewModel.deleteLocationFromFavourite(
                                             locationData.latitude,
@@ -247,7 +247,7 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxSize(),
-                colors = CardDefaults.cardColors(containerColor =Color.Transparent),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             ) {
                 Row(
                     modifier = Modifier
@@ -264,10 +264,7 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
                     Spacer(modifier = Modifier.size(8.dp))
 
                     val countryName = geocoderHelper.getCountryName(
-                        LatLng(
-                            locationData.latitude,
-                            locationData.longitude
-                        )
+                        LatLng(locationData.latitude, locationData.longitude)
                     )
                     Text(
                         text = "$countryName",
