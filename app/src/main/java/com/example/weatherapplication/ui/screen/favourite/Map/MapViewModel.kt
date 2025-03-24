@@ -7,17 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
-import com.example.weatherapplication.enums.Location
-import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapViewModel(val repository: WeatherRepository) : ViewModel() {
@@ -25,6 +20,7 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
     var selectedPoint by mutableStateOf(LatLng(31.20663675, 29.907445625))
     var selectedPlaceName by mutableStateOf("Unknown Place")
     var selectedCountry by mutableStateOf("Unknown Country")
+    var selectedCity by mutableStateOf("Unknown City")
     var polygonPoints by mutableStateOf<List<LatLng>>(emptyList())
 
 
@@ -39,7 +35,9 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
 
     fun fetchCountryName(geocoderHelper: GeocoderHelper) {
         viewModelScope.launch(Dispatchers.IO) {
-            selectedCountry = geocoderHelper.getCountryName(selectedPoint) ?: "Unknown Country"
+            val locationInfo = geocoderHelper.getLocationInfo(selectedPoint)
+            selectedCountry = locationInfo.country ?: "Unknown Country"
+            selectedCity = locationInfo.city ?: "Unknown City"
         }
     }
 

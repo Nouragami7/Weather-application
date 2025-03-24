@@ -30,12 +30,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,15 +91,28 @@ fun FavouriteScreen() {
     )
     val favViewModel: FavouriteViewModel = viewModel(factory = factory)
     val favouriteState by favViewModel.favLocations.collectAsStateWithLifecycle()
+    val snackbarHostState= remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         favViewModel.getAllFavouriteLocations()
         favViewModel.toastEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            scope.launch {
+                val result =snackbarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = "Undo",
+                    duration = SnackbarDuration.Short
+                )
+                if(result == SnackbarResult.ActionPerformed){
+                    favViewModel.addLastDeletedLocation()
+                }
+            }
+
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showMap = !showMap },
@@ -231,6 +249,7 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
                                             locationData.latitude,
                                             locationData.longitude
                                         )
+
                                     } else {
                                         offsetX.animateTo(0f, tween(300))
                                     }
@@ -263,16 +282,26 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
 
                     Spacer(modifier = Modifier.size(8.dp))
 
-                    val countryName = geocoderHelper.getCountryName(
+                    val countryName = geocoderHelper.getLocationInfo(
                         LatLng(locationData.latitude, locationData.longitude)
-                    )
+                    ).country
+
+                    val cityName = geocoderHelper.getLocationInfo(
+                        LatLng(locationData.latitude, locationData.longitude)
+                    ).city
+
                     Text(
                         text = "$countryName",
-                        fontSize = 26.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
+                   /* Text(
+                        text = "$cityName",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )*/
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(

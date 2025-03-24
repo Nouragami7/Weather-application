@@ -67,21 +67,16 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 
     LaunchedEffect(location, lang, tempUnit, windSpeedUnit) {
         val unit = when (tempUnit) {
-            "Celsius °C" -> "metric"
-            "Kelvin °K" -> "standard"
-            "Fahrenheit °F" -> "imperial"
+            "Celsius °C" -> "metric"   // Temp: °C, Wind Speed: meter/sec
+            "Kelvin °K" -> "standard"  // Temp: K, Wind Speed: meter/sec
+            "Fahrenheit °F" -> "imperial"  // Temp: °F, Wind Speed: miles/hour
             else -> "metric"
         }
 
         Log.d(TAG, "Fetching data with lang: $lang, unit: $unit, windSpeed: $windSpeedUnit")
 
-        viewModel.fetchWeatherAndForecastData(
-            lat = location.latitude,
-            lon = location.longitude,
-            lang = lang,
-            unit = unit,
-            apiKey = Constants.API_KEY
-        )
+        viewModel.fetchWeatherData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
+        viewModel.fetchForecastData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
     }
 
     Scaffold(

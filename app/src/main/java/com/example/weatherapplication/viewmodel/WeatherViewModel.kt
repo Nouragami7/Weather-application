@@ -16,8 +16,7 @@ import kotlinx.coroutines.launch
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
     private val TAG = "tag"
     private val mutableWeatherData = MutableStateFlow<ResponseState>(ResponseState.Loading)
-    val weatherData =
-        mutableWeatherData.asStateFlow() // converts the mutable flow into an immutable one
+    val weatherData = mutableWeatherData.asStateFlow()
 
     private val mutableForecastData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val forecastData = mutableForecastData.asStateFlow()
@@ -25,7 +24,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
-    fun fetchWeatherAndForecastData(
+   /* fun fetchWeatherAndForecastData(
         lat: Double,
         lon: Double,
         lang: String,
@@ -52,8 +51,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 mutableMessage.emit("Error fetching weather and forecast data: ${e.message}")
             }
         }
-    }
-
+    }*/
 
     fun fetchWeatherData(lat: Double, lon: Double, lang: String, unit: String, apiKey: String) {
         viewModelScope.launch {

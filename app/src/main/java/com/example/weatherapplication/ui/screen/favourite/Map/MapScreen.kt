@@ -3,7 +3,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -26,9 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.datasource.local.WeatherDatabase
 import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
@@ -70,6 +67,7 @@ fun MapScreen() {
     val selectedPoint by remember { derivedStateOf { mapViewModel.selectedPoint } }
     val selectedPlaceName by remember { derivedStateOf { mapViewModel.selectedPlaceName } }
     val selectedCountry by remember { derivedStateOf { mapViewModel.selectedCountry } }
+    val selectedCity by remember { derivedStateOf { mapViewModel.selectedCity } }
     val polygonPoints by remember { derivedStateOf { mapViewModel.polygonPoints } }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -183,7 +181,9 @@ fun MapScreen() {
                     latitude = selectedPoint.latitude,
                     mapViewModel = mapViewModel,
                     selectedPoint = selectedPoint,
-                    selectedCountry = selectedCountry
+                    selectedCountry = selectedCountry,
+                    selectedCity = selectedCity
+
                 )
             }
         }

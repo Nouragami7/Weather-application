@@ -25,7 +25,8 @@ fun AddToFavorites(
     latitude: Double,
     mapViewModel: MapViewModel,
     selectedPoint: LatLng,
-    selectedCountry: String
+    selectedCountry: String,
+    selectedCity: String
 ) {
     Box(
         modifier = Modifier
@@ -52,11 +53,17 @@ fun AddToFavorites(
                 Text(
                     text = "Country: $selectedCountry",
                     color = Color.Gray,
-                    fontSize = 14.sp, // Smaller font
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-
+                Text(
+                    text = "City: $selectedCity",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Lat: ${selectedPoint.latitude}, Lng: ${selectedPoint.longitude}",
                     color = Color.Gray,

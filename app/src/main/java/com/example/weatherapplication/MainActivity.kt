@@ -51,6 +51,7 @@ import com.example.weatherapplication.navigation.SetupNavHost
 import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
+import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
 import com.example.weatherapplication.utils.Constants.Companion.REQUEST_LOCATION_CODE
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -77,7 +78,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         hideSystemUI()
         if (!Places.isInitialized()) {
-            Places.initialize(this, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
+            Places.initialize(this, API_KEY_Google)
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -93,20 +94,16 @@ class MainActivity : ComponentActivity() {
                     requestLocationPermissions()
                 }
             } else {
-                Scaffold(
-                    bottomBar = {
-                        if (isBottomNavigationVisible.value){
-                            BottomNavigation(selectedIndex)
-                        }
+                Scaffold(bottomBar = {
+                    if (isBottomNavigationVisible.value) {
+                        BottomNavigation(selectedIndex)
                     }
-                ) {
-                    SetupNavHost(
-                        modifier = Modifier.padding(it),
+                }) {
+                    SetupNavHost(modifier = Modifier.padding(it),
                         locationState.value,
-                        isBottomNavigationVisible={
-                            visible ->
-                            isBottomNavigationVisible.value = visible}
-                    )
+                        isBottomNavigationVisible = { visible ->
+                            isBottomNavigationVisible.value = visible
+                        })
                 }
 
             }
@@ -117,16 +114,12 @@ class MainActivity : ComponentActivity() {
     private fun hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
-                it.hide(WindowInsets.Type.navigationBars()) // Hide only navigation bar
+                it.hide(WindowInsets.Type.navigationBars())
                 it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    )
+            @Suppress("DEPRECATION") window.decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
     }
 
@@ -145,8 +138,9 @@ class MainActivity : ComponentActivity() {
 
     private fun isLocationEnabled(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     private fun enableLocationServices() {
@@ -158,20 +152,17 @@ class MainActivity : ComponentActivity() {
     private fun checkPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this, android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(
-                    this, android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            this, android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestLocationPermissions() {
         ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
+            this, arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            REQUEST_LOCATION_CODE
+            ), REQUEST_LOCATION_CODE
         )
     }
 
@@ -210,20 +201,17 @@ class MainActivity : ComponentActivity() {
         ).setMinUpdateDistanceMeters(10f).build()
 
         fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
+            locationRequest, object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     locationResult.lastLocation?.let { location ->
                         Log.i(
-                            TAG,
-                            "New Location: Lat=${location.latitude}, Lon=${location.longitude}"
+                            TAG, "New Location: Lat=${location.latitude}, Lon=${location.longitude}"
                         )
                         locationState.value = location
                         fusedLocationClient.removeLocationUpdates(this)
                     }
                 }
-            },
-            mainLooper
+            }, mainLooper
         )
     }
 }
@@ -247,17 +235,14 @@ private fun BottomNavigation(selectedIndex: MutableState<Int>) {
                     .noRippleClickable {
                         selectedIndex.value = index
                         NavigationManager.navigateTo(item.route)
-                    },
-                contentAlignment = Alignment.Center
+                    }, contentAlignment = Alignment.Center
             ) {
                 Icon(
                     modifier = Modifier.size(26.dp),
                     imageVector = item.icon,
                     contentDescription = item.name,
-                    tint = if (selectedIndex.value == index)
-                        MaterialTheme.colorScheme.inversePrimary
-                    else
-                        MaterialTheme.colorScheme.onSurface
+                    tint = if (selectedIndex.value == index) MaterialTheme.colorScheme.inversePrimary
+                    else MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -265,9 +250,18 @@ private fun BottomNavigation(selectedIndex: MutableState<Int>) {
 }
 
 enum class NavigationBarItems(val icon: ImageVector, val route: ScreensRoute) {
-    Home(icon = Icons.Default.Home, route = ScreensRoute.HomeScreen),
-    Favourite(icon = Icons.Default.Favorite, route = ScreensRoute.FavouriteScreen),
-    Alert(icon = Icons.Default.Notifications, route = ScreensRoute.SearchScreen),
+    Home(
+        icon = Icons.Default.Home,
+        route = ScreensRoute.HomeScreen
+    ),
+    Favourite(
+        icon = Icons.Default.Favorite,
+        route = ScreensRoute.FavouriteScreen
+    ),
+    Alert(
+        icon = Icons.Default.Notifications,
+        route = ScreensRoute.SearchScreen
+    ),
     Settings(icon = Icons.Default.Settings, route = ScreensRoute.SettingsScreen)
 }
 
