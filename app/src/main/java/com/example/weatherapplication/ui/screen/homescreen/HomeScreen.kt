@@ -39,7 +39,6 @@ import java.util.TimeZone
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
-    val userTimeZone = TimeZone.getDefault().id
     val TAG = "HomeScreen"
     val context = LocalContext.current
     val sharedPreferences = SharedPreference()
@@ -87,7 +86,7 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddings)
-                .padding(horizontal = 24.dp, vertical = 10.dp)
+                .padding(horizontal = 18.dp, vertical = 8.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

@@ -2,6 +2,7 @@ package com.example.weatherapplication.utils
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 
 class SharedPreference {
      private  val PREF_NAME = "myPref"
@@ -25,5 +26,17 @@ class SharedPreference {
             remove(key)
             apply()
         }
+    }
+
+    fun getTempUnite(context: Context):String{
+        val sharedPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val value = sharedPref.getString("tempUnit", "Celsius °C")
+         val tempUnite = when (value) {
+             "Celsius °C" -> "°C"
+             "Kelvin °K" -> "°K"
+             "Fahrenheit °F" -> "°F"
+             else -> "metric"
+        }
+        return tempUnite
     }
 }

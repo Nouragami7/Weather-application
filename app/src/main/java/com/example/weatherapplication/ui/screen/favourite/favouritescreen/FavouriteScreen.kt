@@ -95,7 +95,6 @@ fun FavouriteScreen(
     val snackbarHostState= remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-
     LaunchedEffect(Unit) {
         favViewModel.getAllFavouriteLocations()
         favViewModel.toastEvent.collect { message ->

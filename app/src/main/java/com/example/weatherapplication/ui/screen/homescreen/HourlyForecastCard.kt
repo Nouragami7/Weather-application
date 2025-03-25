@@ -1,7 +1,5 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
-import LottieAnimationView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -30,6 +28,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.convertToHour
 import com.example.weatherapplication.utils.getWeatherGradient
 import com.example.weatherapplication.utils.getWeatherIcon
@@ -45,7 +44,6 @@ fun HourlyForecastCard(
     forecast: Forecast,
     modifier: Modifier = Modifier
 ) {
-
     val todayForecastList = forecast.list
         .take(8)
         .map { item ->
@@ -101,8 +99,11 @@ fun HourlyForecastItem(
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(icon))
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = LottieConstants.IterateForever // Loop the animation indefinitely
+        iterations = LottieConstants.IterateForever
     )
+    val sharedPreferences = SharedPreference()
+    val tempUnit = sharedPreferences.getTempUnite(LocalContext.current)
+
     Column(
         modifier = modifier
             .background(backgroundColor, shape = RoundedCornerShape(16.dp))
@@ -112,7 +113,7 @@ fun HourlyForecastItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = hour, color = Color.White, fontSize = 16.sp)
+        Text(text = "$hour ", color = Color.White, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(12.dp))
         LottieAnimation(
             composition = composition,
@@ -121,7 +122,7 @@ fun HourlyForecastItem(
      )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "$temperature°",
+            text = "$temperature $tempUnit",
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = MaterialTheme.typography.bodyLarge.fontWeight

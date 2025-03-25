@@ -280,8 +280,8 @@ val ThunderstormStart = Color(0xFF4B0082) // Deep Purple
 val ThunderstormEnd = Color(0xFF2C003E)   // Almost Black
 
 // ❄️ Snow
-val SnowStart = Color(0xFFFFFFFF)  // Pure White
-val SnowEnd = Color(0xFFE3F2FD)    // Light Sky Blue
+val SnowStart = Color(0xFFB6DEEC)  // Pure White
+val SnowEnd = Color(0xFFC4DDF5)    // Light Sky Blue
 
 // 🌫️ Mist, Fog, Haze
 val MistStart = Color(0xFFB0C4DE)  // Light Steel Blue

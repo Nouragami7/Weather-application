@@ -74,7 +74,7 @@ fun DailyWeatherCard(
             .fillMaxWidth()
             .padding(2.dp)
     ) {
-        val (forecastImage, forecastValue, sunCase, title, date,time, background, detailsCard) = createRefs()
+        val (forecastImage, forecastValue, sunCase, title, date, background, detailsCard) = createRefs()
 
         CardBackground(
             modifier = Modifier.constrainAs(background) {
@@ -246,9 +246,7 @@ fun SunCase(
                 time = timeOfSunrise
             )
         }
-
         SunPathDivider()
-
         Box(
             modifier = Modifier
                 .weight(1f)
