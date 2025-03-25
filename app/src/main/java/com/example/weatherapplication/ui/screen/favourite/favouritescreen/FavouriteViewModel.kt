@@ -81,17 +81,31 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
     }
 
 
-    class MapViewModelFactory(
-        private val repository: WeatherRepository
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(FavouriteViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return FavouriteViewModel(repository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
+
+ /*fun deleteLocationFromFavourite(lat: Double, lng: Double) {
+   viewModelScope.launch {
+       try {
+               repository.deleteLocation(lat, lng)
+               _toastEvent.emit("Location deleted from favourites")
+                getAllFavouriteLocations()
+       } catch (e: Exception) {
+           _toastEvent.emit("An error occurred: ${e.message}")
+       }
+   }
+}
+*/
+
+class MapViewModelFactory(
+   private val repository: WeatherRepository
+) : ViewModelProvider.Factory {
+   override fun <T : ViewModel> create(modelClass: Class<T>): T {
+       if (modelClass.isAssignableFrom(FavouriteViewModel::class.java)) {
+           @Suppress("UNCHECKED_CAST")
+           return FavouriteViewModel(repository) as T
+       }
+       throw IllegalArgumentException("Unknown ViewModel class")
+   }
+}
 
 
 }

@@ -145,7 +145,7 @@ fun DaysForecastItem(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TemperatureInfo(
+                /*TemperatureInfo(
                     label = "Max",
                     temperature = maxTemperature,
                     icon = Icons.Filled.KeyboardArrowUp,
@@ -156,12 +156,29 @@ fun DaysForecastItem(
                     temperature = minTemperature,
                     icon = Icons.Filled.KeyboardArrowDown,
                     backgroundColor = primaryLight
+                )*/
+
+                Text(
+                    text = maxTemperature,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+                Text(
+                    text = "|",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+                Text(
+                    text = minTemperature,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
                 )
             }
         }
     }
 
 
+/*
 @Composable
 fun TemperatureInfo(
     label: String,
@@ -189,3 +206,4 @@ fun TemperatureInfo(
         )
     }
 }
+*/

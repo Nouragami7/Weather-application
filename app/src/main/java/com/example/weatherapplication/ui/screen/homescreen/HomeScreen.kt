@@ -115,7 +115,7 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 }
 
 @Composable
-private fun HomeContent(weather: CurrentWeather?, forecast: Forecast, tempUnit: String, windSpeedUnit: String) {
+fun HomeContent(weather: CurrentWeather?, forecast: Forecast, tempUnit: String, windSpeedUnit: String) {
 
     val tempUnitAbbreviation = when (tempUnit) {
         "Celsius °C" -> "°C"

@@ -3,11 +3,11 @@ package com.example.weatherapplication.ui.screen.favourite.favouritescreen
 import GeocoderHelper
 import LottieAnimationView
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,10 +44,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -71,16 +69,19 @@ import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SkyBlue
-import com.example.weatherapplication.ui.theme.inversePrimaryDark
 import com.example.weatherapplication.ui.theme.onPrimaryDark
-import com.example.weatherapplication.ui.theme.onPrimaryDarkMediumContrast
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun FavouriteScreen() {
+fun FavouriteScreen(
+    goToDetails: (
+            latitude: Double,
+            longitude: Double
+            ) -> Unit
+) {
     var showMap by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val factory = FavouriteViewModel.MapViewModelFactory(
@@ -93,6 +94,10 @@ fun FavouriteScreen() {
     val favouriteState by favViewModel.favLocations.collectAsStateWithLifecycle()
     val snackbarHostState= remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+
+
+
 
     LaunchedEffect(Unit) {
         favViewModel.getAllFavouriteLocations()
@@ -193,7 +198,7 @@ fun FavouriteScreen() {
                                         .padding(16.dp)
                                 ) {
                                     items(locations.size) { index ->
-                                        FavouriteItem(locations[index], favViewModel)
+                                        FavouriteItem(locations[index], favViewModel,goToDetails)
                                     }
                                 }
                             }
@@ -218,7 +223,11 @@ fun LoadingIndicator() {
 }
 
 @Composable
-fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) {
+fun FavouriteItem(
+    locationData: LocationData,
+    favViewModel: FavouriteViewModel,
+    goToDetails: (latitude: Double, longitude: Double) -> Unit
+) {
     val context = LocalContext.current
     val geocoderHelper = remember { GeocoderHelper(context) }
     var isVisible by remember { mutableStateOf(true) }
@@ -265,8 +274,15 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .clickable(
+                        onClick = {
+                            Toast.makeText(context, "Clicked on ${locationData.latitude}, ${locationData.longitude}", Toast.LENGTH_SHORT).show()
+                            goToDetails(locationData.latitude, locationData.longitude)
+                        }
+                    ),
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+
             ) {
                 Row(
                     modifier = Modifier
@@ -297,7 +313,7 @@ fun FavouriteItem(locationData: LocationData, favViewModel: FavouriteViewModel) 
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
-                   /* Text(
+                /*    Text(
                         text = "$cityName",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold

@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapplication.ui.screen.AlertScreen
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.DetailsScreen
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
 import com.example.weatherapplication.ui.screen.settings.SettingsScreen
@@ -38,8 +39,19 @@ fun SetupNavHost(
         }
         composable<ScreensRoute.FavouriteScreen> {
             isBottomNavigationVisible(true)
-            FavouriteScreen()
+            FavouriteScreen(
+                goToDetails = { latitude, longitude ->
+                    NavigationManager.navigateTo(ScreensRoute.DetailsScreen(latitude, longitude))
+                }
+            )
         }
+        composable<ScreensRoute.DetailsScreen> {
+            isBottomNavigationVisible(false)
+            val latitude = it.arguments?.getDouble("latitude") ?: 30.0444
+            val longitude = it.arguments?.getDouble("longitude") ?: 31.2357
+            DetailsScreen(latitude, longitude)
+        }
+
         composable<ScreensRoute.MapScreen> {
             isBottomNavigationVisible(false)
             MapScreen()
