@@ -188,8 +188,6 @@ fun MapScreen() {
             }
         }
     }
-
-
 }
 
 

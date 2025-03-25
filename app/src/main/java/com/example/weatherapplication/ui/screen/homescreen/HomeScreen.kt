@@ -75,8 +75,8 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 
         Log.d(TAG, "Fetching data with lang: $lang, unit: $unit, windSpeed: $windSpeedUnit")
 
-        viewModel.fetchWeatherData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
-        viewModel.fetchForecastData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
+        viewModel.fetchWeatherData(31.20663675, 29.907445625, lang, unit, Constants.API_KEY)
+        viewModel.fetchForecastData(31.20663675, 29.907445625, lang, unit, Constants.API_KEY)
     }
 
     Scaffold(

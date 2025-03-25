@@ -252,3 +252,41 @@ val ColorTextPrimaryVariant = ColorTextPrimary.copy(alpha = 0.7f)
 val ColorTextSecondary = Color.White
 val ColorTextSecondaryVariant = ColorTextSecondary.copy(alpha = 0.7f)
 val ColorTextAction = ColorGradient2
+
+// ☀️ Clear Sky
+val ClearSkyDayStart = Color(0xFF4FC3F7)  // Light Blue
+val ClearSkyDayEnd = Color(0xFF0288D1)    // Deep Sky Blue
+val ClearSkyNightStart = Color(0xFF013A63) // Dark Blue
+val ClearSkyNightEnd = Color(0xFF1E6091)   // Night Sky Blue
+
+// ⛅ Few Clouds & Scattered Clouds
+val FewCloudsStart = Color(0xFFB0BEC5)  // Light Grayish Blue
+val FewCloudsEnd = Color(0xFF78909C)    // Medium Gray-Blue
+val ScatteredCloudsStart = Color(0xFF90A4AE) // Medium Grayish Blue
+val ScatteredCloudsEnd = Color(0xFF607D8B)   // Darker Gray-Blue
+
+// ☁️ Broken Clouds & Overcast
+val BrokenCloudsStart = Color(0xFF78909C)  // Medium Gray
+val BrokenCloudsEnd = Color(0xFF546E7A)    // Darker Gray
+
+// 🌧️ Rain (Light, Moderate, Heavy)
+val RainDayStart = Color(0xFF4A90E2)  // Vibrant Blue
+val RainDayEnd = Color(0xFF005BBB)    // Deep Blue
+val RainNightStart = Color(0xFF1C2D5B) // Dark Blue-Gray
+val RainNightEnd = Color(0xFF0A1F44)  // Almost Black
+
+// ⛈️ Thunderstorm
+val ThunderstormStart = Color(0xFF4B0082) // Deep Purple
+val ThunderstormEnd = Color(0xFF2C003E)   // Almost Black
+
+// ❄️ Snow
+val SnowStart = Color(0xFFFFFFFF)  // Pure White
+val SnowEnd = Color(0xFFE3F2FD)    // Light Sky Blue
+
+// 🌫️ Mist, Fog, Haze
+val MistStart = Color(0xFFB0C4DE)  // Light Steel Blue
+val MistEnd = Color(0xFF8C9CAD)    // Faded Gray-Blue
+
+// Default (Fallback)
+val DefaultColorStart = Color(0xFF1E88E5)
+val DefaultColorEnd = Color(0xFF1565C0)

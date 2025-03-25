@@ -1,5 +1,6 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -51,94 +53,41 @@ import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.convertToHour
 import com.example.weatherapplication.utils.getCurrentDate
+import com.example.weatherapplication.utils.getWeatherGradient
+import com.example.weatherapplication.utils.getWeatherIcon
 
 data class HourlyForecast(
     val hour: String,
     val temperature: String,
     val icon: Int,
-    val backgroundColor: Color
+    val backgroundColor: Brush
 )
-
-fun getRandomColor(): Color {
-    val colors = listOf(SkyBlue, LightSkyBlue, SoftSkyBlue, PaleSkyBlue, LightBlue)
-    return colors.random()
-}
-
 @Composable
 fun HourlyForecastCard(
     forecast: Forecast,
     modifier: Modifier = Modifier
 ) {
-
-    /* LaunchedEffect(Unit) {
-        viewModel.fetchForecastData(
-            lat = 31.20663675,
-            lon = 29.907445625,
-            apiKey = Constants.API_KEY
-        )
-    }*/
-
-    /* when (forecastState) {
-        is ResponseState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is ResponseState.Failure -> {
-            val errorMessage = (forecastState as ResponseState.Failure).message.message ?: "Unknown error"
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error: $errorMessage", color = Color.Red)
-            }
-        }
-
-        is ResponseState.Success<*> -> {
-            val forecast = (forecastState as ResponseState.Success<Forecast>).data
-            val currentDate = getCurrentDate().substring(0, 10)
-            val todayForecastList = forecast.list
-                .filter { it.dt_txt.startsWith(currentDate) }
-                .map { item ->
-                    HourlyForecast(
-                        hour = convertToHour(item.dt_txt),
-                        temperature = "${item.main.temp.toInt()}",
-                        icon = getWeatherIcon(item.weather.firstOrNull()?.icon ?: ""),
-                        backgroundColor = getRandomColor(),
-                    )
-                }
-
-            Column(modifier = Modifier.fillMaxWidth()) {
-                LazyRow(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(todayForecastList) { forecast ->
-                        HourlyForecastItem(
-                            hour = forecast.hour,
-                            temperature = forecast.temperature,
-                            icon = forecast.icon,
-                            backgroundColor = forecast.backgroundColor
-                        )
-                    }
-                }
-                DaysForeCastContent(forecast)
-            }
-        }
-    }
-}
-*/
-
-    val currentDate = getCurrentDate().substring(0, 10)
+    //val currentDate = getCurrentDate().substring(0, 10)
     val todayForecastList = forecast.list
-        .filter { it.dt_txt.startsWith(currentDate) }
+        .take(8)
         .map { item ->
+            val weatherDescription = item.weather.firstOrNull()?.description ?: ""
+            val weatherCode = item.weather.firstOrNull()?.icon ?: ""
+            val backgroundColor = if (weatherCode.contains("01d", ignoreCase = true)) {
+                Brush.verticalGradient(   listOf(
+                    Color(0xFFFFC107),
+                    Color(0xFFFFA000),
+                    Color(0xFFEE972A)
+                ))
+            } else {
+                getWeatherGradient(weatherDescription)
+            }
+
             HourlyForecast(
                 hour = convertToHour(item.dt_txt),
                 temperature = "${item.main.temp.toInt()}",
                 icon = getWeatherIcon(item.weather.firstOrNull()?.icon ?: ""),
-                backgroundColor = getRandomColor(),
+                backgroundColor = backgroundColor,
             )
         }
 
@@ -168,7 +117,7 @@ fun HourlyForecastItem(
     hour: String,
     temperature: String,
     icon: Int,
-    backgroundColor: Color,
+    backgroundColor: Brush,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -182,10 +131,10 @@ fun HourlyForecastItem(
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = hour, color = Color.White, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(12.dp))
-        Icon(
+        Image(
             painter = painterResource(id = icon),
             contentDescription = null,
-            tint = Color.White
+            modifier = Modifier.width(32.dp).height(32.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -197,18 +146,4 @@ fun HourlyForecastItem(
     }
 }
 
-fun getWeatherIcon(iconCode: String): Int {
-    return when (iconCode) {
-        "01d" -> R.drawable.ic_air_quality_header
-        "02d" -> R.drawable.ic_o3
-        "03d", "03n" -> R.drawable.img_sun
-        "04d", "04n" -> R.drawable.ic_control
-        "09d", "09n" -> R.drawable.ic_o3
-        "10d", "10n" -> R.drawable.ic_so2
-        "11d", "11n" -> R.drawable.ic_frosty
-        "13d", "13n" -> R.drawable.img_sun
-        "50d", "50n" -> R.drawable.img_sub_rain
-        else -> R.drawable.ic_wind
-    }
-}
 
