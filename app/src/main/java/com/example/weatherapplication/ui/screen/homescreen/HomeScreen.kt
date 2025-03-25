@@ -28,7 +28,6 @@ import com.example.weatherapplication.datasource.remote.*
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
-import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -36,9 +35,11 @@ import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.convertToEgyptTime
 import com.example.weatherapplication.utils.SharedPreference
+import java.util.TimeZone
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
+    val userTimeZone = TimeZone.getDefault().id
     val TAG = "HomeScreen"
     val context = LocalContext.current
     val sharedPreferences = SharedPreference()
@@ -75,8 +76,8 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 
         Log.d(TAG, "Fetching data with lang: $lang, unit: $unit, windSpeed: $windSpeedUnit")
 
-        viewModel.fetchWeatherData(31.20663675, 29.907445625, lang, unit, Constants.API_KEY)
-        viewModel.fetchForecastData(31.20663675, 29.907445625, lang, unit, Constants.API_KEY)
+        viewModel.fetchWeatherData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
+        viewModel.fetchForecastData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
     }
 
     Scaffold(
@@ -115,7 +116,12 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
 }
 
 @Composable
-fun HomeContent(weather: CurrentWeather?, forecast: Forecast, tempUnit: String, windSpeedUnit: String) {
+fun HomeContent(
+    weather: CurrentWeather?,
+    forecast: Forecast,
+    tempUnit: String,
+    windSpeedUnit: String,
+) {
 
     val tempUnitAbbreviation = when (tempUnit) {
         "Celsius °C" -> "°C"
@@ -151,7 +157,10 @@ fun HomeContent(weather: CurrentWeather?, forecast: Forecast, tempUnit: String, 
                 humidity = "${weather.main.humidity}%",
                 currentTemperature = "${weather.main.temp} $tempUnitAbbreviation",
                 currentDate = date,
-                currentTime = time
+                currentTime = time,
+                icon = weather.weather.firstOrNull()?.icon ?: "",
+                sunrise = weather.sys.sunrise.toLong(),
+                sunset = weather.sys.sunset.toLong()
             )
         }
 

@@ -96,9 +96,6 @@ fun FavouriteScreen(
     val scope = rememberCoroutineScope()
 
 
-
-
-
     LaunchedEffect(Unit) {
         favViewModel.getAllFavouriteLocations()
         favViewModel.toastEvent.collect { message ->
@@ -121,7 +118,7 @@ fun FavouriteScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showMap = !showMap },
-                modifier = Modifier.padding(16.dp, bottom = 32.dp),
+                modifier = Modifier.padding(16.dp, bottom = 40.dp),
                 containerColor = SkyBlue
             ) {
                 Icon(
@@ -144,10 +141,11 @@ fun FavouriteScreen(
             } else {
                 Column(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+
                 ) {
                     Text(
-                        text = "Favourite",
+                        text = "Saved Locations",
                         style = TextStyle(
                             brush = Brush.verticalGradient(
                                 0f to primaryContainerDark,

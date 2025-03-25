@@ -23,17 +23,17 @@ import com.example.weatherapplication.ui.theme.ThunderstormStart
 
 fun getWeatherIcon(iconCode: String): Int {
     return when (iconCode) {
-        "01d" -> R.drawable.sun
-        "01n" -> R.drawable.few_clouds
-        "02d" -> R.drawable.few_clouds
-        "03d", "03n" -> R.drawable.scattered_cloud
-        "04d", "04n" -> R.drawable.broken_clouds
-        "09d", "09n" -> R.drawable.rain
-        "10d", "10n" -> R.drawable.rain
-        "11d", "11n" -> R.drawable.thunderstorm
-        "13d", "13n" -> R.drawable.snowy
-        "50d", "50n" -> R.drawable.broken_clouds
-        else -> R.drawable.few_clouds
+        "01d" -> R.raw.sunrise
+        "01n" -> R.raw.sky
+        "02d" -> R.raw.few_clouds
+        "03d", "03n" -> R.raw.few_clouds
+        "04d", "04n" -> R.raw.broken_clouds
+        "09d", "09n" -> R.raw.rain
+        "10d", "10n" -> R.raw.rain
+        "11d", "11n" -> R.raw.thunderstorm
+        "13d", "13n" -> R.raw.snow
+        "50d", "50n" -> R.raw.fog
+        else -> R.raw.clear_sky
     }
 }
 

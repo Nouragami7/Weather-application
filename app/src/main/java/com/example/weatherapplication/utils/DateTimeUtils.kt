@@ -33,6 +33,12 @@ fun getCurrentDate(): String {
     return dateFormat.format(calendar.time)
 }
 
+fun convertUnixToTime(unixTime: Long): String {
+    val date = Date(unixTime * 1000) // Convert seconds to milliseconds
+    val format = SimpleDateFormat("hh:mm a", Locale.getDefault()) // Format as "06:30 AM"
+    format.timeZone = TimeZone.getDefault() // Set to local timezone
+    return format.format(date)
+}
 
 fun convertToHour(dateTime: String): String {
     return try {

@@ -44,6 +44,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SkyBlue
@@ -128,6 +133,11 @@ fun DaysForecastItem(
     description: String
 ) {
     val weatherIcon = getWeatherIcon(iconCode)
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(weatherIcon))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -138,7 +148,7 @@ fun DaysForecastItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(getWeatherGradient(description)) // Apply the gradient
+                .background(getWeatherGradient(description))
         ) {
             ConstraintLayout(
                 modifier = Modifier
@@ -167,9 +177,9 @@ fun DaysForecastItem(
                     }
                 )
 
-                Image(
-                    painter = painterResource(id = weatherIcon),
-                    contentDescription = "Weather Icon",
+                LottieAnimation(
+                    composition = composition,
+                    progress = {progress},
                     modifier = Modifier
                         .constrainAs(iconRef) {
                             start.linkTo(parent.start)
