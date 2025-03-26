@@ -1,5 +1,6 @@
 package com.example.weatherapplication.navigation
 
+import androidx.compose.runtime.MutableState
 import kotlinx.serialization.Serializable
 
 
@@ -14,7 +15,7 @@ sealed class ScreensRoute(){
     @Serializable
     data object FavouriteScreen : ScreensRoute()
     @Serializable
-    data object MapScreen : ScreensRoute()
+    data class MapScreen(val isFavourite: Boolean) : ScreensRoute()
     @Serializable
     data class DetailsScreen(val latitude: Double, val longitude: Double) : ScreensRoute()
 

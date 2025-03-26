@@ -18,12 +18,18 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
     private val favMutableLocations = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val favLocations = favMutableLocations.asStateFlow()
 
+    val isFavourite = MutableStateFlow(false)
+
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
 
 
     private var lastDeletedLocation: LocationData? = null
     private var lastDeletedIndex: Int? = null
+
+    fun setIsFavourite(isFav: Boolean) {
+        isFavourite.value = isFav
+    }
 
 
     fun getAllFavouriteLocations() {

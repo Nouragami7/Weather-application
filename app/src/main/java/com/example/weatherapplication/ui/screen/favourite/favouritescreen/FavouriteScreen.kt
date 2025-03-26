@@ -78,11 +78,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavouriteScreen(
     goToDetails: (
-            latitude: Double,
-            longitude: Double
-            ) -> Unit
+        latitude: Double,
+        longitude: Double
+    ) -> Unit
 ) {
     var showMap by remember { mutableStateOf(false) }
+    var isFavourite by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val factory = FavouriteViewModel.MapViewModelFactory(
         WeatherRepository.getInstance(
@@ -92,19 +93,19 @@ fun FavouriteScreen(
     )
     val favViewModel: FavouriteViewModel = viewModel(factory = factory)
     val favouriteState by favViewModel.favLocations.collectAsStateWithLifecycle()
-    val snackbarHostState= remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         favViewModel.getAllFavouriteLocations()
         favViewModel.toastEvent.collect { message ->
             scope.launch {
-                val result =snackbarHostState.showSnackbar(
+                val result = snackbarHostState.showSnackbar(
                     message = message,
                     actionLabel = "Undo",
                     duration = SnackbarDuration.Short
                 )
-                if(result == SnackbarResult.ActionPerformed){
+                if (result == SnackbarResult.ActionPerformed) {
                     favViewModel.addLastDeletedLocation()
                 }
             }
@@ -116,8 +117,11 @@ fun FavouriteScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showMap = !showMap },
-                modifier = Modifier.padding(16.dp, bottom = 40.dp),
+                onClick = {
+                    showMap = !showMap
+                   isFavourite = true
+                },
+                modifier = Modifier.padding(16.dp, bottom = 60.dp),
                 containerColor = SkyBlue
             ) {
                 Icon(
@@ -136,13 +140,13 @@ fun FavouriteScreen(
             contentAlignment = Alignment.Center
         ) {
             if (showMap) {
-                NavigationManager.navigateTo(ScreensRoute.MapScreen)
+                NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite))
             } else {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
 
-                ) {
+                    ) {
                     Text(
                         text = "Saved Locations",
                         style = TextStyle(
@@ -195,7 +199,7 @@ fun FavouriteScreen(
                                         .padding(16.dp)
                                 ) {
                                     items(locations.size) { index ->
-                                        FavouriteItem(locations[index], favViewModel,goToDetails)
+                                        FavouriteItem(locations[index], favViewModel, goToDetails)
                                     }
                                 }
                             }
@@ -249,7 +253,10 @@ fun FavouriteItem(
                             onDragEnd = {
                                 launch {
                                     if (offsetX.value < -300 || offsetX.value > 300) {
-                                        offsetX.animateTo(if (offsetX.value < 0) -600f else 600f, tween(300))
+                                        offsetX.animateTo(
+                                            if (offsetX.value < 0) -600f else 600f,
+                                            tween(300)
+                                        )
                                         isVisible = false
                                         favViewModel.deleteLocationFromFavourite(
                                             locationData.latitude,
@@ -271,16 +278,21 @@ fun FavouriteItem(
         ) {
             Card(
                 shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .clickable(
                         onClick = {
-                            Toast.makeText(context, "Clicked on ${locationData.latitude}, ${locationData.longitude}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Clicked on ${locationData.latitude}, ${locationData.longitude}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             goToDetails(locationData.latitude, locationData.longitude)
                         }
                     ),
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
 
-            ) {
+                ) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -310,11 +322,11 @@ fun FavouriteItem(
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
-                /*    Text(
-                        text = "$cityName",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
-                    )*/
+                    /*    Text(
+                            text = "$cityName",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold
+                        )*/
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(

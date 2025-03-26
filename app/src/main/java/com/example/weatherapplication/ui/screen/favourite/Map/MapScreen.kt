@@ -1,3 +1,4 @@
+
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +37,7 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.ui.screen.favourite.Map.MapViewModel
 import com.example.weatherapplication.ui.screen.favourite.Map.PlacesHelper
 import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
+import com.example.weatherapplication.utils.SharedPreference
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -48,8 +50,10 @@ import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 
 @Composable
-fun MapScreen() {
-
+fun MapScreen(
+    isFavourite: Boolean
+) {
+    val sharedPreference = SharedPreference()
     val context = LocalContext.current
     val geocoderHelper = remember { GeocoderHelper(context) }
     val placesHelper = remember { PlacesHelper(context) }
@@ -62,7 +66,6 @@ fun MapScreen() {
         )
     )
     val mapViewModel: MapViewModel = viewModel(factory = factory)
-
 
     val selectedPoint by remember { derivedStateOf { mapViewModel.selectedPoint } }
     val selectedPlaceName by remember { derivedStateOf { mapViewModel.selectedPlaceName } }
@@ -176,14 +179,31 @@ fun MapScreen() {
                     .fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                AddToFavorites(
+                MapCard(
                     longitude = selectedPoint.longitude,
                     latitude = selectedPoint.latitude,
                     mapViewModel = mapViewModel,
                     selectedPoint = selectedPoint,
                     selectedCountry = selectedCountry,
-                    selectedCity = selectedCity
-
+                    selectedCity = selectedCity,
+                    actionName = if(isFavourite)"Add to Favorite" else "Select Location",
+                    action = {
+                        if (isFavourite) mapViewModel.addLocationToFavourite(
+                            selectedPoint.longitude,
+                            selectedPoint.latitude
+                        )
+                        else{ sharedPreference.saveToSharedPreference(
+                            context,
+                            "latitude",
+                            selectedPoint.latitude.toString()
+                        )
+                        sharedPreference.saveToSharedPreference(
+                            context,
+                            "longitude",
+                            selectedPoint.longitude.toString()
+                        )
+                        }
+                    }
                 )
             }
         }

@@ -4,11 +4,29 @@ import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -24,7 +42,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.local.WeatherDatabase
 import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
-import com.example.weatherapplication.datasource.remote.*
+import com.example.weatherapplication.datasource.remote.ApiService
+import com.example.weatherapplication.datasource.remote.ResponseState
+import com.example.weatherapplication.datasource.remote.RetrofitHelper
+import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
@@ -33,9 +54,8 @@ import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
 import com.example.weatherapplication.utils.Constants
-import com.example.weatherapplication.utils.convertToEgyptTime
 import com.example.weatherapplication.utils.SharedPreference
-import java.util.TimeZone
+import com.example.weatherapplication.utils.convertToEgyptTime
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
@@ -43,7 +63,7 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
     val context = LocalContext.current
     val sharedPreferences = SharedPreference()
 
-    var lang by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "language") ?: "en") }
+    var language by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "language") ?: "en") }
     var tempUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
     var windSpeedUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
 
@@ -60,12 +80,12 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
     val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        lang = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
+        language = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
         tempUnit = sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C"
         windSpeedUnit = sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec"
     }
 
-    LaunchedEffect(location, lang, tempUnit, windSpeedUnit) {
+    LaunchedEffect(location, language, tempUnit, windSpeedUnit) {
         val unit = when (tempUnit) {
             "Celsius °C" -> "metric"   // Temp: °C, Wind Speed: meter/sec
             "Kelvin °K" -> "standard"  // Temp: K, Wind Speed: meter/sec
@@ -73,10 +93,10 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
             else -> "metric"
         }
 
-        Log.d(TAG, "Fetching data with lang: $lang, unit: $unit, windSpeed: $windSpeedUnit")
+        Log.d(TAG, "Fetching data with lang: $language, unit: $unit, windSpeed: $windSpeedUnit")
 
-        viewModel.fetchWeatherData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
-        viewModel.fetchForecastData(location.latitude, location.longitude, lang, unit, Constants.API_KEY)
+        viewModel.fetchWeatherData(location.latitude, location.longitude, language, unit, Constants.API_KEY)
+        viewModel.fetchForecastData(location.latitude, location.longitude, language, unit, Constants.API_KEY)
     }
 
     Scaffold(

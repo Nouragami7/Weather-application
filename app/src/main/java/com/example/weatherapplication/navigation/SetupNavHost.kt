@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.weatherapplication.ui.screen.AlertScreen
 import com.example.weatherapplication.ui.screen.detailscreen.DetailsScreen
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
@@ -54,7 +55,8 @@ fun SetupNavHost(
 
         composable<ScreensRoute.MapScreen> {
             isBottomNavigationVisible(false)
-            MapScreen()
+            val isFavourite = it.toRoute<ScreensRoute.MapScreen>().isFavourite
+            MapScreen(isFavourite)
         }
     }
 }

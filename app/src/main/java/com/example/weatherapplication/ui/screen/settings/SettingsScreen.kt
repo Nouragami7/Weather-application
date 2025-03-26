@@ -1,6 +1,5 @@
 package com.example.weatherapplication.ui.screen.settings
 
-import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,9 +33,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
+import com.example.weatherapplication.navigation.NavigationManager
+import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.theme.primaryContainerLight
 import com.example.weatherapplication.ui.theme.primaryLight
 import com.example.weatherapplication.utils.SharedPreference
@@ -45,10 +45,50 @@ fun SettingsScreen() {
     val sharedPreference = SharedPreference()
     val context = LocalContext.current
 
-    var selectedLanguage by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "language") ?: "English") }
-    var selectedTempUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
-    var selectedLocation by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "location") ?: "GPS") }
-    var selectedWindSpeedUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
+    var selectedLanguage by remember {
+        mutableStateOf(
+            sharedPreference.getFromSharedPreference(
+                context,
+                "language"
+            ) ?: "English"
+        )
+    }
+    var selectedTempUnit by remember {
+        mutableStateOf(
+            sharedPreference.getFromSharedPreference(
+                context,
+                "tempUnit"
+            ) ?: "Celsius °C"
+        )
+    }
+    var selectedLocation by remember {
+        mutableStateOf(
+            sharedPreference.getFromSharedPreference(
+                context,
+                "location"
+            ) ?: "GPS"
+        )
+    }
+    var selectedWindSpeedUnit by remember {
+        mutableStateOf(
+            sharedPreference.getFromSharedPreference(
+                context,
+                "windSpeedUnit"
+            ) ?: "meter/sec"
+        )
+    }
+
+    LaunchedEffect(selectedWindSpeedUnit, selectedTempUnit) {
+        if (selectedTempUnit == "Fahrenheit °F" && selectedWindSpeedUnit != "mile/hour") {
+            selectedWindSpeedUnit = "mile/hour"
+            sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
+        } else if ((selectedTempUnit == "Celsius °C" || selectedTempUnit == "Kelvin °K") &&
+            selectedWindSpeedUnit == "mile/hour") {
+            selectedWindSpeedUnit = "meter/sec"
+            sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
+        }
+    }
+
 
 
     Column(
@@ -61,12 +101,10 @@ fun SettingsScreen() {
             options = listOf("Arabic", "English"),
             selectedOption = selectedLanguage,
             onSelectedOption = {
-                sharedPreference.deleteSharedPreference(context, "language")
-                sharedPreference.saveToSharedPreference(context, "language", it)
                 selectedLanguage = it
+                sharedPreference.saveToSharedPreference(context, "language", it)
             },
-            iconRes = R.drawable.img_sun,
-
+            iconRes = R.drawable.img_sun
         )
 
         SettingsCard(
@@ -74,9 +112,8 @@ fun SettingsScreen() {
             options = listOf("Celsius °C", "Kelvin °K", "Fahrenheit °F"),
             selectedOption = selectedTempUnit,
             onSelectedOption = {
-                sharedPreference.deleteSharedPreference(context, "tempUnit")
-                sharedPreference.saveToSharedPreference(context, "tempUnit", it)
                 selectedTempUnit = it
+                sharedPreference.saveToSharedPreference(context, "tempUnit", it)
             },
             iconRes = R.drawable.ic_rain_chance
         )
@@ -86,9 +123,11 @@ fun SettingsScreen() {
             options = listOf("GPS", "Map"),
             selectedOption = selectedLocation,
             onSelectedOption = {
-                sharedPreference.deleteSharedPreference(context, "location")
-                sharedPreference.saveToSharedPreference(context, "location", it)
                 selectedLocation = it
+                sharedPreference.saveToSharedPreference(context, "location", it)
+                if (it == "Map") {
+                    NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
+                }
             },
             iconRes = R.drawable.ic_air_quality_header
         )
@@ -98,9 +137,8 @@ fun SettingsScreen() {
             options = listOf("meter/sec", "mile/hour"),
             selectedOption = selectedWindSpeedUnit,
             onSelectedOption = {
-                sharedPreference.deleteSharedPreference(context, "windSpeedUnit")
-                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", it)
                 selectedWindSpeedUnit = it
+                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", it)
             },
             iconRes = R.drawable.ic_wind
         )
@@ -108,16 +146,28 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun SettingsCard(title: String, options: List<String>,selectedOption: String,onSelectedOption:(String)->Unit, iconRes: Int) {
+fun SettingsCard(
+    title: String,
+    options: List<String>,
+    selectedOption: String,
+    onSelectedOption: (String) -> Unit,
+    iconRes: Int
+) {
+    val enabledColor = primaryLight
+
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = primaryContainerLight),
+        colors = CardDefaults.cardColors(
+            containerColor = primaryContainerLight
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .border(width = 1.dp, color = primaryLight, shape = RoundedCornerShape(12.dp))
-
-
+            .border(
+                width = 1.dp,
+                color = primaryLight,
+                shape = RoundedCornerShape(12.dp)
+            )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -131,7 +181,7 @@ fun SettingsCard(title: String, options: List<String>,selectedOption: String,onS
                 Text(
                     text = title,
                     fontSize = 20.sp,
-                    color = primaryLight,
+                    color = enabledColor,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -140,7 +190,7 @@ fun SettingsCard(title: String, options: List<String>,selectedOption: String,onS
 
             options.forEach { text ->
                 Row(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
                         .selectable(
@@ -152,12 +202,15 @@ fun SettingsCard(title: String, options: List<String>,selectedOption: String,onS
                 ) {
                     RadioButton(
                         selected = (text == selectedOption),
-                        onClick = {onSelectedOption(text)},
-                        colors = RadioButtonDefaults.colors(selectedColor = primaryLight)
+                        onClick = { onSelectedOption(text) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = enabledColor,
+                            unselectedColor = enabledColor.copy(alpha = 0.6f)
+                        )
                     )
                     Text(
                         text = text,
-                        color = primaryLight,
+                        color = enabledColor,
                         modifier = Modifier.padding(start = 8.dp),
                         fontSize = 16.sp
                     )

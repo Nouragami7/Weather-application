@@ -2,7 +2,6 @@ package com.example.weatherapplication.utils
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 
 class SharedPreference {
      private  val PREF_NAME = "myPref"
@@ -14,6 +13,7 @@ class SharedPreference {
             apply()
         }
     }
+
 
     fun getFromSharedPreference(context: Context, key: String): String? {
         val sharedPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
