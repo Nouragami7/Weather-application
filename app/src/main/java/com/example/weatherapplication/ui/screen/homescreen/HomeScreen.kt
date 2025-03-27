@@ -52,7 +52,7 @@ import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
-import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
+import com.example.weatherapplication.ui.viewmodel.HomeViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.convertToEgyptTime
@@ -67,14 +67,14 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
     var tempUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
     var windSpeedUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
 
-    val factory = WeatherViewModel.WeatherFactory(
+    val factory = HomeViewModel.WeatherFactory(
         WeatherRepository.getInstance(
             WeatherRemoteDataSource(
                 RetrofitHelper.retrofitInstance.create(ApiService::class.java)
             ),WeatherLocalDataSource(WeatherDatabase.getDatabase(context).locationDao())
         )
     )
-    val viewModel: WeatherViewModel = viewModel(factory = factory)
+    val viewModel: HomeViewModel = viewModel(factory = factory)
 
     val weatherState by viewModel.weatherData.collectAsStateWithLifecycle()
     val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()

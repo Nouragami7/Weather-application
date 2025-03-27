@@ -39,7 +39,7 @@ fun MapCard(
     action : () -> Unit
 ) {
     val geocoderHelper = GeocoderHelper(LocalContext.current)
-    val city = geocoderHelper.getLocationInfo(selectedPoint).city
+    val city = geocoderHelper.getLocationInfo(selectedPoint).city?.substringBefore("")
     val country = geocoderHelper.getLocationInfo(selectedPoint).country
     Box(
         modifier = Modifier

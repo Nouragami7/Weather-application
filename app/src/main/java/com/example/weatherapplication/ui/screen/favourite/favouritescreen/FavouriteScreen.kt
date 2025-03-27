@@ -1,11 +1,11 @@
 package com.example.weatherapplication.ui.screen.favourite.favouritescreen
 
-import GeocoderHelper
 import LottieAnimationView
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,12 +38,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,11 +62,9 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
-import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun FavouriteScreen(
@@ -212,15 +214,11 @@ fun FavouriteItem(
     snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
-    val geocoderHelper = remember { GeocoderHelper(context) }
 
     SwipeToDeleteContainer(
         item = locationData,
         onDelete = { item ->
-            favViewModel.deleteFromFavourite(
-                item.latitude,
-                item.longitude
-            )
+            favViewModel.deleteFromFavourite(item.latitude, item.longitude)
         },
         onRestore = {},
         snackbarHostState = snackbarHostState
@@ -229,14 +227,9 @@ fun FavouriteItem(
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(130.dp)
+                .height(100.dp)
                 .padding(12.dp)
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(SkyBlue, LightBlue)
-                    ),
-                    shape = RoundedCornerShape(24.dp)
-                )
+                .shadow(10.dp, RoundedCornerShape(24.dp))
                 .clickable {
                     Toast.makeText(
                         context,
@@ -247,69 +240,74 @@ fun FavouriteItem(
                 },
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.countries),
-                    contentDescription = "Favourite Icon",
-                    modifier = Modifier.size(28.dp)
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
-                val countryName = geocoderHelper.getLocationInfo(
-                    LatLng(item.latitude, item.longitude)
-                ).country
-
-                val cityName = geocoderHelper.getLocationInfo(
-                    LatLng(item.latitude, item.longitude)
-                ).city
-
-                Text(
-                    text = "$countryName",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = "$cityName",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Latitude: ${item.latitude}",
-                        style = TextStyle(
-                            brush = Brush.verticalGradient(
-                                0f to Color.White,
-                                1f to Color.White.copy(alpha = 0.8f)
-                            ),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF64A8F1), Color(0xFF7CD1EF)), // Blue gradient
+                            start = Offset(0f, 0f),
+                            end = Offset(400f, 400f)
+                        ),
+                        shape = RoundedCornerShape(24.dp)
                     )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = "Longitude: ${item.longitude}",
-                        style = TextStyle(
-                            brush = Brush.verticalGradient(
-                                0f to Color.White,
-                                1f to Color.White.copy(alpha = 0.8f)
-                            ),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.countries),
+                        contentDescription = "Country Icon",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(end = 12.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.weight(1f), // Pushes the icon to the right
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = locationData.country,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            letterSpacing = 1.sp
                         )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        val cityName = locationData.city
+                            .replace(" Governorate", "")
+                            .replace(" County", "")
+                            .replace(" Province", "")
+                            .replace(" District", "")
+                            .substringBefore(" ")
+
+                        Text(
+                            text = cityName,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White.copy(alpha = 0.9f),
+                            letterSpacing = 0.5.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "Location Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
         }
     }
 }
+
 

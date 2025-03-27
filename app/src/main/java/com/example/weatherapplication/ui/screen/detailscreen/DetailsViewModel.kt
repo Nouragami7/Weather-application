@@ -23,35 +23,6 @@ class DetailsViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
-    /* fun fetchWeatherAndForecastData(
-         lat: Double,
-         lon: Double,
-         lang: String,
-         unit: String,
-         apiKey: String
-     ) {
-         viewModelScope.launch {
-             try {
-                 mutableWeatherData.value = ResponseState.Loading
-                 mutableForecastData.value = ResponseState.Loading
-
-                 coroutineScope {
-                     launch {
-                         fetchWeatherData(lat, lon, lang, unit, apiKey)
-                     }
-                     launch {
-                         fetchForecastData(lat, lon, lang, unit, apiKey)
-                     }
-                 }
-
-             } catch (e: Exception) {
-                 mutableWeatherData.value = ResponseState.Failure(e)
-                 mutableForecastData.value = ResponseState.Failure(e)
-                 mutableMessage.emit("Error fetching weather and forecast data: ${e.message}")
-             }
-         }
-     }*/
-
     fun fetchWeatherData(lat: Double, lon: Double, lang: String, unit: String, apiKey: String) {
         viewModelScope.launch {
             try {

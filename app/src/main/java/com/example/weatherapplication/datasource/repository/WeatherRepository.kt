@@ -1,6 +1,5 @@
 package com.example.weatherapplication.datasource.repository
 
-import android.util.Log
 import com.example.weatherapplication.datasource.local.IWeatherLocalDataSource
 import com.example.weatherapplication.datasource.remote.IWeatherRemoteDataSource
 import com.example.weatherapplication.domain.model.CurrentWeather
@@ -18,7 +17,7 @@ class WeatherRepository private constructor(
         lang: String,
         unit: String,
         apiKey: String
-    ): Flow<CurrentWeather?> {
+    ): Flow<CurrentWeather> {
        return remoteDataSource.getCurrentWeather(lat, lon,lang,unit, apiKey)
     }
 
@@ -28,7 +27,7 @@ class WeatherRepository private constructor(
         lang: String,
         unit: String,
         apiKey: String
-    ): Flow<Forecast?> {
+    ): Flow<Forecast> {
         return remoteDataSource.getForecast(lat, lon, lang, unit, apiKey)
     }
 

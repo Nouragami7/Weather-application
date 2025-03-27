@@ -181,7 +181,8 @@ fun MapScreen(
                     action = {
                         if (isFavourite) mapViewModel.addLocationToFavourite(
                             selectedPoint.longitude,
-                            selectedPoint.latitude
+                            selectedPoint.latitude,
+                            context
                         )
                         else {
                             sharedPreference.saveToSharedPreference(

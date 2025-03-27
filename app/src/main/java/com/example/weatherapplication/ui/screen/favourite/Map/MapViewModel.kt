@@ -1,6 +1,7 @@
 package com.example.weatherapplication.ui.screen.favourite.Map
 
 import GeocoderHelper
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,10 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
+import com.example.weatherapplication.utils.Constants
+import com.example.weatherapplication.utils.SharedPreference
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MapViewModel(val repository: WeatherRepository) : ViewModel() {
@@ -22,6 +26,9 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
     private var selectedCountry by mutableStateOf("Unknown Country")
     private var selectedCity by mutableStateOf("Unknown City")
     var polygonPoints by mutableStateOf<List<LatLng>>(emptyList())
+
+    val sharedPreferences = SharedPreference()
+
 
 
     private val _message = MutableSharedFlow<String>()
@@ -56,9 +63,16 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
     }
 
 
-    fun addLocationToFavourite(longitude: Double, latitude: Double) {
-        val locationData = LocationData(latitude, longitude)
+     fun addLocationToFavourite(longitude: Double, latitude: Double,context: Context) {
+        val lang = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
+        val unit = sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C"
+         val geocoderHelper = GeocoderHelper(context)
         viewModelScope.launch {
+            val currentWeather = repository.getCurrentWeather(latitude, longitude,lang , unit, Constants.API_KEY).first()
+            val forecast = repository.getForecast(latitude, longitude,lang , unit, Constants.API_KEY).first()
+            val country = geocoderHelper.getLocationInfo(LatLng(latitude, longitude)).country ?: "Unknown Country"
+            val city = geocoderHelper.getLocationInfo(LatLng(latitude, longitude)).city ?: "Unknown City"
+            val locationData = LocationData(latitude, longitude, currentWeather, forecast, country, city)
             try {
                 repository.insertLocation(locationData)
                 _message.emit("Location added to favourites")

@@ -15,14 +15,14 @@ class WeatherRemoteDataSource(private val apiService: ApiService) :
         lang: String,
         unit: String,
         apiKey: String
-    ): Flow<CurrentWeather?> {
+    ): Flow<CurrentWeather> {
         val response = apiService.getCurrentWeather(lat, lon, lang, unit, apiKey)
         if (response.isSuccessful) {
             Log.i(TAG, "Response successful: ${response.body()}")
         } else {
             Log.i(TAG, "Response not successful: ${response.errorBody()}")
         }
-        return flowOf(response.body())
+        return flowOf(response.body()!!)
     }
 
     override suspend fun getForecast(
@@ -31,7 +31,7 @@ class WeatherRemoteDataSource(private val apiService: ApiService) :
         lang: String,
         unit: String,
         apiKey: String
-    ): Flow<Forecast?> {
+    ): Flow<Forecast> {
         val response = apiService.getForecast(lat, lon, lang, unit, apiKey)
         if (response.isSuccessful) {
             Log.i(TAG, "Response successful: ${response.body()}")
