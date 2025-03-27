@@ -1,6 +1,4 @@
 package com.example.weatherapplication.navigation
-
-import androidx.compose.runtime.MutableState
 import kotlinx.serialization.Serializable
 
 

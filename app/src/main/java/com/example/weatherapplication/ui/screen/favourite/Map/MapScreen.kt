@@ -1,4 +1,3 @@
-
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,7 +50,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MapScreen(
-    isFavourite: Boolean
+    isFavourite: Boolean,
+    getLocation: (latitude: Double, longitude: Double) -> Unit
 ) {
     val sharedPreference = SharedPreference()
     val context = LocalContext.current
@@ -69,15 +69,13 @@ fun MapScreen(
 
     val selectedPoint by remember { derivedStateOf { mapViewModel.selectedPoint } }
     val selectedPlaceName by remember { derivedStateOf { mapViewModel.selectedPlaceName } }
-    val selectedCountry by remember { derivedStateOf { mapViewModel.selectedCountry } }
-    val selectedCity by remember { derivedStateOf { mapViewModel.selectedCity } }
     val polygonPoints by remember { derivedStateOf { mapViewModel.polygonPoints } }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        mapViewModel.toastEvent.collect { message ->
+        mapViewModel.messageState.collect { message ->
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = message,
@@ -86,8 +84,6 @@ fun MapScreen(
             }
         }
     }
-
-
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(selectedPoint, 10f)
     }
@@ -180,28 +176,25 @@ fun MapScreen(
                 contentAlignment = Alignment.BottomCenter
             ) {
                 MapCard(
-                    longitude = selectedPoint.longitude,
-                    latitude = selectedPoint.latitude,
-                    mapViewModel = mapViewModel,
                     selectedPoint = selectedPoint,
-                    selectedCountry = selectedCountry,
-                    selectedCity = selectedCity,
-                    actionName = if(isFavourite)"Add to Favorite" else "Select Location",
+                    actionName = if (isFavourite) "Add to Favorite" else "Select Location",
                     action = {
                         if (isFavourite) mapViewModel.addLocationToFavourite(
                             selectedPoint.longitude,
                             selectedPoint.latitude
                         )
-                        else{ sharedPreference.saveToSharedPreference(
-                            context,
-                            "latitude",
-                            selectedPoint.latitude.toString()
-                        )
-                        sharedPreference.saveToSharedPreference(
-                            context,
-                            "longitude",
-                            selectedPoint.longitude.toString()
-                        )
+                        else {
+                            sharedPreference.saveToSharedPreference(
+                                context,
+                                "latitude",
+                                selectedPoint.latitude.toString()
+                            )
+                            sharedPreference.saveToSharedPreference(
+                                context,
+                                "longitude",
+                                selectedPoint.longitude.toString()
+                            )
+                            getLocation(selectedPoint.latitude, selectedPoint.longitude)
                         }
                     }
                 )

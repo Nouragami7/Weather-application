@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
             var displaySplashScreen by remember { mutableStateOf(true) }
             locationState = remember { mutableStateOf(Location("")) }
             mapLocationState = remember { mutableStateOf(Location("")) }
+
             mapLocationState.value.latitude = sharedPreference.getFromSharedPreference(this, "latitude")?.toDouble() ?: 0.0
             mapLocationState.value.longitude = sharedPreference.getFromSharedPreference(this, "longitude")?.toDouble() ?: 0.0
             Log.d(TAG, "onCreate: ${mapLocationState.value.latitude} ${mapLocationState.value.longitude}")

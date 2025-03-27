@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,20 +30,17 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.R
-import com.example.weatherapplication.ui.screen.favourite.Map.MapViewModel
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MapCard(
-    longitude: Double,
-    latitude: Double,
-    mapViewModel: MapViewModel,
     selectedPoint: LatLng,
-    selectedCountry: String,
-    selectedCity: String,
     actionName : String,
     action : () -> Unit
 ) {
+    val geocoderHelper = GeocoderHelper(LocalContext.current)
+    val city = geocoderHelper.getLocationInfo(selectedPoint).city
+    val country = geocoderHelper.getLocationInfo(selectedPoint).country
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,14 +64,14 @@ fun MapCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Country: $selectedCountry",
+                    text = "Country: $country",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "City: $selectedCity",
+                    text = "City: $city",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
@@ -119,7 +117,6 @@ fun LottieAnimationView(resId: Int, modifier: Modifier = Modifier) {
         composition,
         iterations = LottieConstants.IterateForever
     )
-
     LottieAnimation(
         composition = composition,
         progress = { progress },

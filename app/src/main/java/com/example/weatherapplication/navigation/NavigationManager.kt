@@ -7,4 +7,5 @@ object NavigationManager {
     fun navigateTo(route: ScreensRoute) {
         navController.navigate(route)
     }
+
 }

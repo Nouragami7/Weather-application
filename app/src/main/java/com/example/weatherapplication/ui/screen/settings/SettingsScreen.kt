@@ -88,9 +88,6 @@ fun SettingsScreen() {
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
         }
     }
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -127,6 +124,8 @@ fun SettingsScreen() {
                 sharedPreference.saveToSharedPreference(context, "location", it)
                 if (it == "Map") {
                     NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
+                }else{
+
                 }
             },
             iconRes = R.drawable.ic_air_quality_header

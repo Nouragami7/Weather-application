@@ -19,13 +19,13 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
 
     var selectedPoint by mutableStateOf(LatLng(31.20663675, 29.907445625))
     var selectedPlaceName by mutableStateOf("Unknown Place")
-    var selectedCountry by mutableStateOf("Unknown Country")
-    var selectedCity by mutableStateOf("Unknown City")
+    private var selectedCountry by mutableStateOf("Unknown Country")
+    private var selectedCity by mutableStateOf("Unknown City")
     var polygonPoints by mutableStateOf<List<LatLng>>(emptyList())
 
 
-    private val _toastEvent = MutableSharedFlow<String>()
-    val toastEvent = _toastEvent.asSharedFlow()
+    private val _message = MutableSharedFlow<String>()
+    val messageState = _message.asSharedFlow()
 
 
     fun updateSelectedPoint(latLng: LatLng, placeName: String = "Custom Location") {
@@ -61,9 +61,9 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.insertLocation(locationData)
-                _toastEvent.emit("Location added to favourites")
+                _message.emit("Location added to favourites")
             } catch (e: Exception) {
-                _toastEvent.emit("An error occurred: ${e.message}")
+                _message.emit("An error occurred: ${e.message}")
 
             }
         }

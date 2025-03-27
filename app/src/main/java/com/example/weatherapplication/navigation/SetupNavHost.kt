@@ -56,7 +56,12 @@ fun SetupNavHost(
         composable<ScreensRoute.MapScreen> {
             isBottomNavigationVisible(false)
             val isFavourite = it.toRoute<ScreensRoute.MapScreen>().isFavourite
-            MapScreen(isFavourite)
+            MapScreen(isFavourite,
+               getLocation = { latitude, longitude ->
+                   location.latitude = latitude
+                   location.longitude = longitude
+
+               })
         }
     }
 }

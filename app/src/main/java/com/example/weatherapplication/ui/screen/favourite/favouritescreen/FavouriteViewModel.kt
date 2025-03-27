@@ -18,18 +18,12 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
     private val favMutableLocations = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val favLocations = favMutableLocations.asStateFlow()
 
-    val isFavourite = MutableStateFlow(false)
-
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent = _toastEvent.asSharedFlow()
 
 
     private var lastDeletedLocation: LocationData? = null
     private var lastDeletedIndex: Int? = null
-
-    fun setIsFavourite(isFav: Boolean) {
-        isFavourite.value = isFav
-    }
 
 
     fun getAllFavouriteLocations() {
@@ -49,7 +43,7 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
         }
     }
 
-    fun deleteLocationFromFavourite(lat: Double, lng: Double) {
+    /*fun deleteLocationFromFavourite(lat: Double, lng: Double) {
         viewModelScope.launch {
             try {
                 val currentList =
@@ -68,7 +62,7 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
                 _toastEvent.emit("An error occurred: ${e.message}")
             }
         }
-    }
+    }*/
 
 
     fun addLastDeletedLocation() {
@@ -76,7 +70,7 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
             viewModelScope.launch {
                 try {
                     repository.insertLocation(location)
-                    _toastEvent.emit("Location restored")
+                    _toastEvent.emit("Location deleted from favourites")
                     lastDeletedLocation = null
                     lastDeletedIndex = null
                 } catch (e: Exception) {
@@ -88,18 +82,16 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
 
 
 
- /*fun deleteLocationFromFavourite(lat: Double, lng: Double) {
+ fun deleteFromFavourite(lat: Double, lng: Double) {
    viewModelScope.launch {
        try {
                repository.deleteLocation(lat, lng)
-               _toastEvent.emit("Location deleted from favourites")
                 getAllFavouriteLocations()
        } catch (e: Exception) {
            _toastEvent.emit("An error occurred: ${e.message}")
        }
    }
 }
-*/
 
 class MapViewModelFactory(
    private val repository: WeatherRepository

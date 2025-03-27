@@ -12,12 +12,7 @@ class GeocoderHelper(private val context: Context) {
         return try {
             val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
             val address = addresses?.firstOrNull()
-            val city = when {
-                !address?.locality.isNullOrEmpty() -> address?.locality
-                !address?.subAdminArea.isNullOrEmpty() -> address?.subAdminArea
-                !address?.adminArea.isNullOrEmpty() -> address?.adminArea
-                else -> null
-            }
+            val city = address?.adminArea
             val country = address?.countryName
             LocationInfo(city, country)
         } catch (e: IOException) {
