@@ -25,8 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.local.WeatherDatabase
 import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
 import com.example.weatherapplication.datasource.remote.ApiService
@@ -166,7 +168,10 @@ fun MapScreen(
                     ).build(context)
                     launcher.launch(intent)
                 }) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.search)
+                    )
                 }
             }
 
@@ -177,7 +182,11 @@ fun MapScreen(
             ) {
                 MapCard(
                     selectedPoint = selectedPoint,
-                    actionName = if (isFavourite) "Add to Favorite" else "Select Location",
+                    actionName = if (isFavourite)
+                        stringResource(R.string.add_to_favorite)
+                    else stringResource(
+                        R.string.select_location
+                    ),
                     action = {
                         if (isFavourite) mapViewModel.addLocationToFavourite(
                             selectedPoint.longitude,

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,11 +37,12 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.R
+import com.example.weatherapplication.ui.theme.DeepRed
 import com.example.weatherapplication.ui.theme.LightBlue
+import com.example.weatherapplication.ui.theme.Orange
 import com.example.weatherapplication.ui.theme.SkyBlue
+import com.example.weatherapplication.ui.theme.Yellow
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
-import com.example.weatherapplication.ui.theme.primaryDarkMediumContrast
-import com.example.weatherapplication.utils.convertToHour
 import com.example.weatherapplication.utils.convertUnixToTime
 import com.example.weatherapplication.utils.getWeatherIcon
 
@@ -233,7 +235,7 @@ fun SunCase(
                 .weight(1f)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFFFD700), Color(0xFFFFA500)) // Yellow to Orange
+                        colors = listOf(Yellow, Orange)
                     ),
                     shape = RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp)
                 )
@@ -252,7 +254,7 @@ fun SunCase(
                 .weight(1f)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFFFA500), Color(0xFF8B0000)) // Orange to Deep Red
+                        colors = listOf(Orange, DeepRed)
                     ),
                     shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp)
                 )
@@ -329,10 +331,11 @@ fun WeatherDetailsCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            WeatherDetailItem(R.drawable.pressure, "Pressure", pressure)
-            WeatherDetailItem(R.drawable.ic_air_quality_header, "Clouds", clouds)
-            WeatherDetailItem(R.drawable.ic_wind, "Wind", windSpeed)
-            WeatherDetailItem(R.drawable.humidity, "Humidity", humidity)
+            WeatherDetailItem(R.drawable.pressure, stringResource(R.string.pressure), pressure)
+            WeatherDetailItem(R.drawable.ic_air_quality_header,
+                stringResource(R.string.clouds), clouds)
+            WeatherDetailItem(R.drawable.ic_wind, stringResource(R.string.wind), windSpeed)
+            WeatherDetailItem(R.drawable.humidity, stringResource(R.string.humidity), humidity)
         }
     }
 }

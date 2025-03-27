@@ -1,7 +1,6 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
 import android.location.Location
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,10 +56,11 @@ import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.ui.viewmodel.HomeViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.abbreviationTempUnit
 import com.example.weatherapplication.utils.convertToEgyptTime
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
+fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) {
     val TAG = "HomeScreen"
     val context = LocalContext.current
     val sharedPreferences = SharedPreference()
@@ -92,11 +94,14 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
             "Fahrenheit °F" -> "imperial"  // Temp: °F, Wind Speed: miles/hour
             else -> "metric"
         }
+        val lang = when (language) {
+            "Arabic" -> "ar"
+            "English" -> "en"
+            else -> "en"
+        }
 
-        Log.d(TAG, "Fetching data with lang: $language, unit: $unit, windSpeed: $windSpeedUnit")
-
-        viewModel.fetchWeatherData(location.latitude, location.longitude, language, unit, Constants.API_KEY)
-        viewModel.fetchForecastData(location.latitude, location.longitude, language, unit, Constants.API_KEY)
+        viewModel.fetchWeatherData(sharedPreferences.getFromSharedPreference(context,"latitude")?.toDoubleOrNull() ?: location.value.latitude, sharedPreferences.getFromSharedPreference(context,"longitude")?.toDoubleOrNull() ?: location.value.longitude, lang , unit, Constants.API_KEY)
+        viewModel.fetchForecastData(sharedPreferences.getFromSharedPreference(context,"latitude")?.toDoubleOrNull() ?: location.value.latitude, sharedPreferences.getFromSharedPreference(context,"longitude")?.toDoubleOrNull() ?: location.value.longitude, language, unit, Constants.API_KEY)
     }
 
     Scaffold(
@@ -113,15 +118,12 @@ fun HomeScreen(modifier: Modifier = Modifier, location: Location) {
         ) {
             when {
                 weatherState is ResponseState.Loading || forecastState is ResponseState.Loading -> {
-                    Log.i(TAG, "Loading...")
                     LoadingIndicator()
                 }
                 weatherState is ResponseState.Failure || forecastState is ResponseState.Failure -> {
                     val errorMessage = (weatherState as? ResponseState.Failure)?.message?.message
                         ?: (forecastState as? ResponseState.Failure)?.message?.message
-                        ?: "Unknown error"
-
-                    Log.e(TAG, "Failure: $errorMessage")
+                        ?: stringResource(R.string.unknown_error)
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
                 weatherState is ResponseState.Success<*> && forecastState is ResponseState.Success<*> -> {
@@ -142,12 +144,6 @@ fun HomeContent(
     windSpeedUnit: String,
 ) {
 
-    val tempUnitAbbreviation = when (tempUnit) {
-        "Celsius °C" -> "°C"
-        "Kelvin °K" -> "°K"
-        "Fahrenheit °F" -> "°F"
-        else -> "metric"
-    }
 
     Column(
         modifier = Modifier
@@ -169,12 +165,12 @@ fun HomeContent(
             DailyWeatherCard(
                 modifier = Modifier.padding(bottom = 24.dp),
                 forecast = weather.weather.firstOrNull()?.description ?: "Unknown",
-                feelsLike = "${weather.main.feels_like} $tempUnitAbbreviation",
-                pressure = "${weather.main.pressure} hPa",
+                feelsLike = "${weather.main.feels_like} ${abbreviationTempUnit(tempUnit)}",
+                pressure = stringResource(R.string.hpa, weather.main.pressure),
                 clouds = "${weather.clouds.all}%",
                 windSpeed = "${weather.wind.speed} $windSpeedUnit",
                 humidity = "${weather.main.humidity}%",
-                currentTemperature = "${weather.main.temp} $tempUnitAbbreviation",
+                currentTemperature = "${weather.main.temp.toInt()} ${abbreviationTempUnit(tempUnit)}",
                 currentDate = date,
                 currentTime = time,
                 icon = weather.weather.firstOrNull()?.icon ?: "",
@@ -191,7 +187,7 @@ fun HomeContent(
                 .wrapContentHeight()
         ) {
             Text(
-                "Hourly Forecast",
+                text = stringResource(R.string.hourly_forecast),
                 style = TextStyle(
                     brush = Brush.verticalGradient(
                         0f to primaryContainerDark,

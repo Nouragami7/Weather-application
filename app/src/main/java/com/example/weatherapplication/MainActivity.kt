@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                 }) {
                     SetupNavHost(
                         modifier = Modifier.padding(it),
-                        if (settingsLocation == "GPS") locationState.value else mapLocationState.value,
+                        if (settingsLocation == "GPS") locationState else mapLocationState,
                         isBottomNavigationVisible = { visible -> isBottomNavigationVisible.value = visible }
                     )
                 }

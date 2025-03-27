@@ -1,4 +1,36 @@
 <resources>
     <string name="app_name">Cloudora</string>
     <string name="deleted">Deleted</string>
+    <string name="saved_alert">Saved Alert</string>
+    <string name="pressure">Pressure</string>
+    <string name="clouds">Clouds</string>
+    <string name="wind">Wind</string>
+    <string name="humidity">Humidity</string>
+    <string name="_5_days_forecast">5 Days Forecast</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="hpa">%1$s hPa</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="search">Search</string>
+    <string name="add_to_favorite">Add to Favorite</string>
+    <string name="select_location">Select Location</string>
+    <string name="country">Country:</string>
+    <string name="city">City:</string>
+    <string name="lat">Lat:</string>
+    <string name="lng">Lng:</string>
+    <string name="location_deleted_from_favourites">Location deleted from favourites</string>
+    <string name="undo">Undo</string>
+    <string name="alert">alert</string>
+    <string name="language">Language</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="temp_unit">Temp Unit</string>
+    <string name="celsius_c">Celsius °C</string>
+    <string name="kelvin_k">Kelvin °K</string>
+    <string name="fahrenheit_f">Fahrenheit °F</string>
+    <string name="location">Location</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="wind_speed_unit">Wind Speed Unit</string>
+    <string name="meter_sec">meter/sec</string>
+    <string name="mile_hour">mile/hour</string>
 </resources>

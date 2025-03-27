@@ -40,14 +40,6 @@ class SharedPreference {
         return tempUnite
     }
 
-    fun getSavedLocation(context: Context): android.location.Location {
-        val latitude = getFromSharedPreference(context, "latitude")?.toDouble() ?: 0.0
-        val longitude = getFromSharedPreference(context, "longitude")?.toDouble() ?: 0.0
-        return android.location.Location("").apply {
-            this.latitude = latitude
-            this.longitude = longitude
-        }
-    }
 
 }
 

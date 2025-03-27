@@ -1,5 +1,6 @@
 package com.example.weatherapplication.ui.screen.settings
 
+import android.app.Activity
 import android.location.Location
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,11 +43,12 @@ import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.theme.primaryContainerLight
 import com.example.weatherapplication.ui.theme.primaryLight
 import com.example.weatherapplication.utils.LocationHelper
+import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
 
 @Composable
 fun SettingsScreen(
-    location: Location
+    location: MutableState<Location>
 ) {
     val sharedPreference = SharedPreference()
     val context = LocalContext.current
@@ -87,7 +91,8 @@ fun SettingsScreen(
             selectedWindSpeedUnit = "mile/hour"
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
         } else if ((selectedTempUnit == "Celsius °C" || selectedTempUnit == "Kelvin °K") &&
-            selectedWindSpeedUnit == "mile/hour") {
+            selectedWindSpeedUnit == "mile/hour"
+        ) {
             selectedWindSpeedUnit = "meter/sec"
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
         }
@@ -98,8 +103,8 @@ fun SettingsScreen(
             .padding(16.dp)
     ) {
         SettingsCard(
-            title = "Language",
-            options = listOf("Arabic", "English"),
+            title = stringResource(R.string.language),
+            options = listOf(stringResource(R.string.arabic), stringResource(R.string.english)),
             selectedOption = selectedLanguage,
             onSelectedOption = {
                 selectedLanguage = it
@@ -109,8 +114,11 @@ fun SettingsScreen(
         )
 
         SettingsCard(
-            title = "Temp Unit",
-            options = listOf("Celsius °C", "Kelvin °K", "Fahrenheit °F"),
+            title = stringResource(R.string.temp_unit),
+            options = listOf(
+                stringResource(R.string.celsius_c),
+                stringResource(R.string.kelvin_k), stringResource(R.string.fahrenheit_f)
+            ),
             selectedOption = selectedTempUnit,
             onSelectedOption = {
                 selectedTempUnit = it
@@ -120,28 +128,36 @@ fun SettingsScreen(
         )
 
         SettingsCard(
-            title = "Location",
-            options = listOf("GPS", "Map"),
+            title = stringResource(R.string.location),
+            options = listOf(stringResource(R.string.gps), stringResource(R.string.map)),
             selectedOption = selectedLocation,
             onSelectedOption = {
                 selectedLocation = it
                 sharedPreference.saveToSharedPreference(context, "location", it)
                 if (it == "Map") {
                     NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
-                }else{
-                    LocationHelper(context) { newLocation ->
-                        location.latitude = newLocation.latitude
-                        location.longitude = newLocation.longitude
-                    }
 
+                } else {
+                    sharedPreference.deleteSharedPreference(context, "latitude")
+                    sharedPreference.deleteSharedPreference(context, "longitude")
+                    if (!PermissionUtils.isLocationEnabled(context)) {
+                        PermissionUtils.enableLocationServices(context as Activity)
+                    } else {
+                        LocationHelper(context) { newLocation ->
+                            location.value = newLocation
+                        }.getLastKnownLocation()
                     }
-                },
+                }
+            },
             iconRes = R.drawable.ic_air_quality_header
         )
 
         SettingsCard(
-            title = "Wind Speed Unit",
-            options = listOf("meter/sec", "mile/hour"),
+            title = stringResource(R.string.wind_speed_unit),
+            options = listOf(
+                stringResource(R.string.meter_sec),
+                stringResource(R.string.mile_hour)
+            ),
             selectedOption = selectedWindSpeedUnit,
             onSelectedOption = {
                 selectedWindSpeedUnit = it

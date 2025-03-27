@@ -28,6 +28,9 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.ui.theme.DarkYellow
+import com.example.weatherapplication.ui.theme.LightOrange
+import com.example.weatherapplication.ui.theme.Orange
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.convertToHour
 import com.example.weatherapplication.utils.getWeatherGradient
@@ -51,9 +54,9 @@ fun HourlyForecastCard(
             val weatherCode = item.weather.firstOrNull()?.icon ?: ""
             val backgroundColor = if (weatherCode.contains("01d", ignoreCase = true)) {
                 Brush.verticalGradient(   listOf(
-                    Color(0xFFFFC107),
-                    Color(0xFFFFA000),
-                    Color(0xFFEE972A)
+                    DarkYellow,
+                    Orange,
+                    LightOrange
                 ))
             } else {
                 getWeatherGradient(weatherDescription)

@@ -289,4 +289,10 @@ val MistEnd = Color(0xFF8C9CAD)    // Faded Gray-Blue
 
 // Default (Fallback)
 val DefaultColorStart = Color(0xFF1E88E5)
-val DefaultColorEnd = Color(0xFF1565C0)
+val DefaultColorEnd = Color(0xFF0288D1)
+
+val Yellow = Color(0xFFFFD700)
+val Orange = Color(0xFFFFA500)
+val DeepRed = Color(0xFF8B0000)
+val DarkYellow  = Color(0xFFFFC107)
+val LightOrange = Color(0xFFEE972A)

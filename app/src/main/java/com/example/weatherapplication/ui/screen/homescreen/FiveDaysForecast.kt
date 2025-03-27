@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.weatherapplication.R
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -61,7 +63,7 @@ fun DaysForeCastContent(forecast: Forecast) {
             .padding(top = 16.dp)
     ) {
         Text(
-            text = "5 Days Forecast",
+            text = stringResource(R.string._5_days_forecast),
             style = TextStyle(
                 brush = Brush.verticalGradient(
                     0f to primaryContainerDark,

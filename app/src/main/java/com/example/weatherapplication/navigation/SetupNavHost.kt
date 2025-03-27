@@ -3,12 +3,13 @@ package com.example.weatherapplication.navigation
 import MapScreen
 import android.location.Location
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.weatherapplication.ui.screen.AlertScreen
+import com.example.weatherapplication.ui.screen.alert.AlertScreen
 import com.example.weatherapplication.ui.screen.detailscreen.DetailsScreen
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
@@ -17,7 +18,7 @@ import com.example.weatherapplication.ui.screen.settings.SettingsScreen
 @Composable
 fun SetupNavHost(
     modifier: Modifier = Modifier,
-    location: Location,
+    location: MutableState<Location>,
     isBottomNavigationVisible: (visibility:Boolean) -> Unit
 ) {
     val navController = rememberNavController()
@@ -58,8 +59,8 @@ fun SetupNavHost(
             val isFavourite = it.toRoute<ScreensRoute.MapScreen>().isFavourite
             MapScreen(isFavourite,
                getLocation = { latitude, longitude ->
-                   location.latitude = latitude
-                   location.longitude = longitude
+                   location.value.latitude = latitude
+                   location.value.longitude = longitude
 
                })
         }

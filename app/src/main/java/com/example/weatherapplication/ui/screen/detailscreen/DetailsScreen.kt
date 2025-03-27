@@ -1,6 +1,5 @@
 package com.example.weatherapplication.ui.screen.detailscreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +29,7 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.screen.homescreen.HomeContent
+import com.example.weatherapplication.ui.screen.homescreen.LoadingIndicator
 import com.example.weatherapplication.ui.viewmodel.DetailsViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
@@ -79,15 +79,13 @@ fun DetailsScreen(
 
     when {
         weatherState is ResponseState.Loading || forecastState is ResponseState.Loading -> {
-            Log.i("TAG", "Loading")
-            com.example.weatherapplication.ui.screen.homescreen.LoadingIndicator()
+          LoadingIndicator()
         }
         weatherState is ResponseState.Failure || forecastState is ResponseState.Failure -> {
             val errorMessage = (weatherState as? ResponseState.Failure)?.message?.message
                 ?: (forecastState as? ResponseState.Failure)?.message?.message
                 ?: "Unknown error"
 
-            Log.e("TAG", "Failure: $errorMessage")
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
         weatherState is ResponseState.Success<*> && forecastState is ResponseState.Success<*> -> {

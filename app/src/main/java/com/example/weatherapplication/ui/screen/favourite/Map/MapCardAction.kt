@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,6 +20,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,16 +30,18 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.R
+import com.example.weatherapplication.ui.theme.DefaultColorEnd
+import com.example.weatherapplication.ui.theme.DefaultColorStart
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MapCard(
     selectedPoint: LatLng,
-    actionName : String,
-    action : () -> Unit
+    actionName: String,
+    action: () -> Unit
 ) {
     val geocoderHelper = GeocoderHelper(LocalContext.current)
-    val city = geocoderHelper.getLocationInfo(selectedPoint).city?.substringBefore("")
+    val city = geocoderHelper.getLocationInfo(selectedPoint).city
     val country = geocoderHelper.getLocationInfo(selectedPoint).country
     Box(
         modifier = Modifier
@@ -64,21 +66,22 @@ fun MapCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Country: $country",
+                    text = stringResource(R.string.country) + "$country",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "City: $city",
+                    text = stringResource(R.string.city) + "$city",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Lat: ${selectedPoint.latitude}, Lng: ${selectedPoint.longitude}",
+                    text = "${stringResource(R.string.lat)}${"%.3f".format(selectedPoint.latitude)} " +
+                            "${stringResource(R.string.lng)}${"%.3f".format(selectedPoint.longitude)}",
                     color = Color.Gray,
                     fontSize = 16.sp
                 )
@@ -92,7 +95,7 @@ fun MapCard(
                         .clip(RoundedCornerShape(20.dp))
                         .background(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(Color(0xFF81D4FA), Color(0xFF0288D1)) // Lighter gradient
+                                colors = listOf(DefaultColorStart, DefaultColorEnd)
                             )
                         )
                         .clickable { action() },

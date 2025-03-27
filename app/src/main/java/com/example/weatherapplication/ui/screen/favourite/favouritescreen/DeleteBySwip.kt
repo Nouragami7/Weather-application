@@ -27,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.weatherapplication.R
 
 @Composable
 fun <T> SwipeToDeleteContainer(
@@ -40,6 +42,7 @@ fun <T> SwipeToDeleteContainer(
 ) {
     var isRemoved by remember { mutableStateOf(false) }
     var canSwipe by remember { mutableStateOf(true) }
+    val context = LocalContext.current
 
     val state = rememberSwipeToDismissBoxState(
         confirmValueChange = { dismissValue ->
@@ -56,8 +59,8 @@ fun <T> SwipeToDeleteContainer(
     LaunchedEffect(isRemoved) {
         if (isRemoved) {
             val result = snackbarHostState.showSnackbar(
-                message = "Location deleted from favourites",
-                actionLabel = "Undo",
+                message = context.getString(R.string.location_deleted_from_favourites),
+                actionLabel = context.getString(R.string.undo),
                 duration = SnackbarDuration.Short,
                 withDismissAction = true
             )
