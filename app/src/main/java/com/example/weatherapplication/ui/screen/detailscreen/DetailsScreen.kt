@@ -30,7 +30,7 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.screen.homescreen.HomeContent
-import com.example.weatherapplication.ui.viewmodel.WeatherViewModel
+import com.example.weatherapplication.ui.viewmodel.DetailsViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
 
@@ -46,14 +46,14 @@ fun DetailsScreen(
     var tempUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
     var windSpeedUnit by remember { mutableStateOf(sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
 
-    val factory = WeatherViewModel.WeatherFactory(
+    val factory = DetailsViewModel.DetailsFactory(
         WeatherRepository.getInstance(
             WeatherRemoteDataSource(
                 RetrofitHelper.retrofitInstance.create(ApiService::class.java)
             ),WeatherLocalDataSource(WeatherDatabase.getDatabase(context).locationDao())
         )
     )
-    val viewModel: WeatherViewModel = viewModel(factory = factory)
+    val viewModel: DetailsViewModel = viewModel(factory = factory)
 
     val weatherState by viewModel.weatherData.collectAsStateWithLifecycle()
     val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()

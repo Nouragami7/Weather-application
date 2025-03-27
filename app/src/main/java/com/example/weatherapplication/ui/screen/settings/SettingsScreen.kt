@@ -1,5 +1,6 @@
 package com.example.weatherapplication.ui.screen.settings
 
+import android.location.Location
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,10 +39,13 @@ import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.theme.primaryContainerLight
 import com.example.weatherapplication.ui.theme.primaryLight
+import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.SharedPreference
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    location: Location
+) {
     val sharedPreference = SharedPreference()
     val context = LocalContext.current
 
@@ -125,9 +129,13 @@ fun SettingsScreen() {
                 if (it == "Map") {
                     NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
                 }else{
+                    LocationHelper(context) { newLocation ->
+                        location.latitude = newLocation.latitude
+                        location.longitude = newLocation.longitude
+                    }
 
-                }
-            },
+                    }
+                },
             iconRes = R.drawable.ic_air_quality_header
         )
 

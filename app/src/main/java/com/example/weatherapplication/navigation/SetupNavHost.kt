@@ -36,7 +36,7 @@ fun SetupNavHost(
         }
         composable<ScreensRoute.SettingsScreen> {
             isBottomNavigationVisible(true)
-            SettingsScreen()
+            SettingsScreen(location)
         }
         composable<ScreensRoute.FavouriteScreen> {
             isBottomNavigationVisible(true)

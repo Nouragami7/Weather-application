@@ -1,11 +1,8 @@
 package com.example.weatherapplication
 
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -45,41 +42,40 @@ import com.example.weatherapplication.navigation.SetupNavHost
 import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
-import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
-import com.example.weatherapplication.utils.Constants.Companion.REQUEST_LOCATION_CODE
+import com.example.weatherapplication.utils.Constants
+import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.libraries.places.api.Places
 
 class MainActivity : ComponentActivity() {
 
     private val TAG = "MainActivity"
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationHelper: LocationHelper
+    private val sharedPreference = SharedPreference()
+
     lateinit var locationState: MutableState<Location>
     lateinit var mapLocationState: MutableState<Location>
     lateinit var settingsLocation: String
-    val sharedPreference = SharedPreference()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemUI()
+
         if (!Places.isInitialized()) {
-            Places.initialize(this, API_KEY_Google)
+            Places.initialize(this, Constants.API_KEY_Google)
         }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         settingsLocation = sharedPreference.getFromSharedPreference(this, "location") ?: "GPS"
+
+        locationHelper = LocationHelper(this) { newLocation ->
+            locationState.value = newLocation
+        }
 
         setContent {
             var displaySplashScreen by remember { mutableStateOf(true) }
@@ -88,10 +84,10 @@ class MainActivity : ComponentActivity() {
 
             mapLocationState.value.latitude = sharedPreference.getFromSharedPreference(this, "latitude")?.toDouble() ?: 0.0
             mapLocationState.value.longitude = sharedPreference.getFromSharedPreference(this, "longitude")?.toDouble() ?: 0.0
-            Log.d(TAG, "onCreate: ${mapLocationState.value.latitude} ${mapLocationState.value.longitude}")
 
             val isBottomNavigationVisible = remember { mutableStateOf(true) }
             var selectedIndex = remember { mutableStateOf(0) }
+
             if (displaySplashScreen) {
                 SplashScreen {
                     displaySplashScreen = false
@@ -103,15 +99,11 @@ class MainActivity : ComponentActivity() {
                         BottomNavigation(selectedIndex)
                     }
                 }) {
-                    SetupNavHost(modifier = Modifier.padding(it),
-                        if (settingsLocation == "GPS") {
-                            locationState.value
-                        } else {
-                            mapLocationState.value
-                        },
-                        isBottomNavigationVisible = { visible ->
-                            isBottomNavigationVisible.value = visible
-                        })
+                    SetupNavHost(
+                        modifier = Modifier.padding(it),
+                        if (settingsLocation == "GPS") locationState.value else mapLocationState.value,
+                        isBottomNavigationVisible = { visible -> isBottomNavigationVisible.value = visible }
+                    )
                 }
             }
         }
@@ -133,7 +125,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         if (PermissionUtils.checkPermissions(this)) {
             if (PermissionUtils.isLocationEnabled(this)) {
-                getFreshLocation()
+                locationHelper.getLastKnownLocation()
             } else {
                 PermissionUtils.enableLocationServices(this)
             }
@@ -143,52 +135,16 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, // code that we passed when requesting the permissions (specialize the request)
-        permissions: Array<out String>, // array of permissions that we requested (fine location, coarse location)
-        grantResults: IntArray, // array of results (granted or not granted)
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
         deviceId: Int
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
-        if (requestCode == REQUEST_LOCATION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getFreshLocation()
-            }
-        }
+        PermissionUtils.handlePermissionsResult(requestCode, grantResults) {
+            locationHelper.getLastKnownLocation()
     }
-
-    @SuppressLint("MissingPermission")
-    private fun getFreshLocation() {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                locationState.value = location
-            } else {
-                requestNewLocationData()
-            }
-        }.addOnFailureListener { e ->
-            Log.e(TAG, "Failed to get location: ${e.message}")
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun requestNewLocationData() {
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 5000L
-        ).setMinUpdateDistanceMeters(10f).build()
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest, object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    locationResult.lastLocation?.let { location ->
-                        Log.i(
-                            TAG, "New Location: Lat=${location.latitude}, Lon=${location.longitude}"
-                        )
-                        locationState.value = location
-                        fusedLocationClient.removeLocationUpdates(this)
-                    }
-                }
-            }, mainLooper
-        )
-    }
+}
 }
 
 @Composable
