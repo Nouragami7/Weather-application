@@ -33,4 +33,5 @@
     <string name="wind_speed_unit">Wind Speed Unit</string>
     <string name="meter_sec">meter/sec</string>
     <string name="mile_hour">mile/hour</string>
+    <string name="offline_mode">Offline mode</string>
 </resources>

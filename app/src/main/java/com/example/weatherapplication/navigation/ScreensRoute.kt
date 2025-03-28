@@ -15,7 +15,6 @@ sealed class ScreensRoute(){
     @Serializable
     data class MapScreen(val isFavourite: Boolean) : ScreensRoute()
     @Serializable
-    data class DetailsScreen(val latitude: Double, val longitude: Double) : ScreensRoute()
-
+    data class DetailsScreen(val location: String) : ScreensRoute()
 
 }

@@ -69,8 +69,7 @@ import com.example.weatherapplication.ui.theme.primaryContainerDark
 @Composable
 fun FavouriteScreen(
     goToDetails: (
-        latitude: Double,
-        longitude: Double
+       LocationData
     ) -> Unit
 ) {
     var showMap by remember { mutableStateOf(false) }
@@ -210,7 +209,7 @@ fun LoadingIndicator() {
 fun FavouriteItem(
     locationData: LocationData,
     favViewModel: FavouriteViewModel,
-    goToDetails: (latitude: Double, longitude: Double) -> Unit,
+    goToDetails: (LocationData) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val context = LocalContext.current
@@ -236,7 +235,7 @@ fun FavouriteItem(
                         "Clicked on ${item.latitude}, ${item.longitude}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    goToDetails(item.latitude, item.longitude)
+                    goToDetails(item)
                 },
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         ) {

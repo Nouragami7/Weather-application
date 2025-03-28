@@ -2,6 +2,7 @@ package com.example.weatherapplication.navigation
 
 import MapScreen
 import android.location.Location
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -9,11 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.ui.screen.alert.AlertScreen
 import com.example.weatherapplication.ui.screen.detailscreen.DetailsScreen
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
 import com.example.weatherapplication.ui.screen.settings.SettingsScreen
+import com.google.gson.Gson
 
 @Composable
 fun SetupNavHost(
@@ -42,17 +45,30 @@ fun SetupNavHost(
         composable<ScreensRoute.FavouriteScreen> {
             isBottomNavigationVisible(true)
             FavouriteScreen(
-                goToDetails = { latitude, longitude ->
-                    NavigationManager.navigateTo(ScreensRoute.DetailsScreen(latitude, longitude))
+                goToDetails = { LocationData ->
+                    val gson = Gson()
+                    var location = gson.toJson(LocationData)
+                    NavigationManager.navigateTo(ScreensRoute.DetailsScreen(location))
                 }
             )
         }
-        composable<ScreensRoute.DetailsScreen> {
-            isBottomNavigationVisible(false)
-            val latitude = it.arguments?.getDouble("latitude") ?: 30.0444
-            val longitude = it.arguments?.getDouble("longitude") ?: 31.2357
-            DetailsScreen(latitude, longitude)
+
+        composable<ScreensRoute.DetailsScreen> { backStackEntry ->
+           val jsonString = backStackEntry.toRoute<ScreensRoute.DetailsScreen>().location
+            val location = try {
+                Gson().fromJson(jsonString, LocationData::class.java)
+            } catch (e: Exception) {
+                Log.e("TAG", "Error parsing JSON: $e")
+                null
+            }
+            if (location != null) {
+                DetailsScreen(location)
+
+            } else {
+                Log.e("TAG", "Location data is null")
+            }
         }
+
 
         composable<ScreensRoute.MapScreen> {
             isBottomNavigationVisible(false)
