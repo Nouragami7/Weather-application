@@ -34,4 +34,6 @@
     <string name="meter_sec">meter/sec</string>
     <string name="mile_hour">mile/hour</string>
     <string name="offline_mode">Offline mode</string>
+    <string name="settings">Settings</string>
+    <string name="lan">Language</string>
 </resources>

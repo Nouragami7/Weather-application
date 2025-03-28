@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import com.example.weatherapplication.R
 import com.example.weatherapplication.ui.theme.BrokenCloudsEnd
 import com.example.weatherapplication.ui.theme.BrokenCloudsStart
@@ -17,12 +16,11 @@ import com.example.weatherapplication.ui.theme.MistEnd
 import com.example.weatherapplication.ui.theme.MistStart
 import com.example.weatherapplication.ui.theme.RainDayEnd
 import com.example.weatherapplication.ui.theme.RainDayStart
-import com.example.weatherapplication.ui.theme.RainNightEnd
-import com.example.weatherapplication.ui.theme.RainNightStart
 import com.example.weatherapplication.ui.theme.SnowEnd
 import com.example.weatherapplication.ui.theme.SnowStart
 import com.example.weatherapplication.ui.theme.ThunderstormEnd
 import com.example.weatherapplication.ui.theme.ThunderstormStart
+import java.util.Locale
 
 
 fun getWeatherIcon(iconCode: String): Int {
@@ -42,16 +40,37 @@ fun getWeatherIcon(iconCode: String): Int {
 }
 
 fun getWeatherGradient(description: String): Brush {
-    return when (description.lowercase()) {
+    val englishDescription = mapWeatherDescriptionToEnglish(description)
+    return when (englishDescription.lowercase()) {
         "clear sky" -> Brush.verticalGradient(listOf(ClearSkyDayStart, ClearSkyDayEnd))
         "few clouds", "scattered clouds" -> Brush.verticalGradient(listOf(FewCloudsStart, FewCloudsEnd))
         "broken clouds", "overcast clouds" -> Brush.verticalGradient(listOf(BrokenCloudsStart, BrokenCloudsEnd))
-        "shower rain", "light rain", "moderate rain", "heavy rain" -> Brush.verticalGradient(listOf(RainDayStart, RainDayEnd))
-        "rain" -> Brush.verticalGradient(listOf(RainNightStart, RainNightEnd))
+        "shower rain", "light rain", "moderate rain", "heavy rain", "rain" ->
+            Brush.verticalGradient(listOf(RainDayStart, RainDayEnd))
         "thunderstorm" -> Brush.verticalGradient(listOf(ThunderstormStart, ThunderstormEnd))
         "snow", "light snow", "heavy snow" -> Brush.verticalGradient(listOf(SnowStart, SnowEnd))
         "mist", "fog", "haze" -> Brush.verticalGradient(listOf(MistStart, MistEnd))
-        else -> Brush.verticalGradient(listOf(Color.White,Color.White))
+        else -> Brush.verticalGradient(listOf(ClearSkyDayStart, ClearSkyDayEnd))
+    }
+}
+fun mapWeatherDescriptionToEnglish(description: String): String {
+    return when (description.lowercase()) {
+        "سماء صافية" -> "clear sky"
+        "غيوم متفرقة", "بعض الغيوم" -> "few clouds"
+        "غيوم متناثرة" -> "scattered clouds"
+        "غيوم قاتمة", "غيوم مكسورة" -> "broken clouds"
+        "غيوم متكاثفة", "غيوم ملبدة" -> "overcast clouds"
+        "أمطار خفيفة" -> "light rain"
+        "أمطار معتدلة" -> "moderate rain"
+        "أمطار غزيرة" -> "heavy rain"
+        "أمطار" -> "rain"
+        "عاصفة رعدية" -> "thunderstorm"
+        "ثلج" -> "snow"
+        "ثلوج خفيفة" -> "light snow"
+        "ثلوج كثيفة" -> "heavy snow"
+        "ضباب", "شبورة" -> "mist"
+        "غبار", "عوالق" -> "haze"
+        else -> description.lowercase()
     }
 }
 
@@ -77,4 +96,32 @@ fun checkForInternet(context: Context): Boolean {
         return networkInfo.isConnected
     }
 }
+
+
+
+fun setLocale(context: Context, language: String) {
+    val locale = getLanguageCode(language)
+
+    Locale.setDefault(locale)
+
+    val config = context.resources.configuration
+    config.setLocale(locale)
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    sharedPreferences.edit()
+        .putString("app_language", language)
+        .putBoolean("skip_splash", true)
+        .apply()
+}
+
+fun getLanguageCode(language: String) : Locale{
+    return when (language) {
+        "English" -> Locale("en")
+        "العربية" -> Locale("ar")
+        "Türkiye" -> Locale("tr")
+        else -> Locale.getDefault()
+    }
+}
+
 

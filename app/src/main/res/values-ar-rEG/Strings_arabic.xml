@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">كلاودورا</string>
+<string name="deleted">تم الحذف</string>
+<string name="saved_alert">تم حفظ التنبيه</string>
+<string name="pressure">الضغط</string>
+<string name="clouds">الغيوم</string>
+<string name="wind">الرياح</string>
+<string name="humidity">الرطوبة</string>
+<string name="_5_days_forecast">توقعات 5 أيام</string>
+<string name="unknown_error">خطأ غير معروف</string>
+<string name="hpa">%1$s هيكتوباسكال</string>
+<string name="hourly_forecast">التوقعات لكل ساعة</string>
+<string name="search">بحث</string>
+<string name="add_to_favorite">إضافة إلى المفضلة</string>
+<string name="select_location">اختر الموقع</string>
+<string name="country">الدولة:</string>
+<string name="city">المدينة:</string>
+<string name="lat">خط العرض:</string>
+<string name="lng">خط الطول:</string>
+<string name="location_deleted_from_favourites">تم حذف الموقع من المفضلة</string>
+<string name="undo">تراجع</string>
+<string name="alert">تنبيه</string>
+<string name="language">اللغة</string>
+<string name="arabic">العربية</string>
+<string name="english">الإنجليزية</string>
+<string name="temp_unit">وحدة الحرارة</string>
+<string name="celsius_c">درجة مئوية °C</string>
+<string name="kelvin_k">كلفن °K</string>
+<string name="fahrenheit_f">فهرنهايت °F</string>
+<string name="location">الموقع</string>
+<string name="gps">نظام تحديد المواقع</string>
+<string name="map">الخريطة</string>
+<string name="wind_speed_unit">وحدة سرعة الرياح</string>
+<string name="meter_sec">متر/ثانية</string>
+<string name="mile_hour">ميل/ساعة</string>
+<string name="offline_mode">وضع عدم الاتصال</string>
+<string name="settings">الإعدادات</string>
+<string name="lan">اللغة</string>
+</resources>

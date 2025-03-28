@@ -53,11 +53,8 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.android.libraries.places.api.Places
 
 class MainActivity : ComponentActivity() {
-
-    private val TAG = "MainActivity"
     private lateinit var locationHelper: LocationHelper
     private val sharedPreference = SharedPreference()
-
     lateinit var locationState: MutableState<Location>
     lateinit var mapLocationState: MutableState<Location>
     lateinit var settingsLocation: String
