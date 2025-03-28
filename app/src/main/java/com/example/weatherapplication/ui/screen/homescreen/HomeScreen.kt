@@ -1,5 +1,7 @@
 package com.example.weatherapplication.ui.screen.homescreen
 
+import ConnectivityObserver
+import LottieAnimationView
 import android.location.Location
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -57,11 +59,11 @@ import com.example.weatherapplication.ui.viewmodel.HomeViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.abbreviationTempUnit
+import com.example.weatherapplication.utils.checkForInternet
 import com.example.weatherapplication.utils.convertToEgyptTime
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) {
-    val TAG = "HomeScreen"
     val context = LocalContext.current
     val sharedPreferences = SharedPreference()
 
@@ -80,6 +82,10 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
 
     val weatherState by viewModel.weatherData.collectAsStateWithLifecycle()
     val forecastState by viewModel.forecastData.collectAsStateWithLifecycle()
+    val connectivityObserver = remember { ConnectivityObserver(context) }
+    val isConnected by connectivityObserver.isConnected.collectAsStateWithLifecycle(initialValue = checkForInternet(context))
+
+
 
     LaunchedEffect(Unit) {
         language = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
@@ -87,11 +93,11 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
         windSpeedUnit = sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec"
     }
 
-    LaunchedEffect(location, language, tempUnit, windSpeedUnit) {
+    LaunchedEffect(isConnected,location, language, tempUnit, windSpeedUnit) {
         val unit = when (tempUnit) {
-            "Celsius °C" -> "metric"   // Temp: °C, Wind Speed: meter/sec
-            "Kelvin °K" -> "standard"  // Temp: K, Wind Speed: meter/sec
-            "Fahrenheit °F" -> "imperial"  // Temp: °F, Wind Speed: miles/hour
+            "Celsius °C" -> "metric"
+            "Kelvin °K" -> "standard"
+            "Fahrenheit °F" -> "imperial"
             else -> "metric"
         }
         val lang = when (language) {
@@ -99,9 +105,22 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
             "English" -> "en"
             else -> "en"
         }
-
-        viewModel.fetchWeatherData(sharedPreferences.getFromSharedPreference(context,"latitude")?.toDoubleOrNull() ?: location.value.latitude, sharedPreferences.getFromSharedPreference(context,"longitude")?.toDoubleOrNull() ?: location.value.longitude, lang , unit, Constants.API_KEY)
-        viewModel.fetchForecastData(sharedPreferences.getFromSharedPreference(context,"latitude")?.toDoubleOrNull() ?: location.value.latitude, sharedPreferences.getFromSharedPreference(context,"longitude")?.toDoubleOrNull() ?: location.value.longitude, language, unit, Constants.API_KEY)
+        if (isConnected) {
+            viewModel.fetchWeatherData(
+                location.value.latitude,
+                location.value.longitude,
+                lang,
+                unit,
+                Constants.API_KEY
+            )
+            viewModel.fetchForecastData(
+                location.value.latitude,
+                location.value.longitude,
+                lang,
+                unit,
+                Constants.API_KEY
+            )
+        }
     }
 
     Scaffold(
@@ -117,10 +136,17 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
             verticalArrangement = Arrangement.Center
         ) {
             when {
+                !isConnected -> {
+                  LottieAnimationView(
+                      resId = R.raw.no_internet,
+                      modifier = Modifier.fillMaxSize()
+                  )
+                }
                 weatherState is ResponseState.Loading || forecastState is ResponseState.Loading -> {
                     LoadingIndicator()
                 }
                 weatherState is ResponseState.Failure || forecastState is ResponseState.Failure -> {
+
                     val errorMessage = (weatherState as? ResponseState.Failure)?.message?.message
                         ?: (forecastState as? ResponseState.Failure)?.message?.message
                         ?: stringResource(R.string.unknown_error)
@@ -143,8 +169,6 @@ fun HomeContent(
     tempUnit: String,
     windSpeedUnit: String,
 ) {
-
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

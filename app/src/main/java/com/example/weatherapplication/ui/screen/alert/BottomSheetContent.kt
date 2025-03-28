@@ -3,6 +3,7 @@ package com.example.weatherapplication.ui.screen.alert
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,13 +13,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +44,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
     var endTime by remember { mutableStateOf("End Time") }
     var selectedOption by remember { mutableStateOf("Alarm") }
     val options = listOf("Alarm", "Notification")
-    val icons = listOf(R.drawable.clock, R.drawable.calendar)
+    val icons = listOf(R.drawable.alarm, R.drawable.notification)
 
     Column(
         modifier = Modifier
@@ -73,7 +74,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Notify me by:", fontWeight = FontWeight.Medium, color = Color.Black)
+        Text(text = "Notify me by:", fontWeight = FontWeight.SemiBold, color = Color.Black)
 
         Column(Modifier.selectableGroup().padding(vertical = 8.dp)) {
             options.forEachIndexed { index, option ->
@@ -92,9 +93,10 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
                         onClick = { selectedOption = option }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
+                    Image(
                         painter = painterResource(id = icons[index]),
-                        contentDescription = option
+                        contentDescription = option,
+                        modifier = Modifier.size(26.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(option, color = Color.Black)
@@ -148,9 +150,10 @@ fun DateTimePickerField(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = iconRes),
-            contentDescription = label
+            contentDescription = label,
+            modifier = Modifier.size(26.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(text = value, fontSize = 16.sp, color = Color.Black)
