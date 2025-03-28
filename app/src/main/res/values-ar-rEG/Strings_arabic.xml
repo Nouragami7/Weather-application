@@ -37,4 +37,14 @@
 <string name="offline_mode">وضع عدم الاتصال</string>
 <string name="settings">الإعدادات</string>
 <string name="lan">اللغة</string>
+    <string name="set_alert">تعيين تنبيه</string>
+    <string name="date">التاريخ</string>
+    <string name="start_time">وقت البدء</string>
+    <string name="end_time">وقت الانتهاء</string>
+    <string name="cancel">إلغاء</string>
+    <string name="save">حفظ</string>
+    <string name="notify_me_by">إخطارني عبر:</string>
+    <string name="alarm">المنبه</string>
+    <string name="notification">الإشعار</string>
+
 </resources>

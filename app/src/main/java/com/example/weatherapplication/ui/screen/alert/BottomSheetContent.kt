@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +44,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
     var startTime by remember { mutableStateOf("Start Time") }
     var endTime by remember { mutableStateOf("End Time") }
     var selectedOption by remember { mutableStateOf("Alarm") }
-    val options = listOf("Alarm", "Notification")
+    val options = listOf(stringResource(R.string.alarm), stringResource(R.string.notification))
     val icons = listOf(R.drawable.alarm, R.drawable.notification)
 
     Column(
@@ -54,7 +55,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Set Alert",
+            text = stringResource(R.string.set_alert),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -62,21 +63,24 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        DateTimePickerField(context, "Date", startDate, R.drawable.calendar) {
+        DateTimePickerField(context, stringResource(R.string.date), startDate, R.drawable.calendar) {
             startDate = it
         }
-        DateTimePickerField(context, "Start Time", startTime, R.drawable.clock) {
+        DateTimePickerField(context,
+            stringResource(R.string.start_time), startTime, R.drawable.clock) {
             startTime = it
         }
-        DateTimePickerField(context, "End Time", endTime, R.drawable.clock) {
+        DateTimePickerField(context, stringResource(R.string.end_time), endTime, R.drawable.clock) {
             endTime = it
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Notify me by:", fontWeight = FontWeight.SemiBold, color = Color.Black)
+        Text(text = stringResource(R.string.notify_me_by), fontWeight = FontWeight.SemiBold, color = Color.Black)
 
-        Column(Modifier.selectableGroup().padding(vertical = 8.dp)) {
+        Column(Modifier
+            .selectableGroup()
+            .padding(vertical = 8.dp)) {
             options.forEachIndexed { index, option ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -114,7 +118,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
                     .weight(1f)
                     .height(50.dp)
             ) {
-                Text("SAVE", fontSize = 18.sp)
+                Text(stringResource(R.string.save), fontSize = 18.sp)
             }
             Spacer(modifier = Modifier.width(12.dp))
             Button(
@@ -124,7 +128,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
                     .weight(1f)
                     .height(50.dp)
             ) {
-                Text("CANCEL", fontSize = 18.sp)
+                Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }
         }
     }

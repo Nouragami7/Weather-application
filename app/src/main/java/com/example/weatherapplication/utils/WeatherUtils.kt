@@ -20,6 +20,7 @@ import com.example.weatherapplication.ui.theme.SnowEnd
 import com.example.weatherapplication.ui.theme.SnowStart
 import com.example.weatherapplication.ui.theme.ThunderstormEnd
 import com.example.weatherapplication.ui.theme.ThunderstormStart
+import com.example.weatherapplication.utils.Constants.Companion.PREF_NAME
 import java.util.Locale
 
 
@@ -108,18 +109,17 @@ fun setLocale(context: Context, language: String) {
     config.setLocale(locale)
     context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
-    val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     sharedPreferences.edit()
-        .putString("app_language", language)
-        .putBoolean("skip_splash", true)
+        .putString("language", language)
         .apply()
+
 }
 
 fun getLanguageCode(language: String) : Locale{
     return when (language) {
         "English" -> Locale("en")
-        "العربية" -> Locale("ar")
-        "Türkiye" -> Locale("tr")
+        "Arabic" -> Locale("ar")
         else -> Locale.getDefault()
     }
 }

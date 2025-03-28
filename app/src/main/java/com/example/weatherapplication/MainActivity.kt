@@ -46,6 +46,7 @@ import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.setLocale
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         hideSystemUI()
+        setLocale(this, sharedPreference.getFromSharedPreference(this, "language") ?: "English")
 
         if (!Places.isInitialized()) {
             Places.initialize(this, Constants.API_KEY_Google)
@@ -75,6 +77,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+
             var displaySplashScreen by remember { mutableStateOf(true) }
             locationState = remember { mutableStateOf(Location("")) }
             mapLocationState = remember { mutableStateOf(Location("")) }

@@ -1,6 +1,7 @@
 package com.example.weatherapplication.ui.screen.settings
 
 import android.app.Activity
+import android.content.Intent
 import android.location.Location
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -43,6 +44,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.weatherapplication.MainActivity
 import com.example.weatherapplication.R
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
@@ -52,6 +54,7 @@ import com.example.weatherapplication.ui.theme.SoftSkyBlue
 import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.setLocale
 
 @Composable
 fun SettingsScreen(location: MutableState<Location>) {
@@ -98,10 +101,21 @@ fun SettingsScreen(location: MutableState<Location>) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        SettingsCard(stringResource(R.string.language), listOf(stringResource(R.string.arabic), stringResource(R.string.english)), selectedLanguage, {
-            selectedLanguage = it
-            sharedPreference.saveToSharedPreference(context, "language", it)
-        }, R.drawable.language)
+        SettingsCard(
+            title = stringResource(R.string.language),
+            options = listOf(stringResource(R.string.arabic), stringResource(R.string.english)),
+            selectedOption = selectedLanguage,
+            onSelectedOption = {
+                selectedLanguage = it
+                sharedPreference.saveToSharedPreference(context, "language", it)
+                setLocale(context, it)
+                val activity = context as Activity
+                val intent = Intent(activity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                activity.startActivity(intent)
+            },
+            iconRes = R.drawable.language
+        )
 
         SettingsCard(stringResource(R.string.temp_unit), listOf(stringResource(R.string.celsius_c), stringResource(R.string.kelvin_k), stringResource(R.string.fahrenheit_f)), selectedTempUnit, {
             selectedTempUnit = it

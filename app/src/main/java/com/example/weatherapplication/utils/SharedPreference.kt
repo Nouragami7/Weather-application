@@ -2,9 +2,9 @@ package com.example.weatherapplication.utils
 
 import android.content.Context
 import android.util.Log
+import com.example.weatherapplication.utils.Constants.Companion.PREF_NAME
 
 class SharedPreference {
-     private  val PREF_NAME = "myPref"
     fun saveToSharedPreference(context: Context, key: String, value: String) {
         Log.d("TAG", "saveToSharedPreference: $value")
         val sharedPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
