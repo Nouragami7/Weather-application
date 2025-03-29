@@ -33,6 +33,8 @@ import com.example.weatherapplication.ui.theme.LightOrange
 import com.example.weatherapplication.ui.theme.Orange
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.convertToHour
+import com.example.weatherapplication.utils.formatNumberBasedOnLanguage
+import com.example.weatherapplication.utils.formatTemperatureUnitBasedOnLanguage
 import com.example.weatherapplication.utils.getWeatherGradient
 import com.example.weatherapplication.utils.getWeatherIcon
 
@@ -64,7 +66,7 @@ fun HourlyForecastCard(
 
             HourlyForecast(
                 hour = convertToHour(item.dt_txt),
-                temperature = "${item.main.temp.toInt()}",
+                temperature = formatNumberBasedOnLanguage(item.main.temp.toString()),
                 icon = getWeatherIcon(item.weather.firstOrNull()?.icon ?: ""),
                 backgroundColor = backgroundColor,
             )
@@ -125,7 +127,7 @@ fun HourlyForecastItem(
      )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "$temperature $tempUnit",
+            text = "$temperature ${formatTemperatureUnitBasedOnLanguage(tempUnit)}",
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = MaterialTheme.typography.bodyLarge.fontWeight

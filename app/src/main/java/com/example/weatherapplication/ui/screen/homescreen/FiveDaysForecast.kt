@@ -38,6 +38,8 @@ import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.formatNumberBasedOnLanguage
+import com.example.weatherapplication.utils.formatTemperatureUnitBasedOnLanguage
 import com.example.weatherapplication.utils.getDayNameFromDate
 import com.example.weatherapplication.utils.getWeatherGradient
 import com.example.weatherapplication.utils.getWeatherIcon
@@ -87,9 +89,9 @@ fun DaysForeCastContent(forecast: Forecast) {
                     dailyAverages.find { it.first == date }?.second ?: Pair(0.0, 0.0)
                 DaysForecastItem(
                     day = dayName,
-                    date = date,
-                    minTemperature = "${averageMinTemperature.toInt()}${tempUnit}",
-                    maxTemperature = "${averageMaxTemperature.toInt()}${tempUnit}",
+                    date = formatNumberBasedOnLanguage(date),
+                    minTemperature = "${formatNumberBasedOnLanguage(averageMinTemperature.toString())}${formatTemperatureUnitBasedOnLanguage(tempUnit)}",
+                    maxTemperature = "${formatNumberBasedOnLanguage(averageMaxTemperature.toString())}${formatTemperatureUnitBasedOnLanguage(tempUnit)}",
                     iconCode = forecast.list.find { it.dt_txt.startsWith(date) }?.weather?.firstOrNull()?.icon ?: "",
                     description = forecast.list.find { it.dt_txt.startsWith(date) }?.weather?.firstOrNull()?.description ?:""
                 )

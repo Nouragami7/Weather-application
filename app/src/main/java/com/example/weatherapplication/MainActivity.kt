@@ -1,6 +1,5 @@
 package com.example.weatherapplication
 
-import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -39,22 +38,9 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapplication.domain.model.City
-import com.example.weatherapplication.domain.model.Clouds
-import com.example.weatherapplication.domain.model.Coord
-import com.example.weatherapplication.domain.model.CurrentWeather
-import com.example.weatherapplication.domain.model.Forecast
-import com.example.weatherapplication.domain.model.Item0
-import com.example.weatherapplication.domain.model.LocationData
-import com.example.weatherapplication.domain.model.Main
-import com.example.weatherapplication.domain.model.Rain
-import com.example.weatherapplication.domain.model.Sys
-import com.example.weatherapplication.domain.model.Weather
-import com.example.weatherapplication.domain.model.Wind
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.navigation.SetupNavHost
-import com.example.weatherapplication.service.NotificationService
 import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
@@ -68,7 +54,6 @@ import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.android.libraries.places.api.Places
-import com.google.gson.Gson
 import createNotificationChannel
 
 class MainActivity : ComponentActivity() {
@@ -85,7 +70,10 @@ class MainActivity : ComponentActivity() {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
         }
 
-        val forecast = Forecast(
+
+
+
+     /*   val forecast = Forecast(
             city = City(
                 coord = Coord(lat = 30.0444, lon = 31.2357),
                 country = "Egypt",
@@ -172,10 +160,6 @@ class MainActivity : ComponentActivity() {
             wind = CurrentWeather.Wind(deg = 150, gust = 4.0, speed = 6.5)
         )
 
-
-
-
-
         //notification
         val locationData = LocationData(
             latitude = 30.0444,
@@ -190,7 +174,9 @@ class MainActivity : ComponentActivity() {
             putExtra("location", Gson().toJson(locationData))
         }
 
-        startService(serviceIntent)
+        startService(serviceIntent)*/
+
+
 
 
 
@@ -207,6 +193,8 @@ class MainActivity : ComponentActivity() {
 
         locationHelper = LocationHelper(this) { newLocation ->
             locationState.value = newLocation
+            sharedPreference.saveToSharedPreference(this, "CurrentLatitude", newLocation.latitude.toString())
+            sharedPreference.saveToSharedPreference(this, "CurrentLongitude", newLocation.longitude.toString())
         }
 
         setContent {

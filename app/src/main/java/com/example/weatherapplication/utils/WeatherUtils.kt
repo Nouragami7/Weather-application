@@ -125,3 +125,40 @@ fun getLanguageCode(language: String) : Locale{
 }
 
 
+fun convertToArabicNumbers(number: String): String {
+    val arabicDigits = arrayOf('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩')
+    return number.map { if (it.isDigit()) arabicDigits[it.digitToInt()] else it }.joinToString("")
+}
+
+fun formatNumberBasedOnLanguage(number: String): String {
+    val language = Locale.getDefault().language
+    return if (language == "ar") convertToArabicNumbers(number) else number
+}
+
+fun formatTemperatureUnitBasedOnLanguage(unit: String): String {
+    val language = Locale.getDefault().language
+    if (language == "ar") {
+        return when (unit) {
+            "°C" -> "°س"
+            "°F" -> "°ف"
+            "°K" -> "°ك"
+            else -> "°س"
+        }
+    }
+    return unit
+}
+
+fun formatWindSpeedBasedOnLanguage(unit: String): String {
+    val language = Locale.getDefault().language
+    return if (language == "ar") {
+        when (unit) {
+            "mile/hour" -> "م/س"
+            "meter/sec" -> "م/ث"
+            else -> unit
+        }
+    } else {
+        unit
+    }
+}
+
+

@@ -3,6 +3,7 @@ package com.example.weatherapplication.ui.screen.alert
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,13 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapplication.R
+import com.example.weatherapplication.worker.scheduleNotification
 import java.util.Calendar
 
 @Composable
 fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
-    var startDate by remember { mutableStateOf("Start Date") }
-    var startTime by remember { mutableStateOf("Start Time") }
-    var endTime by remember { mutableStateOf("End Time") }
+    var selectedDate by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
     var selectedOption by remember { mutableStateOf("Alarm") }
     val options = listOf(stringResource(R.string.alarm), stringResource(R.string.notification))
     val icons = listOf(R.drawable.alarm, R.drawable.notification)
@@ -63,24 +64,18 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        DateTimePickerField(context, stringResource(R.string.date), startDate, R.drawable.calendar) {
-            startDate = it
+        DateTimePickerField(context, "Date", selectedDate, R.drawable.calendar) {
+            selectedDate = it
         }
-        DateTimePickerField(context,
-            stringResource(R.string.start_time), startTime, R.drawable.clock) {
+        DateTimePickerField(context, "Start Time", startTime, R.drawable.clock) {
             startTime = it
-        }
-        DateTimePickerField(context, stringResource(R.string.end_time), endTime, R.drawable.clock) {
-            endTime = it
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = stringResource(R.string.notify_me_by), fontWeight = FontWeight.SemiBold, color = Color.Black)
 
-        Column(Modifier
-            .selectableGroup()
-            .padding(vertical = 8.dp)) {
+        Column(Modifier.selectableGroup().padding(vertical = 8.dp)) {
             options.forEachIndexed { index, option ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -112,21 +107,44 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Button(
-                onClick = { onDismiss() },
+                onClick = {
+                    if (selectedDate.isNotEmpty() && startTime.isNotEmpty()) {
+                        val dateParts = selectedDate.split("/").map { it.toInt() }
+                        val timeParts = startTime.split(":").map { it.toInt() }
+
+                        val notificationTime = Calendar.getInstance().apply {
+                            set(Calendar.YEAR, dateParts[2])
+                            set(Calendar.MONTH, dateParts[1] - 1)
+                            set(Calendar.DAY_OF_MONTH, dateParts[0])
+                            set(Calendar.HOUR_OF_DAY, timeParts[0])
+                            set(Calendar.MINUTE, timeParts[1])
+                            set(Calendar.SECOND, 0)
+                        }.timeInMillis
+
+                        val now = Calendar.getInstance().timeInMillis
+                        val delayInMillis = notificationTime - now
+
+                        if (delayInMillis > 0) {
+                            scheduleNotification(context, delayInMillis)
+                            onDismiss()
+                        } else {
+                            Toast.makeText(context, "Please select a future time", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Please select date and time", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(50.dp)
+                modifier = Modifier.weight(1f).height(50.dp)
             ) {
                 Text(stringResource(R.string.save), fontSize = 18.sp)
             }
+
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = { onDismiss() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(50.dp)
+                modifier = Modifier.weight(1f).height(50.dp)
             ) {
                 Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }
@@ -166,7 +184,7 @@ fun DateTimePickerField(
 
 fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
-    DatePickerDialog(
+    val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
             onDateSelected("$dayOfMonth/${month + 1}/$year")
@@ -174,8 +192,11 @@ fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
-    ).show()
+    )
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis
+    datePickerDialog.show()
 }
+
 
 fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()

@@ -44,6 +44,7 @@ import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.Yellow
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
 import com.example.weatherapplication.utils.convertUnixToTime
+import com.example.weatherapplication.utils.formatNumberBasedOnLanguage
 import com.example.weatherapplication.utils.getWeatherIcon
 
 @Composable
@@ -122,7 +123,7 @@ fun DailyWeatherCard(
                 bottom.linkTo(forecastImage.bottom)
             },
             degree = currentTemperature,
-            feelsLike = feelsLike
+            feelsLike = formatNumberBasedOnLanguage(feelsLike)
         )
         DateTimeDisplay(
             date = currentDate,
@@ -206,10 +207,11 @@ private fun ForecastValue(
             )
         }
         Text(
-            text = ("Feels like $feelsLike"),
+            text = "${stringResource(R.string.feels_like)} $feelsLike",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White
         )
+
     }
 
 
@@ -244,7 +246,7 @@ fun SunCase(
         ) {
             SunInfoItem(
                 iconRes = R.drawable.sunrise,
-                label = "Sunrise",
+                label = stringResource(R.string.sunrise),
                 time = timeOfSunrise
             )
         }
@@ -263,7 +265,7 @@ fun SunCase(
         ) {
             SunInfoItem(
                 iconRes = R.drawable.sunset,
-                label = "Sunset",
+                label = stringResource(R.string.sunset),
                 time = timeOfSunset
             )
         }

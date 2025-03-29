@@ -45,4 +45,8 @@
     <string name="notify_me_by">Notify me by:</string>
     <string name="alarm">Alarm</string>
     <string name="notification">Notification</string>
+    <string name="feels_like">Feels like</string>
+    <string name="percentage">%</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
 </resources>

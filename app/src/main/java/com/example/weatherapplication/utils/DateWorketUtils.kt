@@ -10,7 +10,7 @@ fun calculateDelay(targetHour: Int, targetMinute: Int): Long {
     }
 
     if (targetTime.before(now)) {
-        targetTime.add(Calendar.DAY_OF_MONTH, 1) // Schedule for next day
+        targetTime.add(Calendar.DAY_OF_MONTH, 1)
     }
 
     return targetTime.timeInMillis - now.timeInMillis

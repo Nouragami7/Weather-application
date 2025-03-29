@@ -52,6 +52,7 @@ import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.LoadingIndicator
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -61,6 +62,9 @@ import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.abbreviationTempUnit
 import com.example.weatherapplication.utils.checkForInternet
 import com.example.weatherapplication.utils.convertToEgyptTime
+import com.example.weatherapplication.utils.formatNumberBasedOnLanguage
+import com.example.weatherapplication.utils.formatTemperatureUnitBasedOnLanguage
+import com.example.weatherapplication.utils.formatWindSpeedBasedOnLanguage
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) {
@@ -189,12 +193,12 @@ fun HomeContent(
             DailyWeatherCard(
                 modifier = Modifier.padding(bottom = 24.dp),
                 forecast = weather.weather.firstOrNull()?.description ?: "Unknown",
-                feelsLike = "${weather.main.feels_like} ${abbreviationTempUnit(tempUnit)}",
+                feelsLike = "${weather.main.feels_like} ${formatTemperatureUnitBasedOnLanguage(abbreviationTempUnit(tempUnit))}",
                 pressure = stringResource(R.string.hpa, weather.main.pressure),
-                clouds = "${weather.clouds.all}%",
-                windSpeed = "${weather.wind.speed} $windSpeedUnit",
-                humidity = "${weather.main.humidity}%",
-                currentTemperature = "${weather.main.temp.toInt()} ${abbreviationTempUnit(tempUnit)}",
+                clouds = "${weather.clouds.all} ${stringResource(R.string.percentage)}",
+                windSpeed = "${weather.wind.speed} ${formatWindSpeedBasedOnLanguage(windSpeedUnit)}",
+                humidity = "${weather.main.humidity} ${stringResource(R.string.percentage)}",
+                currentTemperature = "${formatNumberBasedOnLanguage(weather.main.temp.toString())} ${formatTemperatureUnitBasedOnLanguage(abbreviationTempUnit(tempUnit))}",
                 currentDate = date,
                 currentTime = time,
                 icon = weather.weather.firstOrNull()?.icon ?: "",

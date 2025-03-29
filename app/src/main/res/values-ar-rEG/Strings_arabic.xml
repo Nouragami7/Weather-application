@@ -25,9 +25,9 @@
 <string name="arabic">العربية</string>
 <string name="english">الإنجليزية</string>
 <string name="temp_unit">وحدة الحرارة</string>
-<string name="celsius_c">درجة مئوية °C</string>
-<string name="kelvin_k">كلفن °K</string>
-<string name="fahrenheit_f">فهرنهايت °F</string>
+<string name="celsius_c">درجة مئوية °س</string>
+<string name="kelvin_k">كلفن °ك</string>
+<string name="fahrenheit_f">فهرنهايت °ف</string>
 <string name="location">الموقع</string>
 <string name="gps">نظام تحديد المواقع</string>
 <string name="map">الخريطة</string>
@@ -46,5 +46,9 @@
     <string name="notify_me_by">إخطارني عبر:</string>
     <string name="alarm">المنبه</string>
     <string name="notification">الإشعار</string>
+    <string name="feels_like">يشعر وكأنه</string>
+    <string name="percentage">٪</string>
+    <string name="sunrise">شروق الشمس</string>
+    <string name="sunset">غروب الشمس</string>
 
 </resources>

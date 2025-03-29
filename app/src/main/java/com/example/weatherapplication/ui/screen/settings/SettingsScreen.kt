@@ -55,6 +55,7 @@ import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.setLocale
+import java.util.Locale
 
 @Composable
 fun SettingsScreen(location: MutableState<Location>) {
@@ -67,11 +68,17 @@ fun SettingsScreen(location: MutableState<Location>) {
     var selectedWindSpeedUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
 
     LaunchedEffect(selectedTempUnit, selectedWindSpeedUnit) {
-        if (selectedTempUnit == "Fahrenheit °F" && selectedWindSpeedUnit != "mile/hour") {
-            selectedWindSpeedUnit = "mile/hour"
+        if ((selectedTempUnit == "Fahrenheit °F" || selectedTempUnit == "فهرنهايت °ف") &&
+            !(selectedWindSpeedUnit == "mile/hour" || selectedWindSpeedUnit == "ميل/ساعة")) {
+
+            selectedWindSpeedUnit = if (Locale.getDefault().language == "ar") "ميل/ساعة" else "mile/hour"
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
-        } else if ((selectedTempUnit == "Celsius °C" || selectedTempUnit == "Kelvin °K") && selectedWindSpeedUnit == "mile/hour") {
-            selectedWindSpeedUnit = "meter/sec"
+
+        } else if ((selectedTempUnit == "Celsius °C" || selectedTempUnit == "Kelvin °K" ||
+                    selectedTempUnit == "درجة مئوية °س" || selectedTempUnit == "كلفن °ك") &&
+            (selectedWindSpeedUnit == "mile/hour" || selectedWindSpeedUnit == "ميل/ساعة")) {
+
+            selectedWindSpeedUnit = if (Locale.getDefault().language == "ar") "متر/ثانية" else "meter/sec"
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
         }
     }
@@ -105,17 +112,22 @@ fun SettingsScreen(location: MutableState<Location>) {
             title = stringResource(R.string.language),
             options = listOf(stringResource(R.string.arabic), stringResource(R.string.english)),
             selectedOption = selectedLanguage,
-            onSelectedOption = {
-                selectedLanguage = it
-                sharedPreference.saveToSharedPreference(context, "language", it)
-                setLocale(context, it)
+            onSelectedOption = { newLanguage ->
+                sharedPreference.saveToSharedPreference(context, "language", newLanguage)
+                sharedPreference.saveToSharedPreference(context, "tempUnit", selectedTempUnit)
+                sharedPreference.saveToSharedPreference(context, "location", selectedLocation)
+                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
+
+                setLocale(context, newLanguage)
+
                 val activity = context as Activity
-                val intent = Intent(activity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                activity.startActivity(intent)
+                activity.finish()
+                activity.startActivity(Intent(activity, MainActivity::class.java))
             },
             iconRes = R.drawable.language
         )
+
+
 
         SettingsCard(stringResource(R.string.temp_unit), listOf(stringResource(R.string.celsius_c), stringResource(R.string.kelvin_k), stringResource(R.string.fahrenheit_f)), selectedTempUnit, {
             selectedTempUnit = it
@@ -125,9 +137,9 @@ fun SettingsScreen(location: MutableState<Location>) {
         SettingsCard(stringResource(R.string.location), listOf(stringResource(R.string.gps), stringResource(R.string.map)), selectedLocation, {
             selectedLocation = it
             sharedPreference.saveToSharedPreference(context, "location", it)
-            if (it == "Map") {
+            if (it == "Map" || it =="الخريطة") {
                 NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
-            } else {
+            } else if (it == "GPS" || it == "نظام تحديد المواقع") {
                 sharedPreference.deleteSharedPreference(context, "latitude")
                 sharedPreference.deleteSharedPreference(context, "longitude")
                 if (!PermissionUtils.isLocationEnabled(context)) {
