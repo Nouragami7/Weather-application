@@ -1,5 +1,6 @@
 package com.example.weatherapplication
 
+import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,9 +38,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.example.weatherapplication.domain.model.City
+import com.example.weatherapplication.domain.model.Clouds
+import com.example.weatherapplication.domain.model.Coord
+import com.example.weatherapplication.domain.model.CurrentWeather
+import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.domain.model.Item0
+import com.example.weatherapplication.domain.model.LocationData
+import com.example.weatherapplication.domain.model.Main
+import com.example.weatherapplication.domain.model.Rain
+import com.example.weatherapplication.domain.model.Sys
+import com.example.weatherapplication.domain.model.Weather
+import com.example.weatherapplication.domain.model.Wind
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.navigation.SetupNavHost
+import com.example.weatherapplication.service.NotificationService
 import com.example.weatherapplication.ui.screen.SplashScreen
 import com.example.weatherapplication.ui.theme.LightSkyBlue
 import com.example.weatherapplication.ui.theme.inversePrimaryDarkHighContrast
@@ -52,6 +68,8 @@ import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.android.libraries.places.api.Places
+import com.google.gson.Gson
+import createNotificationChannel
 
 class MainActivity : ComponentActivity() {
     private lateinit var locationHelper: LocationHelper
@@ -62,6 +80,121 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+        }
+
+        val forecast = Forecast(
+            city = City(
+                coord = Coord(lat = 30.0444, lon = 31.2357),
+                country = "Egypt",
+                id = 12345,
+                name = "Cairo",
+                population = 9500000,
+                sunrise = 1680000000,
+                sunset = 1680043200,
+                timezone = 7200
+            ),
+            cnt = 5,
+            cod = "200",
+            list = listOf(
+                Item0(
+                    clouds = Clouds(all = 40),
+                    dt = 1680000000,
+                    dt_txt = "2024-03-29 12:00:00",
+                    main = Main(
+                        feels_like = 30.5,
+                        grnd_level = 1000,
+                        humidity = 60,
+                        pressure = 1012,
+                        sea_level = 1015,
+                        temp = 28.3,
+                        temp_kf = 0.5,
+                        temp_max = 29.0,
+                        temp_min = 27.5
+                    ),
+                    pop = 0.1,
+                    rain = Rain(`3h` = 0.0),
+                    sys = Sys(pod = "d"),
+                    visibility = 10000,
+                    weather = listOf(
+                        Weather(
+                            description = "clear sky",
+                            icon = "01d",
+                            id = 800,
+                            main = "Clear"
+                        )
+                    ),
+                    wind = Wind(deg = 180, gust = 3.5, speed = 5.0)
+                )
+            ),
+            message = 0
+        )
+
+
+
+        val currentWeather = CurrentWeather(
+            base = "stations",
+            clouds = CurrentWeather.Clouds(all = 20),
+            cod = 200,
+            coord = CurrentWeather.Coord(lat = 30.0444, lon = 31.2357),
+            dt = 1680000000,
+            id = 98765,
+            main = CurrentWeather.Main(
+                feels_like = 32.0,
+                grnd_level = 1000,
+                humidity = 55,
+                pressure = 1013,
+                sea_level = 1015,
+                temp = 30.0,
+                temp_max = 31.5,
+                temp_min = 28.0
+            ),
+            name = "Cairo",
+            sys = CurrentWeather.Sys(
+                country = "EG",
+                id = 1,
+                sunrise = 1680000000,
+                sunset = 1680043200,
+                type = 1
+            ),
+            timezone = 7200,
+            visibility = 10000,
+            weather = listOf(
+                CurrentWeather.Weather(
+                    description = "few clouds",
+                    icon = "02d",
+                    id = 801,
+                    main = "Clouds"
+                )
+            ),
+            wind = CurrentWeather.Wind(deg = 150, gust = 4.0, speed = 6.5)
+        )
+
+
+
+
+
+        //notification
+        val locationData = LocationData(
+            latitude = 30.0444,
+            longitude = 31.2357,
+            currentWeather = currentWeather,
+            forecast = forecast,
+            country = "Egypt",
+            city = "Cairo"
+        )
+
+        val serviceIntent = Intent(this, NotificationService::class.java).apply {
+            putExtra("location", Gson().toJson(locationData))
+        }
+
+        startService(serviceIntent)
+
+
+
+
         enableEdgeToEdge()
         hideSystemUI()
         setLocale(this, sharedPreference.getFromSharedPreference(this, "language") ?: "English")
@@ -77,6 +210,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+
+            val navController = rememberNavController()
+            val deepLinkUri = intent?.data?.toString()
+            LaunchedEffect(deepLinkUri) {
+                deepLinkUri?.let { uri ->
+                    if (uri.startsWith("\"C:\\Android projects\\AndroidKotlinProject\\WeatherApp\\app\\src\\main\\java\\com\\example\\weatherapplication\\ui\\screen\\detailscreen\\DetailsScreen.kt\"")) {
+                        val jsonString = uri.substringAfter("favDetails/")
+                        navController.navigate("favDetails/$jsonString")
+                    }
+                }
+            }
+
 
             var displaySplashScreen by remember { mutableStateOf(true) }
             locationState = remember { mutableStateOf(Location("")) }

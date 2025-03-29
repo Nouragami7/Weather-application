@@ -184,6 +184,8 @@ fun FavouriteScreen(
                                         )
                                     }
                                 }
+
+
                             }
                         }
                     }
@@ -295,6 +297,11 @@ fun FavouriteItem(
                             letterSpacing = 0.5.sp,
                             textAlign = TextAlign.Start
                         )
+
+                        Spacer(modifier = Modifier.weight(1f))
+                       /* Button(onClick = { showNotification(context, locationData) }) {
+                            Text(text = "Show Notification")
+                        }*/
                     }
 
                     Icon(
