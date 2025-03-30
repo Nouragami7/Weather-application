@@ -66,6 +66,8 @@ import com.example.weatherapplication.utils.convertToEgyptTime
 import com.example.weatherapplication.utils.formatNumberBasedOnLanguage
 import com.example.weatherapplication.utils.formatTemperatureUnitBasedOnLanguage
 import com.example.weatherapplication.utils.formatWindSpeedBasedOnLanguage
+import com.example.weatherapplication.utils.getLanguageCode
+import com.example.weatherapplication.utils.getUnit
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) {
@@ -112,34 +114,13 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
             context
         )
     )
-
-
-
-    LaunchedEffect(Unit) {
-        language = sharedPreferences.getFromSharedPreference(context, "language") ?: "en"
-        tempUnit = sharedPreferences.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C"
-        windSpeedUnit =
-            sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec"
-    }
-
-    LaunchedEffect(isConnected, location, language, tempUnit, windSpeedUnit) {
-        val unit = when (tempUnit) {
-            "Celsius °C" -> "metric"
-            "Kelvin °K" -> "standard"
-            "Fahrenheit °F" -> "imperial"
-            else -> "metric"
-        }
-        val lang = when (language) {
-            "Arabic" -> "ar"
-            "English" -> "en"
-            else -> "en"
-        }
+    LaunchedEffect(isConnected, location, language, tempUnit) {
         if (isConnected) {
             viewModel.fetchWeatherData(
-                location.value.latitude, location.value.longitude, lang, unit, Constants.API_KEY
+                location.value.latitude, location.value.longitude, getLanguageCode(language).language, getUnit(tempUnit), Constants.API_KEY
             )
             viewModel.fetchForecastData(
-                location.value.latitude, location.value.longitude, lang, unit, Constants.API_KEY
+                location.value.latitude, location.value.longitude, getLanguageCode(language).language, getUnit(tempUnit), Constants.API_KEY
             )
         } else viewModel.getHomeData()
 

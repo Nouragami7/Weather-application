@@ -149,7 +149,11 @@ fun DateTimePickerField(
             modifier = Modifier.size(26.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = value, fontSize = 16.sp, color = Color.Black)
+        Text(
+            text = if (value.isNotEmpty()) value else label,
+            fontSize = 16.sp,
+            color = if (value.isNotEmpty()) Color.Black else Color.Gray
+        )
     }
 }
 

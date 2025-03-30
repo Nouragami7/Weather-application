@@ -263,7 +263,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }) {
                     Box(
-                        modifier = Modifier.padding(top= 18.dp)
+                        modifier = Modifier.padding(top= 12.dp)
                     ) {
                     SetupNavHost(
                         modifier = Modifier.padding(it),

@@ -184,5 +184,14 @@ fun isAlertExpired(date: String, time: String): Boolean {
     }
 }
 
+fun getUnit(unit: String): String {
+    return when(unit){
+        "Celsius °C" -> "metric"
+        "Kelvin °K" -> "standard"
+        "Fahrenheit °F" -> "imperial"
+        else -> "metric"
+    }
+}
+
 
 
