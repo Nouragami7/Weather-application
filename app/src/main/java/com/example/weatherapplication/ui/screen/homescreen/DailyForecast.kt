@@ -67,8 +67,7 @@ fun DailyWeatherCard(
     val weatherIcon = getWeatherIcon(icon)
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(weatherIcon))
     val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever
+        composition = composition, iterations = LottieConstants.IterateForever
     )
 
 
@@ -79,22 +78,19 @@ fun DailyWeatherCard(
     ) {
         val (forecastImage, forecastValue, sunCase, title, date, background, detailsCard) = createRefs()
 
-        CardBackground(
-            modifier = Modifier.constrainAs(background) {
-                linkTo(
-                    start = parent.start,
-                    end = parent.end,
-                    top = parent.top,
-                    bottom = title.bottom,
-                    topMargin = 24.dp
-                )
-                height = Dimension.value(220.dp)
-            }
-        )
+        CardBackground(modifier = Modifier.constrainAs(background) {
+            linkTo(
+                start = parent.start,
+                end = parent.end,
+                top = parent.top,
+                bottom = title.bottom,
+                topMargin = 24.dp
+            )
+            height = Dimension.value(220.dp)
+        })
 
-        LottieAnimation(
-            composition = composition,
-            progress = {progress},
+        LottieAnimation(composition = composition,
+            progress = { progress },
             contentScale = ContentScale.FillHeight,
             modifier = Modifier
                 .height(175.dp)
@@ -102,51 +98,40 @@ fun DailyWeatherCard(
                     start.linkTo(anchor = parent.start)
                     end.linkTo(forecastValue.start)
                     top.linkTo(parent.top)
-                }
-        )
+                })
 
-
-        Text(
-            text = forecast,
+        Text(text = forecast,
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
             modifier = Modifier.constrainAs(title) {
                 start.linkTo(anchor = parent.start, margin = 24.dp)
                 top.linkTo(anchor = forecastImage.bottom)
-            }
-        )
+            })
+
         ForecastValue(
             modifier = Modifier.constrainAs(forecastValue) {
                 end.linkTo(anchor = parent.end, margin = 24.dp)
                 top.linkTo(forecastImage.top)
                 bottom.linkTo(forecastImage.bottom)
-            },
-            degree = currentTemperature,
-            feelsLike = formatNumberBasedOnLanguage(feelsLike)
+            }, degree = currentTemperature, feelsLike = formatNumberBasedOnLanguage(feelsLike)
         )
-        DateTimeDisplay(
-            date = currentDate,
+
+        DateTimeDisplay(date = currentDate,
             time = currentTime,
             modifier = Modifier.constrainAs(date) {
-                top.linkTo(forecastValue.bottom,margin = 16.dp)
+                top.linkTo(forecastValue.bottom, margin = 16.dp)
                 start.linkTo(forecastValue.start)
                 end.linkTo(forecastValue.end)
-            }
-        )
+            })
 
-        SunCase(
-            sunrise = sunrise,
-            sunset = sunset,
-            modifier = Modifier.constrainAs(sunCase) {
-                top.linkTo(background.bottom, margin = 16.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-        )
+        SunCase(sunrise = sunrise, sunset = sunset, modifier = Modifier.constrainAs(sunCase) {
+            top.linkTo(background.bottom, margin = 16.dp)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
 
-        WeatherDetailsCard(
-            pressure = pressure,
+        WeatherDetailsCard(pressure = pressure,
             clouds = clouds,
             windSpeed = windSpeed,
             humidity = humidity,
@@ -154,9 +139,7 @@ fun DailyWeatherCard(
                 top.linkTo(sunCase.bottom, margin = 16.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-            }
-        )
-
+            })
     }
 }
 
@@ -170,40 +153,28 @@ private fun CardBackground(
             .fillMaxWidth()
             .background(
                 brush = Brush.linearGradient(
-                    0f to inversePrimaryDarkHighContrast,
-                    1f to SkyBlue,
-                    1f to LightBlue
-                ),
-                shape = RoundedCornerShape(32.dp)
+                    0f to inversePrimaryDarkHighContrast, 1f to SkyBlue, 1f to LightBlue
+                ), shape = RoundedCornerShape(32.dp)
             )
     )
 }
 
 @Composable
 private fun ForecastValue(
-    modifier: Modifier = Modifier,
-    degree: String = "21",
-    feelsLike: String = "feels like 26"
+    modifier: Modifier = Modifier, degree: String = "21", feelsLike: String = "feels like 26"
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start
+        modifier = modifier, horizontalAlignment = Alignment.Start
     ) {
         Box(
             contentAlignment = Alignment.TopEnd
         ) {
             Text(
-                text = degree,
-                letterSpacing = 0.sp,
-                style = TextStyle(
+                text = degree, letterSpacing = 0.sp, style = TextStyle(
                     brush = Brush.verticalGradient(
-                        0f to Color.White,
-                        1f to Color.White.copy(alpha = 0.3f)
-                    ),
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Black
-                ),
-                modifier = Modifier.padding(top = 16.dp)
+                        0f to Color.White, 1f to Color.White.copy(alpha = 0.3f)
+                    ), fontSize = 40.sp, fontWeight = FontWeight.Black
+                ), modifier = Modifier.padding(top = 16.dp)
             )
         }
         Text(
@@ -219,9 +190,7 @@ private fun ForecastValue(
 
 @Composable
 fun SunCase(
-    sunrise: Long = 0L,
-    sunset: Long = 0L,
-    modifier: Modifier = Modifier
+    sunrise: Long = 0L, sunset: Long = 0L, modifier: Modifier = Modifier
 ) {
     val timeOfSunrise = convertUnixToTime(sunrise)
     val timeOfSunset = convertUnixToTime(sunset)
@@ -238,11 +207,9 @@ fun SunCase(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Yellow, Orange)
-                    ),
-                    shape = RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp)
+                    ), shape = RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp)
                 )
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
+                .padding(8.dp), contentAlignment = Alignment.Center
         ) {
             SunInfoItem(
                 iconRes = R.drawable.sunrise,
@@ -257,11 +224,9 @@ fun SunCase(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Orange, DeepRed)
-                    ),
-                    shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp)
+                    ), shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp)
                 )
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
+                .padding(8.dp), contentAlignment = Alignment.Center
         ) {
             SunInfoItem(
                 iconRes = R.drawable.sunset,
@@ -322,20 +287,18 @@ fun WeatherDetailsCard(
             .fillMaxWidth()
             .background(
                 brush = Brush.linearGradient(
-                    0f to LightBlue,
-                    1f to SkyBlue
-                ),
-                shape = RoundedCornerShape(24.dp)
+                    0f to LightBlue, 1f to SkyBlue
+                ), shape = RoundedCornerShape(24.dp)
             )
             .padding(16.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             WeatherDetailItem(R.drawable.pressure, stringResource(R.string.pressure), pressure)
-            WeatherDetailItem(R.drawable.ic_air_quality_header,
-                stringResource(R.string.clouds), clouds)
+            WeatherDetailItem(
+                R.drawable.ic_air_quality_header, stringResource(R.string.clouds), clouds
+            )
             WeatherDetailItem(R.drawable.ic_wind, stringResource(R.string.wind), windSpeed)
             WeatherDetailItem(R.drawable.humidity, stringResource(R.string.humidity), humidity)
         }
@@ -362,26 +325,19 @@ fun WeatherDetailItem(iconRes: Int, label: String, value: String) {
 
 @Composable
 fun DateTimeDisplay(
-    date: String,
-    time: String,
-    modifier: Modifier = Modifier
+    date: String, time: String, modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = date,
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+            text = date, style = TextStyle(
+                fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = time,
-            style = TextStyle(
+            text = time, style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White.copy(alpha = 0.8f)

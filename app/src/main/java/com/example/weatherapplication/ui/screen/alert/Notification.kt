@@ -99,7 +99,6 @@ fun playNotificationSound(context: Context) {
         }
     }
 }
-
 fun stopNotificationSound() {
     mediaPlayer?.stop()
     mediaPlayer?.release()

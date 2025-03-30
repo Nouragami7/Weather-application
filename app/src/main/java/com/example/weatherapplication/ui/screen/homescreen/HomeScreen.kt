@@ -169,13 +169,8 @@ fun HomeScreen(modifier: Modifier = Modifier, location: MutableState<Location>) 
                         }
 
                         is ResponseState.Failure -> {
-                            /* val errorMessage = (homeState as ResponseState.Failure).message.message
-                                 ?: stringResource(R.string.unknown_error)
-                             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
- */
                             LottieAnimationView(
-                                resId = R.raw.no_internet,
-                                modifier = Modifier.fillMaxSize()
+                                resId = R.raw.no_internet, modifier = Modifier.fillMaxSize()
                             )
                         }
 
@@ -242,10 +237,19 @@ fun HomeContent(
                         abbreviationTempUnit(tempUnit)
                     )
                 }",
-                pressure = stringResource(R.string.hpa, weather.main.pressure),
-                clouds = "${weather.clouds.all} ${stringResource(R.string.percentage)}",
-                windSpeed = "${weather.wind.speed} ${formatWindSpeedBasedOnLanguage(windSpeedUnit)}",
-                humidity = "${weather.main.humidity} ${stringResource(R.string.percentage)}",
+                pressure = stringResource(
+                    R.string.hpa,
+                    formatNumberBasedOnLanguage(weather.main.pressure.toString())
+                ),
+                clouds = "${formatNumberBasedOnLanguage(weather.clouds.all.toString())} ${
+                    stringResource(R.string.percentage)
+                }",
+                windSpeed = "${formatNumberBasedOnLanguage(weather.wind.speed.toString())} ${
+                    formatWindSpeedBasedOnLanguage(windSpeedUnit)
+                }",
+                humidity = "${formatNumberBasedOnLanguage(weather.main.humidity.toString())} ${
+                    stringResource(R.string.percentage)
+                }",
                 currentTemperature = "${formatNumberBasedOnLanguage(weather.main.temp.toString())} ${
                     formatTemperatureUnitBasedOnLanguage(
                         abbreviationTempUnit(tempUnit)

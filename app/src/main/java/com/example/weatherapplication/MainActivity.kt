@@ -1,5 +1,7 @@
 package com.example.weatherapplication
 
+import ConnectivityObserver
+import OfflineBar
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,7 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
@@ -48,6 +53,7 @@ import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.checkForInternet
 import com.example.weatherapplication.utils.setLocale
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -221,22 +227,50 @@ class MainActivity : ComponentActivity() {
             val isBottomNavigationVisible = remember { mutableStateOf(true) }
             var selectedIndex = remember { mutableStateOf(0) }
 
+            val context = LocalContext.current
+
+
+
+            val connectivityObserver = remember { ConnectivityObserver(context) }
+            val isConnected by connectivityObserver.isConnected.collectAsStateWithLifecycle(
+                initialValue = checkForInternet(
+                    context
+                ))
+
             if (displaySplashScreen) {
                 SplashScreen {
                     displaySplashScreen = false
                     PermissionUtils.requestLocationPermissions(this)
                 }
             } else {
-                Scaffold(bottomBar = {
+                Scaffold(
+                    topBar = {
+                        if (!isConnected) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .padding(top = 34.dp)
+                            ) {
+                                OfflineBar()
+                            }
+                        }
+                    },
+
+                    bottomBar = {
                     if (isBottomNavigationVisible.value) {
                         BottomNavigation(selectedIndex)
                     }
                 }) {
+                    Box(
+                        modifier = Modifier.padding(top= 18.dp)
+                    ) {
                     SetupNavHost(
                         modifier = Modifier.padding(it),
                         if (settingsLocation == "GPS") locationState else mapLocationState,
                         isBottomNavigationVisible = { visible -> isBottomNavigationVisible.value = visible }
                     )
+                    }
                 }
             }
         }

@@ -177,10 +177,14 @@ fun AlertScreen() {
             }
 
             if (isSheetOpen) {
-                ModalBottomSheet(onDismissRequest = { isSheetOpen = false }) {
+                ModalBottomSheet(
+                    onDismissRequest = { isSheetOpen = false },
+                    containerColor = SkyBlue
+                ) {
                     BottomSheetContent(
                         alertViewModel = alertViewModel,
-                        context = context
+                        context = context,
+
                     ) { isSheetOpen = false }
                 }
             }

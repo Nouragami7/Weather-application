@@ -16,12 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,9 +43,6 @@ import java.util.Calendar
 fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismiss: () -> Unit) {
     var selectedDate by remember { mutableStateOf("") }
     var startTime by remember { mutableStateOf("") }
-    var selectedOption by remember { mutableStateOf("Alarm") }
-    val options = listOf(stringResource(R.string.alarm), stringResource(R.string.notification))
-    val icons = listOf(R.drawable.alarm, R.drawable.notification)
 
     Column(
         modifier = Modifier
@@ -71,38 +65,6 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
         }
         DateTimePickerField(context, "Start Time", startTime, R.drawable.clock) {
             startTime = it
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = stringResource(R.string.notify_me_by), fontWeight = FontWeight.SemiBold, color = Color.Black)
-
-        Column(Modifier.selectableGroup().padding(vertical = 8.dp)) {
-            options.forEachIndexed { index, option ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = (option == selectedOption),
-                            onClick = { selectedOption = option }
-                        )
-                        .padding(vertical = 6.dp)
-                ) {
-                    RadioButton(
-                        selected = (option == selectedOption),
-                        onClick = { selectedOption = option }
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = icons[index]),
-                        contentDescription = option,
-                        modifier = Modifier.size(26.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(option, color = Color.Black)
-                }
-            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
