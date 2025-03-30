@@ -65,6 +65,7 @@ import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.viewmodel.AlertViewModel
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -191,13 +192,13 @@ fun AlertItem(
     alertViewModel: AlertViewModel,
     snackbarHostState: SnackbarHostState
 ) {
- /*   val alertTimeMillis = parseDateTimeToMillis(alertData.startDate, alertData.startTime)
-    val currentTimeMillis = System.currentTimeMillis()
-
-    if (alertTimeMillis < currentTimeMillis) {
-        alertViewModel.deleteFromAlerts(alertData)
+    LaunchedEffect(alertData) {
+        if (isAlertExpired(alertData.startDate, alertData.startTime)) {
+            alertViewModel.deleteFromAlerts(alertData)
+        }
     }
-*/
+
+
 
     SwipeToDeleteContainer(
         item = alertData,
@@ -256,7 +257,6 @@ fun AlertItem(
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
-
                         Text(
                             text = alertData.startDate,
                             fontSize = 16.sp,
@@ -278,4 +278,27 @@ fun AlertItem(
         }
     }
 }
+
+
+fun isAlertExpired(date: String, time: String): Boolean {
+    return try {
+        val dateParts = date.split("/").map { it.toInt() }
+        val timeParts = time.split(":").map { it.toInt() }
+
+        val alertCalendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, dateParts[0])
+            set(Calendar.MONTH, dateParts[1] - 1)
+            set(Calendar.YEAR, dateParts[2])
+            set(Calendar.HOUR_OF_DAY, timeParts[0])
+            set(Calendar.MINUTE, timeParts[1])
+            set(Calendar.SECOND, 0)
+        }
+
+        val now = Calendar.getInstance()
+        alertCalendar.before(now)
+    } catch (e: Exception) {
+        false // If parsing fails, assume it's not expired
+    }
+}
+
 

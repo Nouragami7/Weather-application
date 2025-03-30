@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.ui.screen.alert.isAlertExpired
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,13 +22,33 @@ class AlertViewModel(private val repository: WeatherRepository) : ViewModel() {
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
+    private val periodicCheckJob = viewModelScope.launch {
+        while (true) {
+            delay(60 * 1000)
+            fetchAlertData()
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            periodicCheckJob.start()
+        }
+    }
 
     fun fetchAlertData() {
         viewModelScope.launch {
             try {
                 val alertData = repository.getAllAlerts()
-                alertData.collect {
-                    _alertData.value = ResponseState.Success(it)
+                alertData.collect { alerts ->
+                    val validAlerts = alerts.filter { alert ->
+                        !isAlertExpired(alert.startDate, alert.startTime)
+                    }
+                    alerts.forEach { alert ->
+                        if (isAlertExpired(alert.startDate, alert.startTime)) {
+                            repository.deleteAlert(alert)
+                        }
+                    }
+                    _alertData.value = ResponseState.Success(validAlerts)
                     mutableMessage.emit("Alert data fetched successfully")
                 }
             } catch (e: Exception) {
