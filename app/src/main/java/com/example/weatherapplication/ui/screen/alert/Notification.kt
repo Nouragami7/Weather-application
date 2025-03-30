@@ -47,22 +47,29 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
     val channelId = "message_channel"
     val soundUri = Uri.parse("android.resource://${context.packageName}/raw/loud_notification")
 
-    playNotificationSound(context) // Start alarm sound
+    playNotificationSound(context)
 
-    // Intent to stop sound and open MainActivity
     val openIntent = Intent(context, StopSoundReceiver::class.java).apply {
-        putExtra("open_main", true) // Flag to indicate opening MainActivity
+        putExtra("open_main", true)
+        putExtra("notification_id", 1)
     }
 
-    // Intent to only stop sound when clicking "Cancel"
-    val stopSoundIntent = Intent(context, StopSoundReceiver::class.java)
-    val stopSoundPendingIntent = PendingIntent.getBroadcast(
-        context, 0, stopSoundIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-
+    val cancelIntent = Intent(context, StopSoundReceiver::class.java).apply {
+        putExtra("notification_id", 1)
+    }
 
     val openPendingIntent = PendingIntent.getBroadcast(
-        context, 1, openIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        context,
+        1,
+        openIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val cancelPendingIntent = PendingIntent.getBroadcast(
+        context,
+        2,
+        cancelIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     val notification = NotificationCompat.Builder(context, channelId)
@@ -73,8 +80,8 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setSound(soundUri)
         .setVibrate(longArrayOf(500, 1000, 500, 1000))
-        .addAction(R.drawable.clear_night, "Open", openPendingIntent) // Now stops sound before opening MainActivity
-        .addAction(R.drawable.snowy, "Cancel", stopSoundPendingIntent) // Stops sound only
+        .addAction(R.drawable.clear_night, "Open", openPendingIntent)
+        .addAction(R.drawable.snowy, "Cancel", cancelPendingIntent)
         .setAutoCancel(true)
         .build()
 

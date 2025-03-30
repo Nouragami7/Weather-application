@@ -61,9 +61,9 @@ object PreferenceConstants {
     const val LANGUAGE_ENGLISH = "English"
     const val LANGUAGE_ARABIC = "Arabic"
 
-    const val TEMP_UNIT_CELSIUS = "Celsius"
-    const val TEMP_UNIT_KELVIN = "Kelvin"
-    const val TEMP_UNIT_FAHRENHEIT = "Fahrenheit"
+    const val TEMP_UNIT_CELSIUS = "Celsius °C"
+    const val TEMP_UNIT_KELVIN = "Kelvin °K"
+    const val TEMP_UNIT_FAHRENHEIT = "Fahrenheit °F"
 
     const val LOCATION_GPS = "GPS"
     const val LOCATION_MAP = "Map"
