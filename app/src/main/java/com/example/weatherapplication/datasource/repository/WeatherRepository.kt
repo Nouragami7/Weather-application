@@ -5,6 +5,7 @@ import com.example.weatherapplication.datasource.remote.IWeatherRemoteDataSource
 import com.example.weatherapplication.domain.model.AlertData
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
+import com.example.weatherapplication.domain.model.HomeData
 import com.example.weatherapplication.domain.model.LocationData
 import kotlinx.coroutines.flow.Flow
 
@@ -44,7 +45,7 @@ class WeatherRepository private constructor(
        return localDataSource.deleteLocation(lat, lng)
     }
 
-    override suspend fun insertAlert(alertData: AlertData) {
+    override suspend fun insertAlert(alertData: AlertData): Long {
         return localDataSource.insertAlert(alertData)
 
     }
@@ -57,7 +58,15 @@ class WeatherRepository private constructor(
         return localDataSource.deleteAlert(alertData)
     }
 
-    companion object { // do not need to make an object of this class to call getInstance fun
+    override suspend fun insertHomeData(homeData: HomeData) {
+        localDataSource.insertHomeData(homeData)
+    }
+
+    override suspend fun getHomeData(): Flow<HomeData> {
+        return localDataSource.getHomeData()
+    }
+
+    companion object {
         @Volatile
         private var instance: WeatherRepository? = null
         fun getInstance(remoteDataSource: IWeatherRemoteDataSource, localDataSource: IWeatherLocalDataSource): WeatherRepository {

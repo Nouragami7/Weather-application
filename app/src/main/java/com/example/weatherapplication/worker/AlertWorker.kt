@@ -19,6 +19,15 @@ import showNotification
 
 class NotificationWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
+
+    companion object {
+        const val ALERT_ID_KEY = "alert_id"
+
+        fun getWorkName(alertId: Int): String {
+            return "notification_alert_$alertId"
+        }
+    }
+
     override fun doWork(): Result {
 
         val repository = WeatherRepository.getInstance(

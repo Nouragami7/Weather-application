@@ -1,12 +1,14 @@
 package com.example.weatherapplication.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
-import com.example.weatherapplication.ui.screen.alert.isAlertExpired
+import com.example.weatherapplication.utils.isAlertExpired
+import com.example.weatherapplication.worker.cancelNotification
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,10 +61,12 @@ class AlertViewModel(private val repository: WeatherRepository) : ViewModel() {
     }
 
 
-    fun deleteFromAlerts(alertData: AlertData) {
+    fun deleteFromAlerts(alertData: AlertData,context: Context) {
         viewModelScope.launch {
             try {
+                cancelNotification(context, alertData.id)
                 repository.deleteAlert(alertData)
+                fetchAlertData()
             } catch (e: Exception) {
                 mutableMessage.emit("Error fetching alert data: ${e.message}")
 
@@ -71,17 +75,16 @@ class AlertViewModel(private val repository: WeatherRepository) : ViewModel() {
 
     }
 
-    fun insertAtAlerts(alertData: AlertData) {
+    fun insertAtAlerts(alertData: AlertData, onSuccess: (Int) -> Unit) {
         viewModelScope.launch {
             try {
-                repository.insertAlert(alertData)
+                val insertedId = repository.insertAlert(alertData).toInt()
                 mutableMessage.emit("Alert Added")
+                onSuccess(insertedId)
             } catch (e: Exception) {
-                mutableMessage.emit("Error fetching alert data: ${e.message}")
-
+                mutableMessage.emit("Error adding alert: ${e.message}")
             }
         }
-
     }
 
     class AlertFactory(

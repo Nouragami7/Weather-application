@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
+import com.example.weatherapplication.domain.model.HomeData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,6 +20,10 @@ class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
 
     private val mutableForecastData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val forecastData = mutableForecastData.asStateFlow()
+
+    private val mutableHomeData = MutableStateFlow<ResponseState>(ResponseState.Loading)
+    val homeData = mutableHomeData.asStateFlow()
+
 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
@@ -56,6 +61,23 @@ class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
             }
         }
 
+    }
+
+
+    fun insertHomeDate(homeData: HomeData) {
+        viewModelScope.launch {
+            repository.insertHomeData(homeData)
+        }
+    }
+
+    fun getHomeData() {
+        viewModelScope.launch {
+            repository.getHomeData().collect {
+                mutableHomeData.value = ResponseState.Success(it)
+                Log.i(TAG, "getHomeData from db: $it")
+
+            }
+        }
     }
 
     class WeatherFactory(

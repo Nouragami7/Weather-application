@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.domain.model.HomeData
 import com.example.weatherapplication.domain.model.LocationData
 import kotlinx.coroutines.flow.Flow
 
@@ -24,12 +25,20 @@ interface LocationDAO{
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAlert(alertData: AlertData)
+    suspend fun insertAlert(alertData: AlertData):Long
 
     @Query("SELECT * FROM Alert")
     fun getAllAlert(): Flow<List<AlertData>>
 
     @Delete
     suspend fun deleteAlert(alertData: AlertData)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHomeData(homeData: HomeData)
+
+    @Query("SELECT * FROM HomeData")
+    fun getHomeData():Flow<HomeData>
+
+
 
 }

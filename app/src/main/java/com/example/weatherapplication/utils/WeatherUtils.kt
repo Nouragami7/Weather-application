@@ -21,8 +21,7 @@ import com.example.weatherapplication.ui.theme.SnowStart
 import com.example.weatherapplication.ui.theme.ThunderstormEnd
 import com.example.weatherapplication.ui.theme.ThunderstormStart
 import com.example.weatherapplication.utils.Constants.Companion.PREF_NAME
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
 
 
@@ -164,14 +163,24 @@ fun formatWindSpeedBasedOnLanguage(unit: String): String {
 }
 
 
-fun parseDateTimeToMillis(date: String, time: String): Long {
+fun isAlertExpired(date: String, time: String): Boolean {
     return try {
-        val formatter = SimpleDateFormat("yyyy-MM-dd h:mm a", Locale.getDefault())
-        val dateTimeString = "$date $time"
-        formatter.parse(dateTimeString)?.time ?: 0L
+        val dateParts = date.split("/").map { it.toInt() }
+        val timeParts = time.split(":").map { it.toInt() }
+
+        val alertCalendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, dateParts[0])
+            set(Calendar.MONTH, dateParts[1] - 1)
+            set(Calendar.YEAR, dateParts[2])
+            set(Calendar.HOUR_OF_DAY, timeParts[0])
+            set(Calendar.MINUTE, timeParts[1])
+            set(Calendar.SECOND, 0)
+        }
+
+        val now = Calendar.getInstance()
+        alertCalendar.before(now)
     } catch (e: Exception) {
-        e.printStackTrace()
-        0L
+        false
     }
 }
 

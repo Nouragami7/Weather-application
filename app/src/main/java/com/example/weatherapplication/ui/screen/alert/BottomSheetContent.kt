@@ -127,19 +127,25 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
                         val delayInMillis = notificationTime - now
 
                         if (delayInMillis > 0) {
-                            scheduleNotification(context, delayInMillis)
-                            onDismiss()
+                            val newAlert = AlertData(
+                                startDate = selectedDate,
+                                startTime = startTime
+                            )
+
+                            alertViewModel.insertAtAlerts(newAlert) { alertId ->
+                                scheduleNotification(context, delayInMillis, alertId)
+                                onDismiss()
+                            }
                         } else {
                             Toast.makeText(context, "Please select a future time", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         Toast.makeText(context, "Please select date and time", Toast.LENGTH_SHORT).show()
                     }
-                    alertViewModel.insertAtAlerts(alertData = AlertData(startDate = selectedDate, startTime = startTime))
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
                 modifier = Modifier.weight(1f).height(50.dp)
-            ) {
+            ){
                 Text(stringResource(R.string.save), fontSize = 18.sp)
             }
 

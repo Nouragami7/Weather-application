@@ -1,6 +1,7 @@
 package com.example.weatherapplication.datasource.local
 
 import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.domain.model.HomeData
 import com.example.weatherapplication.domain.model.LocationData
 import kotlinx.coroutines.flow.Flow
 
@@ -17,10 +18,8 @@ class WeatherLocalDataSource(private val locationDAO: LocationDAO) : IWeatherLoc
         return locationDAO.deleteLocation(lat, lng)
     }
 
-    override suspend fun insertAlert(alertData: AlertData) {
+    override suspend fun insertAlert(alertData: AlertData):Long {
         return locationDAO.insertAlert(alertData)
-
-
     }
 
     override suspend fun getAllAlerts(): Flow<List<AlertData>> {
@@ -31,4 +30,11 @@ class WeatherLocalDataSource(private val locationDAO: LocationDAO) : IWeatherLoc
         return locationDAO.deleteAlert(alertData)
     }
 
+    override suspend fun insertHomeData(homeData: HomeData) {
+        locationDAO.insertHomeData(homeData)
+    }
+
+    override suspend fun getHomeData(): Flow<HomeData> {
+        return locationDAO.getHomeData()
+    }
 }

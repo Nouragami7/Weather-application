@@ -221,7 +221,9 @@ fun FavouriteItem(
         onDelete = { item ->
             favViewModel.deleteFromFavourite(item.latitude, item.longitude)
         },
-        onRestore = {},
+        onRestore = {
+            favViewModel.addLastDeletedLocation()
+        },
         snackbarHostState = snackbarHostState
     ) { item ->
         Card(

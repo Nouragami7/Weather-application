@@ -1,6 +1,7 @@
 package com.example.weatherapplication.ui.screen.alert
 
 import LottieAnimationView
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -64,8 +65,8 @@ import com.example.weatherapplication.ui.screen.favourite.favouritescreen.SwipeT
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
+import com.example.weatherapplication.utils.isAlertExpired
 import com.example.weatherapplication.viewmodel.AlertViewModel
-import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -165,6 +166,7 @@ fun AlertScreen() {
                                     AlertItem(
                                         alerts[index],
                                         alertViewModel,
+                                         context,
                                         snackbarHostState
                                     )
                                 }
@@ -190,22 +192,27 @@ fun AlertScreen() {
 fun AlertItem(
     alertData: AlertData,
     alertViewModel: AlertViewModel,
+    context: Context,
     snackbarHostState: SnackbarHostState
 ) {
+
     LaunchedEffect(alertData) {
         if (isAlertExpired(alertData.startDate, alertData.startTime)) {
-            alertViewModel.deleteFromAlerts(alertData)
+            alertViewModel.deleteFromAlerts(alertData, context)
         }
     }
-
-
 
     SwipeToDeleteContainer(
         item = alertData,
         onDelete = {
-            alertViewModel.deleteFromAlerts(alertData)
+            alertViewModel.deleteFromAlerts(alertData,context)
         },
-        onRestore = {},
+        onRestore = {
+            alertViewModel.insertAtAlerts(
+                alertData,
+                onSuccess = {},
+            )
+        },
         snackbarHostState = snackbarHostState
     ) {
         Card(
@@ -244,7 +251,7 @@ fun AlertItem(
                     )
 
                     Column(
-                        modifier = Modifier.weight(1f), // Pushes the icon to the right
+                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
@@ -280,25 +287,6 @@ fun AlertItem(
 }
 
 
-fun isAlertExpired(date: String, time: String): Boolean {
-    return try {
-        val dateParts = date.split("/").map { it.toInt() }
-        val timeParts = time.split(":").map { it.toInt() }
 
-        val alertCalendar = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, dateParts[0])
-            set(Calendar.MONTH, dateParts[1] - 1)
-            set(Calendar.YEAR, dateParts[2])
-            set(Calendar.HOUR_OF_DAY, timeParts[0])
-            set(Calendar.MINUTE, timeParts[1])
-            set(Calendar.SECOND, 0)
-        }
-
-        val now = Calendar.getInstance()
-        alertCalendar.before(now)
-    } catch (e: Exception) {
-        false // If parsing fails, assume it's not expired
-    }
-}
 
 

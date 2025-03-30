@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.domain.model.HomeData
 import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.utils.Converters
 
-@Database(entities = [LocationData::class,AlertData::class], version = 5, exportSchema = false)
+@Database(entities = [LocationData::class,AlertData::class, HomeData::class], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDAO
