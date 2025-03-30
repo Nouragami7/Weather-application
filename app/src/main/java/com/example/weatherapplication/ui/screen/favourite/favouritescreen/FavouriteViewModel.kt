@@ -86,7 +86,7 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
    viewModelScope.launch {
        try {
                repository.deleteLocation(lat, lng)
-                getAllFavouriteLocations()
+               // getAllFavouriteLocations()
        } catch (e: Exception) {
            _toastEvent.emit("An error occurred: ${e.message}")
        }

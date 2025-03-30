@@ -1,44 +1,92 @@
 package com.example.weatherapplication.ui.screen.alert
 
 import LottieAnimationView
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
+import com.example.weatherapplication.datasource.local.WeatherDatabase
+import com.example.weatherapplication.datasource.local.WeatherLocalDataSource
+import com.example.weatherapplication.datasource.remote.ApiService
+import com.example.weatherapplication.datasource.remote.ResponseState
+import com.example.weatherapplication.datasource.remote.RetrofitHelper
+import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
+import com.example.weatherapplication.datasource.repository.WeatherRepository
+import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.LoadingIndicator
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.SwipeToDeleteContainer
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
+import com.example.weatherapplication.viewmodel.AlertViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun AlertScreen() {
     var isSheetOpen by remember { mutableStateOf(false) }
-    var hasData by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val factory = AlertViewModel.AlertFactory(
+        WeatherRepository.getInstance(
+            WeatherRemoteDataSource(RetrofitHelper.retrofitInstance.create(ApiService::class.java)),
+            WeatherLocalDataSource(WeatherDatabase.getDatabase(context).locationDao())
+        )
+    )
+    val alertViewModel: AlertViewModel = viewModel(factory = factory)
+    val alertState by alertViewModel.alert.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        alertViewModel.fetchAlertData()
+
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -54,7 +102,8 @@ fun AlertScreen() {
                     tint = onPrimaryDark
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -83,29 +132,148 @@ fun AlertScreen() {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (!hasData) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LottieAnimationView(
-                            resId = R.raw.no_fav,
-                            modifier = Modifier.size(300.dp)
-                        )
+                when (alertState) {
+                    is ResponseState.Failure -> {
+                        LaunchedEffect(Unit) {
+                            snackbarHostState.showSnackbar(
+                                "Error: ${(alertState as ResponseState.Failure).message}"
+                            )
+                        }
                     }
-                } else {
-                    DetailsAlert()
-                }
 
+                    ResponseState.Loading -> LoadingIndicator()
+                    is ResponseState.Success<*> -> {
+                        val alerts = (alertState as ResponseState.Success<List<AlertData>>).data
+                        if (alerts.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LottieAnimationView(
+                                    resId = R.raw.no_fav,
+                                    modifier = Modifier.size(300.dp)
+                                )
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                items(alerts.size) { index ->
+                                    AlertItem(
+                                        alerts[index],
+                                        alertViewModel,
+                                        snackbarHostState
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isSheetOpen) {
+                ModalBottomSheet(onDismissRequest = { isSheetOpen = false }) {
+                    BottomSheetContent(
+                        alertViewModel = alertViewModel,
+                        context = context
+                    ) { isSheetOpen = false }
+                }
             }
         }
+    }
+}
 
-        if (isSheetOpen) {
-            ModalBottomSheet(
-                onDismissRequest = { isSheetOpen = false },
+@Composable
+fun AlertItem(
+    alertData: AlertData,
+    alertViewModel: AlertViewModel,
+    snackbarHostState: SnackbarHostState
+) {
+ /*   val alertTimeMillis = parseDateTimeToMillis(alertData.startDate, alertData.startTime)
+    val currentTimeMillis = System.currentTimeMillis()
+
+    if (alertTimeMillis < currentTimeMillis) {
+        alertViewModel.deleteFromAlerts(alertData)
+    }
+*/
+
+    SwipeToDeleteContainer(
+        item = alertData,
+        onDelete = {
+            alertViewModel.deleteFromAlerts(alertData)
+        },
+        onRestore = {},
+        snackbarHostState = snackbarHostState
+    ) {
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(12.dp)
+                .shadow(10.dp, RoundedCornerShape(24.dp)),
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF64A8F1), Color(0xFF7CD1EF)), // Blue gradient
+                            start = Offset(0f, 0f),
+                            end = Offset(400f, 400f)
+                        ),
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                BottomSheetContent(context = LocalContext.current) { isSheetOpen = false }
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.countries),
+                        contentDescription = "Country Icon",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(end = 12.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.weight(1f), // Pushes the icon to the right
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = alertData.startTime,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            letterSpacing = 1.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = alertData.startDate,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White.copy(alpha = 0.9f),
+                            letterSpacing = 0.5.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "Location Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }

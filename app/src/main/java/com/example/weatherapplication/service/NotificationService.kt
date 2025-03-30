@@ -1,16 +1,40 @@
 package com.example.weatherapplication.service
 
-/*
-class NotificationService : Service() {
+import android.app.Service
+import android.content.Intent
+import android.media.MediaPlayer
+import android.os.IBinder
+import com.example.weatherapplication.R
+
+class NotificationSoundService : Service() {
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val locationJson = intent?.getStringExtra("location") ?: return START_NOT_STICKY
-        val location = Gson().fromJson(locationJson, LocationData::class.java)
-
-        val delay = calculateDelay(15, 26)
-        scheduleNotification(this, location, delay)
-
+        if (intent?.action == "STOP_SOUND") {
+            stopSound()
+            stopSelf()
+        } else {
+            playSound()
+        }
         return START_STICKY
     }
-    override fun onBind(intent: Intent?): IBinder? = null
-}*/
+
+    private fun playSound() {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.notification).apply {
+                isLooping = true
+                start()
+            }
+        }
+    }
+
+    private fun stopSound() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+}

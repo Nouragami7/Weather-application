@@ -37,11 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapplication.R
+import com.example.weatherapplication.domain.model.AlertData
+import com.example.weatherapplication.viewmodel.AlertViewModel
 import com.example.weatherapplication.worker.scheduleNotification
 import java.util.Calendar
 
 @Composable
-fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
+fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismiss: () -> Unit) {
     var selectedDate by remember { mutableStateOf("") }
     var startTime by remember { mutableStateOf("") }
     var selectedOption by remember { mutableStateOf("Alarm") }
@@ -133,6 +135,7 @@ fun BottomSheetContent(context: Context, onDismiss: () -> Unit) {
                     } else {
                         Toast.makeText(context, "Please select date and time", Toast.LENGTH_SHORT).show()
                     }
+                    alertViewModel.insertAtAlerts(alertData = AlertData(startDate = selectedDate, startTime = startTime))
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
                 modifier = Modifier.weight(1f).height(50.dp)

@@ -21,6 +21,8 @@ import com.example.weatherapplication.ui.theme.SnowStart
 import com.example.weatherapplication.ui.theme.ThunderstormEnd
 import com.example.weatherapplication.ui.theme.ThunderstormStart
 import com.example.weatherapplication.utils.Constants.Companion.PREF_NAME
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 
@@ -160,5 +162,18 @@ fun formatWindSpeedBasedOnLanguage(unit: String): String {
         unit
     }
 }
+
+
+fun parseDateTimeToMillis(date: String, time: String): Long {
+    return try {
+        val formatter = SimpleDateFormat("yyyy-MM-dd h:mm a", Locale.getDefault())
+        val dateTimeString = "$date $time"
+        formatter.parse(dateTimeString)?.time ?: 0L
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0L
+    }
+}
+
 
 

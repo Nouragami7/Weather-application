@@ -2,6 +2,7 @@ package com.example.weatherapplication.datasource.repository
 
 import com.example.weatherapplication.datasource.local.IWeatherLocalDataSource
 import com.example.weatherapplication.datasource.remote.IWeatherRemoteDataSource
+import com.example.weatherapplication.domain.model.AlertData
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.domain.model.LocationData
@@ -41,6 +42,19 @@ class WeatherRepository private constructor(
 
     override suspend fun deleteLocation(lat: Double, lng: Double) {
        return localDataSource.deleteLocation(lat, lng)
+    }
+
+    override suspend fun insertAlert(alertData: AlertData) {
+        return localDataSource.insertAlert(alertData)
+
+    }
+
+    override suspend fun getAllAlerts(): Flow<List<AlertData>> {
+        return localDataSource.getAllAlerts()
+    }
+
+    override suspend fun deleteAlert(alertData: AlertData) {
+        return localDataSource.deleteAlert(alertData)
     }
 
     companion object { // do not need to make an object of this class to call getInstance fun
