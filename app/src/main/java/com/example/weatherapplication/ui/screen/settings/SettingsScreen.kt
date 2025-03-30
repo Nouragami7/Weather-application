@@ -55,30 +55,75 @@ import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.setLocale
-import java.util.Locale
+
+
+object PreferenceConstants {
+    const val LANGUAGE_ENGLISH = "English"
+    const val LANGUAGE_ARABIC = "Arabic"
+
+    const val TEMP_UNIT_CELSIUS = "Celsius"
+    const val TEMP_UNIT_KELVIN = "Kelvin"
+    const val TEMP_UNIT_FAHRENHEIT = "Fahrenheit"
+
+    const val LOCATION_GPS = "GPS"
+    const val LOCATION_MAP = "Map"
+
+    const val WIND_SPEED_METER_SEC = "meter/sec"
+    const val WIND_SPEED_MILE_HOUR = "mile/hour"
+}
+
+
 
 @Composable
 fun SettingsScreen(location: MutableState<Location>) {
     val sharedPreference = SharedPreference()
     val context = LocalContext.current
+    val languageOptions = mapOf(
+        PreferenceConstants.LANGUAGE_ENGLISH to stringResource(R.string.english),
+        PreferenceConstants.LANGUAGE_ARABIC to stringResource(R.string.arabic)
+    )
 
-    var selectedLanguage by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "language") ?: "English") }
-    var selectedTempUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "tempUnit") ?: "Celsius °C") }
-    var selectedLocation by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "location") ?: "GPS") }
-    var selectedWindSpeedUnit by remember { mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec") }
+    val tempUnitOptions = mapOf(
+        PreferenceConstants.TEMP_UNIT_CELSIUS to stringResource(R.string.celsius_c),
+        PreferenceConstants.TEMP_UNIT_KELVIN to stringResource(R.string.kelvin_k),
+        PreferenceConstants.TEMP_UNIT_FAHRENHEIT to stringResource(R.string.fahrenheit_f)
+    )
+
+    val locationOptions = mapOf(
+        PreferenceConstants.LOCATION_GPS to stringResource(R.string.gps),
+        PreferenceConstants.LOCATION_MAP to stringResource(R.string.map)
+    )
+
+    val windSpeedOptions = mapOf(
+        PreferenceConstants.WIND_SPEED_METER_SEC to stringResource(R.string.meter_sec),
+        PreferenceConstants.WIND_SPEED_MILE_HOUR to stringResource(R.string.mile_hour)
+    )
+
+    var selectedLanguage by remember {
+        mutableStateOf(sharedPreference.getFromSharedPreference(context, "language") ?: PreferenceConstants.LANGUAGE_ENGLISH)
+    }
+    var selectedTempUnit by remember {
+        mutableStateOf(sharedPreference.getFromSharedPreference(context, "tempUnit") ?: PreferenceConstants.TEMP_UNIT_CELSIUS)
+    }
+    var selectedLocation by remember {
+        mutableStateOf(sharedPreference.getFromSharedPreference(context, "location") ?: PreferenceConstants.LOCATION_GPS)
+    }
+    var selectedWindSpeedUnit by remember {
+        mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: PreferenceConstants.WIND_SPEED_METER_SEC)
+    }
 
     LaunchedEffect(selectedTempUnit, selectedWindSpeedUnit) {
-        if ((selectedTempUnit == "Fahrenheit °F" || selectedTempUnit == "فهرنهايت °ف") &&
-            !(selectedWindSpeedUnit == "mile/hour" || selectedWindSpeedUnit == "ميل/ساعة")) {
+        if (selectedTempUnit == PreferenceConstants.TEMP_UNIT_FAHRENHEIT &&
+            selectedWindSpeedUnit != PreferenceConstants.WIND_SPEED_MILE_HOUR) {
 
-            selectedWindSpeedUnit = if (Locale.getDefault().language == "ar") "ميل/ساعة" else "mile/hour"
+            selectedWindSpeedUnit = PreferenceConstants.WIND_SPEED_MILE_HOUR
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
 
-        } else if ((selectedTempUnit == "Celsius °C" || selectedTempUnit == "Kelvin °K" ||
-                    selectedTempUnit == "درجة مئوية °س" || selectedTempUnit == "كلفن °ك") &&
-            (selectedWindSpeedUnit == "mile/hour" || selectedWindSpeedUnit == "ميل/ساعة")) {
+        } else if ((selectedTempUnit == PreferenceConstants.TEMP_UNIT_CELSIUS ||
+                    selectedTempUnit == PreferenceConstants.TEMP_UNIT_KELVIN) &&
+            selectedWindSpeedUnit == PreferenceConstants.WIND_SPEED_MILE_HOUR) {
 
-            selectedWindSpeedUnit = if (Locale.getDefault().language == "ar") "متر/ثانية" else "meter/sec"
+            selectedWindSpeedUnit = PreferenceConstants.WIND_SPEED_METER_SEC
             sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
         }
     }
@@ -107,12 +152,14 @@ fun SettingsScreen(location: MutableState<Location>) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
         SettingsCard(
             title = stringResource(R.string.language),
-            options = listOf(stringResource(R.string.arabic), stringResource(R.string.english)),
-            selectedOption = selectedLanguage,
-            onSelectedOption = { newLanguage ->
+            options = languageOptions.values.toList(),
+            selectedOption = languageOptions[selectedLanguage] ?: "",
+            onSelectedOption = { displayedOption ->
+                val newLanguage = languageOptions.entries.find { it.value == displayedOption }?.key
+                    ?: PreferenceConstants.LANGUAGE_ENGLISH
+                selectedLanguage = newLanguage
                 sharedPreference.saveToSharedPreference(context, "language", newLanguage)
                 sharedPreference.saveToSharedPreference(context, "tempUnit", selectedTempUnit)
                 sharedPreference.saveToSharedPreference(context, "location", selectedLocation)
@@ -127,40 +174,69 @@ fun SettingsScreen(location: MutableState<Location>) {
             iconRes = R.drawable.language
         )
 
+        SettingsCard(
+            title = stringResource(R.string.temp_unit),
+            options = tempUnitOptions.values.toList(),
+            selectedOption = tempUnitOptions[selectedTempUnit] ?: "",
+            onSelectedOption = { displayedOption ->
+                val newTempUnit = tempUnitOptions.entries.find { it.value == displayedOption }?.key
+                    ?: PreferenceConstants.TEMP_UNIT_CELSIUS
+                selectedTempUnit = newTempUnit
+                sharedPreference.saveToSharedPreference(context, "tempUnit", newTempUnit)
+            },
+            iconRes = R.drawable.thermometer
+        )
 
+        SettingsCard(
+            title = stringResource(R.string.location),
+            options = locationOptions.values.toList(),
+            selectedOption = locationOptions[selectedLocation] ?: "",
+            onSelectedOption = { displayedOption ->
+                val newLocation = locationOptions.entries.find { it.value == displayedOption }?.key
+                    ?: PreferenceConstants.LOCATION_GPS
+                selectedLocation = newLocation
+                sharedPreference.saveToSharedPreference(context, "location", newLocation)
 
-        SettingsCard(stringResource(R.string.temp_unit), listOf(stringResource(R.string.celsius_c), stringResource(R.string.kelvin_k), stringResource(R.string.fahrenheit_f)), selectedTempUnit, {
-            selectedTempUnit = it
-            sharedPreference.saveToSharedPreference(context, "tempUnit", it)
-        }, R.drawable.thermometer)
-
-        SettingsCard(stringResource(R.string.location), listOf(stringResource(R.string.gps), stringResource(R.string.map)), selectedLocation, {
-            selectedLocation = it
-            sharedPreference.saveToSharedPreference(context, "location", it)
-            if (it == "Map" || it =="الخريطة") {
-                NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
-            } else if (it == "GPS" || it == "نظام تحديد المواقع") {
-                sharedPreference.deleteSharedPreference(context, "latitude")
-                sharedPreference.deleteSharedPreference(context, "longitude")
-                if (!PermissionUtils.isLocationEnabled(context)) {
-                    PermissionUtils.enableLocationServices(context as Activity)
-                } else {
-                    LocationHelper(context) { newLocation ->
-                        location.value = newLocation
-                    }.getLastKnownLocation()
+                if (newLocation == PreferenceConstants.LOCATION_MAP) {
+                    NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
+                } else if (newLocation == PreferenceConstants.LOCATION_GPS) {
+                    sharedPreference.deleteSharedPreference(context, "latitude")
+                    sharedPreference.deleteSharedPreference(context, "longitude")
+                    if (!PermissionUtils.isLocationEnabled(context)) {
+                        PermissionUtils.enableLocationServices(context as Activity)
+                    } else {
+                        LocationHelper(context) { newLocation ->
+                            location.value = newLocation
+                        }.getLastKnownLocation()
+                    }
                 }
-            }
-        }, R.drawable.location)
+            },
+            iconRes = R.drawable.location
+        )
 
-        SettingsCard(stringResource(R.string.wind_speed_unit), listOf(stringResource(R.string.meter_sec), stringResource(R.string.mile_hour)), selectedWindSpeedUnit, {
-            selectedWindSpeedUnit = it
-            sharedPreference.saveToSharedPreference(context, "windSpeedUnit", it)
-        }, R.drawable.ic_wind)
+        SettingsCard(
+            title = stringResource(R.string.wind_speed_unit),
+            options = windSpeedOptions.values.toList(),
+            selectedOption = windSpeedOptions[selectedWindSpeedUnit] ?: "",
+            onSelectedOption = { displayedOption ->
+                val newWindSpeedUnit = windSpeedOptions.entries.find { it.value == displayedOption }?.key
+                    ?: PreferenceConstants.WIND_SPEED_METER_SEC
+                selectedWindSpeedUnit = newWindSpeedUnit
+                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", newWindSpeedUnit)
+            },
+            iconRes = R.drawable.ic_wind
+        )
     }
 }
 
 @Composable
-fun SettingsCard(title: String, options: List<String>, selectedOption: String, onSelectedOption: (String) -> Unit, iconRes: Int) {
+fun SettingsCard(
+    title: String,
+    options: List<String>,
+    selectedOption: String,
+    onSelectedOption: (String) -> Unit,
+    iconRes: Int
+) {
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -182,25 +258,28 @@ fun SettingsCard(title: String, options: List<String>, selectedOption: String, o
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                options.forEach { text ->
+                options.forEach { displayText ->
                     Row(
                         modifier = Modifier
                             .selectable(
-                                selected = (text == selectedOption),
-                                onClick = { onSelectedOption(text) },
+                                selected = (displayText == selectedOption),
+                                onClick = { onSelectedOption(displayText) },
                                 role = Role.RadioButton
                             ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = (text == selectedOption),
-                            onClick = { onSelectedOption(text) },
+                            selected = (displayText == selectedOption),
+                            onClick = { onSelectedOption(displayText) },
                             colors = RadioButtonDefaults.colors(selectedColor = SoftSkyBlue)
                         )
-                        Text(text, color = SoftSkyBlue, modifier = Modifier.padding(start = 1.dp), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(displayText, color = SoftSkyBlue,
+                            modifier = Modifier.padding(start = 1.dp),
+                            fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
     }
 }
+
