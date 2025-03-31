@@ -2,7 +2,6 @@ package com.example.weatherapplication.ui.screen.favourite.favouritescreen
 
 import LottieAnimationView
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,10 +43,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,6 +63,10 @@ import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
+import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.abbreviationTempUnit
+import com.example.weatherapplication.utils.formatTemperatureUnitBasedOnLanguage
+import com.example.weatherapplication.utils.getWeatherIcon
 
 @Composable
 fun FavouriteScreen(
@@ -230,9 +232,9 @@ fun FavouriteItem(
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(140.dp)
                 .padding(12.dp)
-                .shadow(10.dp, RoundedCornerShape(24.dp))
+                .shadow(12.dp, RoundedCornerShape(24.dp))
                 .clickable {
                     Toast.makeText(
                         context,
@@ -248,41 +250,30 @@ fun FavouriteItem(
                     .fillMaxSize()
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF64A8F1), Color(0xFF7CD1EF)), // Blue gradient
+                            colors = listOf(Color(0xFF4C64A1), Color(0xFF3BA6E1)),
                             start = Offset(0f, 0f),
                             end = Offset(400f, 400f)
                         ),
                         shape = RoundedCornerShape(24.dp)
                     )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(20.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.countries),
-                        contentDescription = "Country Icon",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 12.dp)
-                    )
-
                     Column(
-                        modifier = Modifier.weight(1f), // Pushes the icon to the right
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = locationData.country,
-                            fontSize = 20.sp,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            letterSpacing = 1.sp
+                            color = Color.White
                         )
-
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         val cityName = locationData.city
                             .replace(" Governorate", "")
@@ -295,27 +286,69 @@ fun FavouriteItem(
                             text = cityName,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color.White.copy(alpha = 0.9f),
-                            letterSpacing = 0.5.sp,
-                            textAlign = TextAlign.Start
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.weight(1.5f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "${locationData.currentWeather.main.temp.toInt()} ${
+                                formatTemperatureUnitBasedOnLanguage(
+                                abbreviationTempUnit(
+                                    SharedPreference().getFromSharedPreference(context, "tempUnit") ?: "Celsius °C")
+                                )
+                            }",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
 
-                        Spacer(modifier = Modifier.weight(1f))
-                       /* Button(onClick = { showNotification(context, locationData) }) {
-                            Text(text = "Show Notification")
-                        }*/
+                        Text(
+                            text = locationData.currentWeather.weather.firstOrNull()?.description ?: "Unknown",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
                     }
 
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Location Icon",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    Column(
+                        modifier = Modifier.weight(0.8f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LottieAnimationView(
+                            resId = getWeatherIcon(locationData.currentWeather.weather.firstOrNull()?.icon ?: ""),
+                            modifier = Modifier.size(70.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(end = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Arrow Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+
+
 
 
