@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.alert
+package com.example.weatherapplication.ui.screen.notification
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog

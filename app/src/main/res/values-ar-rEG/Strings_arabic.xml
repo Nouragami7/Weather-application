@@ -7,7 +7,7 @@
 <string name="clouds">الغيوم</string>
 <string name="wind">الرياح</string>
 <string name="humidity">الرطوبة</string>
-<string name="_5_days_forecast">توقعات 5 أيام</string>
+<string name="_5_days_forecast">توقعات ٥ أيام</string>
 <string name="unknown_error">خطأ غير معروف</string>
 <string name="hpa">%1$s هيكتوباسكال</string>
 <string name="hourly_forecast">التوقعات لكل ساعة</string>

@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherapplication.domain.model.LocationData
-import com.example.weatherapplication.ui.screen.alert.AlertScreen
+import com.example.weatherapplication.ui.screen.notification.AlertScreen
 import com.example.weatherapplication.ui.screen.detailscreen.DetailsScreen
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
 import com.example.weatherapplication.ui.screen.homescreen.HomeScreen

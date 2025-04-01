@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +61,7 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
+import com.example.weatherapplication.ui.screen.homescreen.LoadingIndicator
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -122,26 +124,41 @@ fun FavouriteScreen(
                 NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite))
             } else {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                    Text(
-                        text = "Saved Locations",
-                        style = TextStyle(
-                            brush = Brush.verticalGradient(
-                                0f to primaryContainerDark,
-                                1f to onPrimaryDark
-                            ),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Black
-                        ),
-                        color = onPrimaryDark,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Location Icon",
+                            tint = primaryContainerDark,
+                            modifier = Modifier.size(28.dp)
+                        )
 
-                    Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = "Saved Locations",
+                            style = TextStyle(
+                                brush = Brush.verticalGradient(
+                                    0f to primaryContainerDark,
+                                    1f to onPrimaryDark
+                                ),
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Black
+                            ),
+                            color = onPrimaryDark,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     when (favouriteState) {
                         is ResponseState.Loading -> {
@@ -162,20 +179,30 @@ fun FavouriteScreen(
 
                             if (locations.isEmpty()) {
                                 Box(
-                                    modifier = Modifier.wrapContentSize(),
+                                    modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    LottieAnimationView(
-                                        resId = R.raw.no_data,
-                                        modifier = Modifier.size(300.dp)
-                                    )
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        LottieAnimationView(
+                                            resId = R.raw.no_data,
+                                            modifier = Modifier.size(250.dp) // Reduced for balance
+                                        )
+
+                                        Text(
+                                            text = "No Saved Locations",
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color.Gray
+                                        )
+                                    }
                                 }
-                                Spacer(modifier = Modifier.weight(1f))
                             } else {
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(16.dp)
+                                        .padding(top = 16.dp)
                                 ) {
                                     items(locations.size) { index ->
                                         FavouriteItem(
@@ -186,16 +213,16 @@ fun FavouriteScreen(
                                         )
                                     }
                                 }
-
-
                             }
                         }
                     }
                 }
             }
+
         }
     }
 }
+
 
 @Composable
 fun LoadingIndicator() {

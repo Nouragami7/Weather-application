@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.alert
+package com.example.weatherapplication.ui.screen.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context

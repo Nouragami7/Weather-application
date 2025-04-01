@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.weatherapplication.R
 import com.example.weatherapplication.domain.model.CurrentWeather
-import com.example.weatherapplication.ui.screen.alert.StopSoundReceiver
+import com.example.weatherapplication.ui.screen.notification.StopSoundReceiver
 
 private var mediaPlayer: MediaPlayer? = null
 
