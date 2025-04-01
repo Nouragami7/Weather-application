@@ -51,7 +51,7 @@ class WeatherLocalDataSourceTest{
         // Given
         val lat = 30.0
         val lng = 31.0
-        val locationData = LocationData(lat, lng, mockk(), mockk(), "Region", "Timezone")
+        val locationData = LocationData(lat, lng, mockk(), mockk(), "Egypt", "Cairo")
 
         locationDAO.insertLocation(locationData)
 
