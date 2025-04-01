@@ -55,26 +55,9 @@ import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SoftSkyBlue
 import com.example.weatherapplication.utils.LocationHelper
 import com.example.weatherapplication.utils.PermissionUtils
+import com.example.weatherapplication.utils.PreferenceConstants
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.setLocale
-
-
-object PreferenceConstants {
-    const val LANGUAGE_ENGLISH = "English"
-    const val LANGUAGE_ARABIC = "Arabic"
-
-    const val TEMP_UNIT_CELSIUS = "Celsius °C"
-    const val TEMP_UNIT_KELVIN = "Kelvin °K"
-    const val TEMP_UNIT_FAHRENHEIT = "Fahrenheit °F"
-
-    const val LOCATION_GPS = "GPS"
-    const val LOCATION_MAP = "Map"
-
-    const val WIND_SPEED_METER_SEC = "meter/sec"
-    const val WIND_SPEED_MILE_HOUR = "mile/hour"
-}
-
-
 
 @Composable
 fun SettingsScreen(location: MutableState<Location>) {

@@ -18,7 +18,7 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
     private val favMutableLocations = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val favLocations = favMutableLocations.asStateFlow()
 
-    private val _toastEvent = MutableSharedFlow<String>()
+    private val _toastEvent = MutableSharedFlow<String>(replay = 1)
     val toastEvent = _toastEvent.asSharedFlow()
 
 
@@ -43,27 +43,6 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
         }
     }
 
-    /*fun deleteLocationFromFavourite(lat: Double, lng: Double) {
-        viewModelScope.launch {
-            try {
-                val currentList =
-                    (favMutableLocations.value as? ResponseState.Success<List<LocationData>>)?.data
-                        ?: emptyList()
-                val index = currentList.indexOfFirst { it.latitude == lat && it.longitude == lng }
-
-                if (index != -1) {
-                    lastDeletedLocation = currentList[index]
-                    lastDeletedIndex = index
-                    repository.deleteLocation(lat, lng)
-                    _toastEvent.emit("Location deleted from favourites")
-                    getAllFavouriteLocations()
-                }
-            } catch (e: Exception) {
-                _toastEvent.emit("An error occurred: ${e.message}")
-            }
-        }
-    }*/
-
     fun addLastDeletedLocation() {
         lastDeletedLocation?.let { location ->
             viewModelScope.launch {
@@ -84,7 +63,8 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
  fun deleteFromFavourite(lat: Double, lng: Double) {
    viewModelScope.launch {
        try {
-               repository.deleteLocation(lat, lng)
+           repository.deleteLocation(lat, lng)
+           _toastEvent.emit("Location deleted from favourites")
        } catch (e: Exception) {
            _toastEvent.emit("An error occurred: ${e.message}")
        }
