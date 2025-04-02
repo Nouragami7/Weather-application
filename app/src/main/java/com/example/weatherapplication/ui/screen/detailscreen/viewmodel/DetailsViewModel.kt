@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
+import com.example.weatherapplication.datasource.repository.IRepository
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class DetailsViewModel(private val repository: WeatherRepository) : ViewModel() {
+class DetailsViewModel(private val repository: IRepository) : ViewModel() {
     private val TAG = "tag"
     private val mutableWeatherData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val weatherData = mutableWeatherData.asStateFlow()

@@ -3,7 +3,7 @@ package com.example.weatherapplication.ui.screen.favourite.favouritescreen
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapplication.R
-import com.example.weatherapplication.datasource.repository.WeatherRepository
+import com.example.weatherapplication.datasource.repository.IRepository
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.viewmodel.FavouriteViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 class FavouriteViewModelTest {
     private lateinit var favouriteViewModel: FavouriteViewModel
-    private lateinit var repository: WeatherRepository
+    private lateinit var repository: IRepository
     private lateinit var context: Context
 
     @Before

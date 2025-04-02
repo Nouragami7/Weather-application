@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.remote.ResponseState
+import com.example.weatherapplication.datasource.repository.IRepository
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
+class FavouriteViewModel(val repository: IRepository) : ViewModel() {
 
     private val favMutableLocations = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val favLocations = favMutableLocations.asStateFlow()
