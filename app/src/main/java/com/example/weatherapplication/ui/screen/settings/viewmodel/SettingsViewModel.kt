@@ -3,6 +3,7 @@ package com.example.weatherapplication.ui.screen.settings.viewmodel
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.location.Location
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -17,13 +18,14 @@ import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.PreferenceConstants
 import com.example.weatherapplication.utils.SharedPreference
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class SettingsViewModel(private val context: Context) : ViewModel() {
     private val sharedPreference = SharedPreference()
     var selectedLanguage = mutableStateOf(
-        sharedPreference.getFromSharedPreference(context, "language")
-            ?: PreferenceConstants.LANGUAGE_ENGLISH
+        sharedPreference.getFromSharedPreference(context, "language") ?: "system"
     )
+
 
     var selectedTempUnit = mutableStateOf(
         sharedPreference.getFromSharedPreference(context, "tempUnit")
@@ -44,7 +46,8 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         selectedLanguage.value = newLanguage
         sharedPreference.saveToSharedPreference(context, "language", newLanguage)
 
-        restartApp()
+        // Apply the selected language immediately
+        applyLanguage(newLanguage)
     }
 
     fun updateTempUnit(newTempUnit: String) {
@@ -99,6 +102,26 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         activity.finish()
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
+
+
+
+    fun applyLanguage(language: String) {
+        val locale = if (language == "system") {
+            Locale.getDefault()
+        } else {
+            Locale(language)
+        }
+
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+        restartApp()
+    }
+
+
+
 
     class SettingsViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

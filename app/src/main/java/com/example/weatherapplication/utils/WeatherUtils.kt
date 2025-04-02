@@ -196,6 +196,7 @@ fun getUnit(unit: String): String {
 object PreferenceConstants {
     const val LANGUAGE_ENGLISH = "English"
     const val LANGUAGE_ARABIC = "Arabic"
+    const val LANGUAGE_SYSTEM = "System"
 
     const val TEMP_UNIT_CELSIUS = "Celsius °C"
     const val TEMP_UNIT_KELVIN = "Kelvin °K"

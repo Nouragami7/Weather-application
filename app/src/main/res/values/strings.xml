@@ -23,6 +23,7 @@
     <string name="language">Language</string>
     <string name="arabic">Arabic</string>
     <string name="english">English</string>
+    <string name="system">System</string>
     <string name="temp_unit">Temp Unit</string>
     <string name="celsius_c">Celsius °C</string>
     <string name="kelvin_k">Kelvin °K</string>

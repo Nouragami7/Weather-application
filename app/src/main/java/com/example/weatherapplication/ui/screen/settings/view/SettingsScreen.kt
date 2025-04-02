@@ -55,7 +55,8 @@ fun SettingsScreen( location: MutableState<Location>) {
 
     val languageOptions = mapOf(
         PreferenceConstants.LANGUAGE_ENGLISH to stringResource(R.string.english),
-        PreferenceConstants.LANGUAGE_ARABIC to stringResource(R.string.arabic)
+        PreferenceConstants.LANGUAGE_ARABIC to stringResource(R.string.arabic),
+        PreferenceConstants.LANGUAGE_SYSTEM to stringResource(R.string.system)
     )
 
     val tempUnitOptions = mapOf(
@@ -106,6 +107,7 @@ fun SettingsScreen( location: MutableState<Location>) {
             },
             iconRes = R.drawable.language
         )
+
 
         SettingsCard(
             title = stringResource(R.string.temp_unit),
