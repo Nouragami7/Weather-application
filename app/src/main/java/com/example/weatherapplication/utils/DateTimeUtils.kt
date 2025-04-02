@@ -32,9 +32,9 @@ fun getCurrentDate(): String {
 }
 
 fun convertUnixToTime(unixTime: Long): String {
-    val date = Date(unixTime * 1000) // Convert seconds to milliseconds
-    val format = SimpleDateFormat("hh:mm a", Locale.getDefault()) // Format as "06:30 AM"
-    format.timeZone = TimeZone.getDefault() // Set to local timezone
+    val date = Date(unixTime * 1000)
+    val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    format.timeZone = TimeZone.getDefault()
     return format.format(date)
 }
 
