@@ -35,9 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapplication.R
 import com.example.weatherapplication.domain.model.AlertData
-import com.example.weatherapplication.ui.theme.SkyBlue
-import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
 import com.example.weatherapplication.ui.screen.notification.scheduleNotification
+import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
+import com.example.weatherapplication.ui.theme.DeepRed
+import com.example.weatherapplication.ui.theme.SkyBlue
 import java.util.Calendar
 
 @Composable
@@ -119,7 +120,7 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = { onDismiss() },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                colors = ButtonDefaults.buttonColors(containerColor = DeepRed),
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)

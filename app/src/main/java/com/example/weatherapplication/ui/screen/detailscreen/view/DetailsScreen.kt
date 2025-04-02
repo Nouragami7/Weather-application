@@ -29,9 +29,9 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.domain.model.LocationData
+import com.example.weatherapplication.ui.screen.detailscreen.viewmodel.DetailsViewModel
 import com.example.weatherapplication.ui.screen.homescreen.view.HomeContent
 import com.example.weatherapplication.ui.screen.homescreen.view.LoadingIndicator
-import com.example.weatherapplication.ui.screen.detailscreen.viewmodel.DetailsViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.getLanguageCode
@@ -138,5 +138,4 @@ fun DetailsScreen(
 
         }
     }
-
 }

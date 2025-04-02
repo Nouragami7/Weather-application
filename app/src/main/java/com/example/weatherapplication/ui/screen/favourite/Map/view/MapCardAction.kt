@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,8 +31,8 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.weatherapplication.R
-import com.example.weatherapplication.ui.theme.DefaultColorEnd
-import com.example.weatherapplication.ui.theme.DefaultColorStart
+import com.example.weatherapplication.ui.theme.ClearSkyDayEnd
+import com.example.weatherapplication.ui.theme.ClearSkyDayStart
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -95,7 +96,7 @@ fun MapCard(
                         .clip(RoundedCornerShape(20.dp))
                         .background(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(DefaultColorStart, DefaultColorEnd)
+                                colors = listOf(ClearSkyDayEnd, ClearSkyDayStart)
                             )
                         )
                         .clickable { action() },

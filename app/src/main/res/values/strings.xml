@@ -54,4 +54,6 @@
     <string name="select_date">Select Date</string>
     <string name="select_time">Select Time</string>
     <string name="location_is_selected">Location is selected</string>
+    <string name="location_added_to_favourites">Location added to favourites</string>
+    <string name="no_saved_locations">No Saved Locations</string>
 </resources>

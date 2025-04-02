@@ -99,8 +99,6 @@ fun checkForInternet(context: Context): Boolean {
     }
 }
 
-
-
 fun setLocale(context: Context, language: String) {
     val locale = getLanguageCode(language)
 

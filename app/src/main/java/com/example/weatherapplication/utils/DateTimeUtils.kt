@@ -25,12 +25,6 @@ fun convertToEgyptTime(timestamp: Long): Pair<String, String> {
 }
 
 
-fun getCurrentDate(): String {
-    val calendar = Calendar.getInstance(TimeZone.getTimeZone("Africa/Cairo"))
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    return dateFormat.format(calendar.time)
-}
-
 fun convertUnixToTime(unixTime: Long): String {
     val date = Date(unixTime * 1000)
     val format = SimpleDateFormat("hh:mm a", Locale.getDefault())

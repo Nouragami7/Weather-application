@@ -64,6 +64,8 @@ import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.viewmodel.FavouriteViewModel
 import com.example.weatherapplication.ui.screen.homescreen.view.LoadingIndicator
+import com.example.weatherapplication.ui.theme.Blue
+import com.example.weatherapplication.ui.theme.DarkBlue
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -193,7 +195,7 @@ fun FavouriteScreen(
                                         )
 
                                         Text(
-                                            text = "No Saved Locations",
+                                            text = stringResource(R.string.no_saved_locations),
                                             fontSize = 18.sp,
                                             fontWeight = FontWeight.Medium,
                                             color = Color.Gray
@@ -274,7 +276,7 @@ fun FavouriteItem(
                     .fillMaxSize()
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF4C64A1), Color(0xFF3BA6E1)),
+                            colors = listOf(DarkBlue, Blue),
                             start = Offset(0f, 0f),
                             end = Offset(400f, 400f)
                         ),
@@ -304,7 +306,6 @@ fun FavouriteItem(
                             .replace(" County", "")
                             .replace(" Province", "")
                             .replace(" District", "")
-                            .replace( "محافظة", "")
                             .substringBefore(" ")
 
                         Text(

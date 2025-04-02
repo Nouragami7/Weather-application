@@ -205,7 +205,6 @@ class MainActivity : ComponentActivity() {
 
         val sharedPreference = SharedPreference()
         val savedLanguage = sharedPreference.getFromSharedPreference(this, "language")
-
         val systemLanguage = Locale.getDefault().language
         if (savedLanguage.isNullOrEmpty()) {
             if (systemLanguage == "ar") {

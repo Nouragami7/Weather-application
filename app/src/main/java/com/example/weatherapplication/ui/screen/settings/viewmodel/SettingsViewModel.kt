@@ -47,6 +47,27 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         applyLanguage(newLanguage)
     }
 
+    fun applyLanguage(language: String) {
+        val locale = if (language == "system") {
+            Locale.getDefault()
+        } else {
+            Locale(language)
+        }
+
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+        restartApp()
+    }
+
+    private fun restartApp() {
+        val activity = context as Activity
+        activity.finish()
+        activity.startActivity(Intent(activity, MainActivity::class.java))
+    }
+
     fun updateTempUnit(newTempUnit: String) {
         selectedTempUnit.value = newTempUnit
         sharedPreference.saveToSharedPreference(context, "tempUnit", newTempUnit)
@@ -96,27 +117,6 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    private fun restartApp() {
-        val activity = context as Activity
-        activity.finish()
-        activity.startActivity(Intent(activity, MainActivity::class.java))
-    }
-
-
-    fun applyLanguage(language: String) {
-        val locale = if (language == "system") {
-            Locale.getDefault()
-        } else {
-            Locale(language)
-        }
-
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.setLocale(locale)
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
-
-        restartApp()
-    }
 
 
     class SettingsViewModelFactory(private val context: Context) : ViewModelProvider.Factory {

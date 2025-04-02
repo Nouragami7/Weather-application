@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.utils.Constants
@@ -27,7 +28,7 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
     private var selectedCity by mutableStateOf("Unknown City")
     var polygonPoints by mutableStateOf<List<LatLng>>(emptyList())
 
-    val sharedPreferences = SharedPreference()
+    private val sharedPreferences = SharedPreference()
 
 
 
@@ -75,7 +76,7 @@ class MapViewModel(val repository: WeatherRepository) : ViewModel() {
             val locationData = LocationData(latitude, longitude, currentWeather, forecast, country, city)
             try {
                 repository.insertLocation(locationData)
-                _message.emit("Location added to favourites")
+                _message.emit(context.getString(R.string.location_added_to_favourites))
             } catch (e: Exception) {
                 _message.emit("An error occurred: ${e.message}")
 

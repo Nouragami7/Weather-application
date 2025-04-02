@@ -84,8 +84,8 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
         .setSound(soundUri)
         .setVibrate(longArrayOf(500, 1000, 500, 1000))
         .addAction(R.drawable.clear_night, "Open", openPendingIntent)
-        .addAction(R.drawable.snowy, "Cancel", cancelPendingIntent)
         .addAction(R.drawable.snowy, "Snooze", snoozePendingIntent)
+        .addAction(R.drawable.snowy, "Cancel", cancelPendingIntent)
         .setAutoCancel(true)
         .build()
 

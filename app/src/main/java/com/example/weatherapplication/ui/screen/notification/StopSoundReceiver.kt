@@ -11,7 +11,6 @@ class StopSoundReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         stopNotificationSound()
-
         val notificationId = intent.getIntExtra("notification_id", 1)
 
         with(NotificationManagerCompat.from(context)) {

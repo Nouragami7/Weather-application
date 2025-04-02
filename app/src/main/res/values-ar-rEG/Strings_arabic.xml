@@ -55,6 +55,9 @@
     <string name="select_time">اختيار الوقت</string>
     <string name="location_is_selected">تم اختيار الموقع</string>
     <string name="system">لغة النظام</string>
+    <string name="location_added_to_favourites">تمت إضافة الموقع إلى المفضلة</string>
+    <string name="no_saved_locations">لا توجد مواقع محفوظة</string>
+
 
 
 
