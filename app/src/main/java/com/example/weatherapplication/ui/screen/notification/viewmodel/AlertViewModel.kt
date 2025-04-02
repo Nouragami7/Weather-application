@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
+import com.example.weatherapplication.datasource.repository.IRepository
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
-import com.example.weatherapplication.utils.isAlertExpired
 import com.example.weatherapplication.ui.screen.notification.cancelNotification
+import com.example.weatherapplication.utils.isAlertExpired
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AlertViewModel(private val repository: WeatherRepository) : ViewModel() {
+class AlertViewModel(private val repository: IRepository) : ViewModel() {
 
     private val _alertData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val alert = _alertData.asStateFlow()

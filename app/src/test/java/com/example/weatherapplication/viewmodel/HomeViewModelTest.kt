@@ -2,7 +2,7 @@ package com.example.weatherapplication.viewmodel
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapplication.datasource.remote.ResponseState
-import com.example.weatherapplication.datasource.repository.WeatherRepository
+import com.example.weatherapplication.datasource.repository.IRepository
 import com.example.weatherapplication.domain.model.HomeData
 import com.example.weatherapplication.ui.screen.homescreen.viewmodel.HomeViewModel
 import io.mockk.coEvery
@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 class HomeViewModelTest{
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var repository: WeatherRepository
+    private lateinit var repository: IRepository
 
     @Before
     fun setUp(){

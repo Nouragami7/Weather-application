@@ -13,10 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="WeatherDatabaseTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="WeatherLocalDataSourceTest">
+      <SelectionState runConfigName="localDataSource_deleteLocation_calls_locationDAO_deleteLocation_and_removes_location()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

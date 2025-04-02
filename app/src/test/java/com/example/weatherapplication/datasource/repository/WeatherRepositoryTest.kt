@@ -18,7 +18,7 @@ class WeatherRepositoryTest {
 
     private lateinit var remoteDataSource: IWeatherRemoteDataSource
     private lateinit var localDataSource: IWeatherLocalDataSource
-    private lateinit var weatherRepository: WeatherRepository
+    private lateinit var weatherRepository: IRepository
 
     @Before
     fun setUp() {
