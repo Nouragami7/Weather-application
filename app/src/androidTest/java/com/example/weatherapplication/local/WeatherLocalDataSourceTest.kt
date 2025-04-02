@@ -53,10 +53,11 @@ class WeatherLocalDataSourceTest{
         val locationData = LocationData(lat, lng, mockk(), mockk(), "Egypt", "Cairo")
 
         locationDAO.insertLocation(locationData)
+        val locationFlow = flowOf(listOf(locationData))
+        every { locationDAO.getAllLocations() } returns locationFlow
 
         // When
         localDataSource.deleteLocation(lat, lng)
-
 
         val emptyLocationFlow = flowOf(emptyList<LocationData>())
         every { locationDAO.getAllLocations() } returns emptyLocationFlow
