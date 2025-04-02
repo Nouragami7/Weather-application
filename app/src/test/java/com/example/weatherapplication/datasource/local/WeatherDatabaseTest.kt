@@ -19,6 +19,7 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(manifest = Config.NONE)
 class WeatherDatabaseTest {
+
     private lateinit var database: WeatherDatabase
     private lateinit var locationDao: LocationDAO
 
@@ -72,8 +73,5 @@ class WeatherDatabaseTest {
         assertNotNull(alerts)
         assertThat(alerts.size, `is`(0))
     }
-
-
-
 
 }

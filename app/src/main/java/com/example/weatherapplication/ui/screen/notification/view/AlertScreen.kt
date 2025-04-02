@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.notification
+package com.example.weatherapplication.ui.screen.notification.view
 
 import LottieAnimationView
 import android.content.Context
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,13 +59,13 @@ import com.example.weatherapplication.datasource.remote.RetrofitHelper
 import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
-import com.example.weatherapplication.ui.screen.favourite.favouritescreen.LoadingIndicator
-import com.example.weatherapplication.ui.screen.favourite.favouritescreen.SwipeToDeleteContainer
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.LoadingIndicator
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.SwipeToDeleteContainer
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.utils.isAlertExpired
-import com.example.weatherapplication.viewmodel.AlertViewModel
+import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -199,7 +198,6 @@ fun AlertItem(
     context: Context,
     snackbarHostState: SnackbarHostState
 ) {
-
     LaunchedEffect(alertData) {
         if (isAlertExpired(alertData.startDate, alertData.startTime)) {
             alertViewModel.deleteFromAlerts(alertData, context)
@@ -208,34 +206,27 @@ fun AlertItem(
 
     SwipeToDeleteContainer(
         item = alertData,
-        onDelete = {
-            alertViewModel.deleteFromAlerts(alertData,context)
-        },
-        onRestore = {
-            alertViewModel.insertAtAlerts(
-                alertData,
-                onSuccess = {},
-            )
-        },
+        onDelete = { alertViewModel.deleteFromAlerts(alertData, context) },
+        onRestore = { alertViewModel.insertAtAlerts(alertData, onSuccess = {}) },
         snackbarHostState = snackbarHostState
     ) {
         Card(
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(110.dp)
                 .padding(12.dp)
-                .shadow(10.dp, RoundedCornerShape(24.dp)),
+                .shadow(12.dp, RoundedCornerShape(24.dp)),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF64A8F1), Color(0xFF7CD1EF)), // Blue gradient
-                            start = Offset(0f, 0f),
-                            end = Offset(400f, 400f)
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color(0xFF4B91F1), Color(0xFF64D3EF)),
+                            center = Offset(200f, 200f),
+                            radius = 500f
                         ),
                         shape = RoundedCornerShape(24.dp)
                     )
@@ -247,10 +238,10 @@ fun AlertItem(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.countries),
-                        contentDescription = "Country Icon",
+                        painter = painterResource(id = R.drawable.clock_alert),
+                        contentDescription = "Time Icon",
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(40.dp)
                             .padding(end = 12.dp)
                     )
 
@@ -261,34 +252,29 @@ fun AlertItem(
                     ) {
                         Text(
                             text = alertData.startTime,
-                            fontSize = 20.sp,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             letterSpacing = 1.sp
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = alertData.startDate,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = Color.White.copy(alpha = 0.85f),
                             letterSpacing = 0.5.sp,
                             textAlign = TextAlign.Start
                         )
                     }
-
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Location Icon",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
                 }
             }
         }
     }
 }
+
 
 
 

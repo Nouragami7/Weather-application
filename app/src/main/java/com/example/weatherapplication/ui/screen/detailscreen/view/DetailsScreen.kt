@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.detailscreen
+package com.example.weatherapplication.ui.screen.detailscreen.view
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +29,13 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.domain.model.LocationData
-import com.example.weatherapplication.ui.screen.homescreen.HomeContent
-import com.example.weatherapplication.ui.screen.homescreen.LoadingIndicator
-import com.example.weatherapplication.ui.viewmodel.DetailsViewModel
+import com.example.weatherapplication.ui.screen.homescreen.view.HomeContent
+import com.example.weatherapplication.ui.screen.homescreen.view.LoadingIndicator
+import com.example.weatherapplication.ui.screen.detailscreen.viewmodel.DetailsViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
+import com.example.weatherapplication.utils.getLanguageCode
+import com.example.weatherapplication.utils.getUnit
 
 @Composable
 fun DetailsScreen(
@@ -87,25 +89,19 @@ fun DetailsScreen(
             sharedPreferences.getFromSharedPreference(context, "windSpeedUnit") ?: "meter/sec"
     }
 
-    LaunchedEffect(LocationData.latitude, LocationData.longitude, lang, tempUnit, windSpeedUnit) {
-        val unit = when (tempUnit) {
-            "Celsius °C" -> "metric"
-            "Kelvin °K" -> "standard"
-            "Fahrenheit °F" -> "imperial"
-            else -> "metric"
-        }
+    LaunchedEffect(LocationData.latitude, LocationData.longitude, lang, tempUnit) {
         viewModel.fetchWeatherData(
             LocationData.latitude,
             LocationData.longitude,
-            lang,
-            unit,
+            getLanguageCode(lang).language,
+            getUnit(tempUnit),
             Constants.API_KEY
         )
         viewModel.fetchForecastData(
             LocationData.latitude,
             LocationData.longitude,
-            lang,
-            unit,
+            getLanguageCode(lang).language,
+            getUnit(tempUnit),
             Constants.API_KEY
         )
     }

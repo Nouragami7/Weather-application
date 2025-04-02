@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.favourite.favouritescreen
+package com.example.weatherapplication.ui.screen.favourite.favouritescreen.view
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween

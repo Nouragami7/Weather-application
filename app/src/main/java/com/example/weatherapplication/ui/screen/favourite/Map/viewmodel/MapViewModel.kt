@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.favourite.Map
+package com.example.weatherapplication.ui.screen.favourite.Map.viewmodel
 
 import GeocoderHelper
 import android.content.Context

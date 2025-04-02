@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.viewmodel
+package com.example.weatherapplication.ui.screen.homescreen.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,19 +6,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
+import com.example.weatherapplication.domain.model.HomeData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class DetailsViewModel(private val repository: WeatherRepository) : ViewModel() {
+class HomeViewModel(private val repository: WeatherRepository) : ViewModel() {
     private val TAG = "tag"
     private val mutableWeatherData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val weatherData = mutableWeatherData.asStateFlow()
 
     private val mutableForecastData = MutableStateFlow<ResponseState>(ResponseState.Loading)
     val forecastData = mutableForecastData.asStateFlow()
+
+    private val mutableHomeData = MutableStateFlow<ResponseState>(ResponseState.Loading)
+    val homeData = mutableHomeData.asStateFlow()
+
 
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
@@ -58,13 +63,30 @@ class DetailsViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     }
 
-    class DetailsFactory(
+
+    fun insertHomeDate(homeData: HomeData) {
+        viewModelScope.launch {
+            repository.insertHomeData(homeData)
+        }
+    }
+
+    fun getHomeData() {
+        viewModelScope.launch {
+            repository.getHomeData().collect {
+                mutableHomeData.value = ResponseState.Success(it)
+                Log.i(TAG, "getHomeData from db: $it")
+
+            }
+        }
+    }
+
+    class WeatherFactory(
         private val repository: WeatherRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return DetailsViewModel(repository) as T
+                return HomeViewModel(repository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

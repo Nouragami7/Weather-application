@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.HomeData
-import com.example.weatherapplication.ui.viewmodel.HomeViewModel
+import com.example.weatherapplication.ui.screen.homescreen.viewmodel.HomeViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,8 +23,8 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(manifest = Config.NONE)
 class HomeViewModelTest{
-    lateinit var homeViewModel: HomeViewModel
-    lateinit var repository: WeatherRepository
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var repository: WeatherRepository
 
     @Before
     fun setUp(){
@@ -39,17 +39,16 @@ class HomeViewModelTest{
         // Given
         val homeData: HomeData = mockk()
 
-        // Mock repository response
         coEvery { repository.getHomeData() } returns flowOf(homeData)
 
         // When
         homeViewModel.insertHomeDate(homeData)
-        homeViewModel.getHomeData() // Ensure we trigger data update
+        homeViewModel.getHomeData()
 
-        advanceUntilIdle() // Wait for coroutines to complete
+        advanceUntilIdle()
 
         // Then
-        val result = homeViewModel.homeData.first() // Get the first emitted value
+        val result = homeViewModel.homeData.first()
         assertThat(result, `is`(ResponseState.Success(homeData)))
     }
 

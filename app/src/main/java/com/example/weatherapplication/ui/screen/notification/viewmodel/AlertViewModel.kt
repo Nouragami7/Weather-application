@@ -1,4 +1,4 @@
-package com.example.weatherapplication.viewmodel
+package com.example.weatherapplication.ui.screen.notification.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -8,7 +8,7 @@ import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
 import com.example.weatherapplication.utils.isAlertExpired
-import com.example.weatherapplication.worker.cancelNotification
+import com.example.weatherapplication.ui.screen.notification.cancelNotification
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

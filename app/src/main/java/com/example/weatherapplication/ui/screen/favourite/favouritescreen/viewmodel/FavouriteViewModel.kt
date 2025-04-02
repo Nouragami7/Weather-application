@@ -1,8 +1,10 @@
-package com.example.weatherapplication.ui.screen.favourite.favouritescreen
+package com.example.weatherapplication.ui.screen.favourite.favouritescreen.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapplication.R
 import com.example.weatherapplication.datasource.remote.ResponseState
 import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
@@ -43,12 +45,12 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
         }
     }
 
-    fun addLastDeletedLocation() {
+    fun addLastDeletedLocation(context: Context) {
         lastDeletedLocation?.let { location ->
             viewModelScope.launch {
                 try {
                     repository.insertLocation(location)
-                    _toastEvent.emit("Location deleted from favourites")
+                    _toastEvent.emit(context.getString(R.string.location_deleted_from_favourites))
                     lastDeletedLocation = null
                     lastDeletedIndex = null
                 } catch (e: Exception) {
@@ -60,11 +62,11 @@ class FavouriteViewModel(val repository: WeatherRepository) : ViewModel() {
 
 
 
- fun deleteFromFavourite(lat: Double, lng: Double) {
+ fun deleteFromFavourite(lat: Double, lng: Double, context: Context) {
    viewModelScope.launch {
        try {
            repository.deleteLocation(lat, lng)
-           _toastEvent.emit("Location deleted from favourites")
+           _toastEvent.emit(context.getString(R.string.location_deleted_from_favourites))
        } catch (e: Exception) {
            _toastEvent.emit("An error occurred: ${e.message}")
        }

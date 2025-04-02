@@ -35,8 +35,8 @@ import com.example.weatherapplication.datasource.remote.ApiService
 import com.example.weatherapplication.datasource.remote.RetrofitHelper
 import com.example.weatherapplication.datasource.remote.WeatherRemoteDataSource
 import com.example.weatherapplication.datasource.repository.WeatherRepository
-import com.example.weatherapplication.ui.screen.favourite.Map.MapViewModel
-import com.example.weatherapplication.ui.screen.favourite.Map.PlacesHelper
+import com.example.weatherapplication.ui.screen.favourite.Map.viewmodel.MapViewModel
+import com.example.weatherapplication.ui.screen.favourite.Map.viewmodel.PlacesHelper
 import com.example.weatherapplication.utils.Constants.Companion.API_KEY_Google
 import com.example.weatherapplication.utils.SharedPreference
 import com.google.android.gms.maps.model.CameraPosition

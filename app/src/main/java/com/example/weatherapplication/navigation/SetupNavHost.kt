@@ -11,11 +11,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherapplication.domain.model.LocationData
-import com.example.weatherapplication.ui.screen.notification.AlertScreen
-import com.example.weatherapplication.ui.screen.detailscreen.DetailsScreen
-import com.example.weatherapplication.ui.screen.favourite.favouritescreen.FavouriteScreen
-import com.example.weatherapplication.ui.screen.homescreen.HomeScreen
-import com.example.weatherapplication.ui.screen.settings.SettingsScreen
+import com.example.weatherapplication.ui.screen.notification.view.AlertScreen
+import com.example.weatherapplication.ui.screen.detailscreen.view.DetailsScreen
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.FavouriteScreen
+import com.example.weatherapplication.ui.screen.homescreen.view.HomeScreen
+import com.example.weatherapplication.ui.screen.settings.view.SettingsScreen
 import com.google.gson.Gson
 
 @Composable

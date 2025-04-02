@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.homescreen
+package com.example.weatherapplication.ui.screen.homescreen.view
 
 import ConnectivityObserver
 import LottieAnimationView
@@ -53,11 +53,11 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.CurrentWeather
 import com.example.weatherapplication.domain.model.Forecast
 import com.example.weatherapplication.domain.model.HomeData
-import com.example.weatherapplication.ui.screen.favourite.favouritescreen.LoadingIndicator
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.LoadingIndicator
 import com.example.weatherapplication.ui.theme.ColorTextPrimary
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
-import com.example.weatherapplication.ui.viewmodel.HomeViewModel
+import com.example.weatherapplication.ui.screen.homescreen.viewmodel.HomeViewModel
 import com.example.weatherapplication.utils.Constants
 import com.example.weatherapplication.utils.SharedPreference
 import com.example.weatherapplication.utils.abbreviationTempUnit

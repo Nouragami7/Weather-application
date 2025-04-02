@@ -1,7 +1,5 @@
-package com.example.weatherapplication.ui.screen.settings
+package com.example.weatherapplication.ui.screen.settings.view
 
-import android.app.Activity
-import android.content.Intent
 import android.location.Location
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -27,12 +25,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -46,23 +39,20 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.weatherapplication.MainActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapplication.R
-import com.example.weatherapplication.navigation.NavigationManager
-import com.example.weatherapplication.navigation.ScreensRoute
+import com.example.weatherapplication.ui.screen.settings.viewmodel.SettingsViewModel
 import com.example.weatherapplication.ui.theme.IceBlue
 import com.example.weatherapplication.ui.theme.LightBlue
 import com.example.weatherapplication.ui.theme.SoftSkyBlue
-import com.example.weatherapplication.utils.LocationHelper
-import com.example.weatherapplication.utils.PermissionUtils
 import com.example.weatherapplication.utils.PreferenceConstants
-import com.example.weatherapplication.utils.SharedPreference
-import com.example.weatherapplication.utils.setLocale
 
 @Composable
-fun SettingsScreen(location: MutableState<Location>) {
-    val sharedPreference = SharedPreference()
-    val context = LocalContext.current
+fun SettingsScreen( location: MutableState<Location>) {
+
+   val factory = SettingsViewModel.SettingsViewModelFactory(LocalContext.current)
+    val viewModel: SettingsViewModel = viewModel(factory = factory)
+
     val languageOptions = mapOf(
         PreferenceConstants.LANGUAGE_ENGLISH to stringResource(R.string.english),
         PreferenceConstants.LANGUAGE_ARABIC to stringResource(R.string.arabic)
@@ -84,43 +74,8 @@ fun SettingsScreen(location: MutableState<Location>) {
         PreferenceConstants.WIND_SPEED_MILE_HOUR to stringResource(R.string.mile_hour)
     )
 
-    var selectedLanguage by remember {
-        mutableStateOf(sharedPreference.getFromSharedPreference(context, "language") ?: PreferenceConstants.LANGUAGE_ENGLISH)
-    }
-    var selectedTempUnit by remember {
-        mutableStateOf(sharedPreference.getFromSharedPreference(context, "tempUnit") ?: PreferenceConstants.TEMP_UNIT_CELSIUS)
-    }
-    var selectedLocation by remember {
-        mutableStateOf(sharedPreference.getFromSharedPreference(context, "location") ?: PreferenceConstants.LOCATION_GPS)
-    }
-    var selectedWindSpeedUnit by remember {
-        mutableStateOf(sharedPreference.getFromSharedPreference(context, "windSpeedUnit") ?: PreferenceConstants.WIND_SPEED_METER_SEC)
-    }
-
-    LaunchedEffect(selectedTempUnit, selectedWindSpeedUnit) {
-        if (selectedTempUnit == PreferenceConstants.TEMP_UNIT_FAHRENHEIT &&
-            selectedWindSpeedUnit != PreferenceConstants.WIND_SPEED_MILE_HOUR) {
-
-            selectedWindSpeedUnit = PreferenceConstants.WIND_SPEED_MILE_HOUR
-            sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
-
-        } else if ((selectedTempUnit == PreferenceConstants.TEMP_UNIT_CELSIUS ||
-                    selectedTempUnit == PreferenceConstants.TEMP_UNIT_KELVIN) &&
-            selectedWindSpeedUnit == PreferenceConstants.WIND_SPEED_MILE_HOUR) {
-
-            selectedWindSpeedUnit = PreferenceConstants.WIND_SPEED_METER_SEC
-            sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
-        }
-    }
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(IceBlue)
-        .verticalScroll(rememberScrollState())
-    ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp)) {
+    Column(modifier = Modifier.fillMaxSize().background(IceBlue).verticalScroll(rememberScrollState())) {
+        Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val path = Path().apply {
                     moveTo(0f, size.height * 0.8f)
@@ -139,24 +94,15 @@ fun SettingsScreen(location: MutableState<Location>) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
         SettingsCard(
             title = stringResource(R.string.language),
             options = languageOptions.values.toList(),
-            selectedOption = languageOptions[selectedLanguage] ?: "",
+            selectedOption = languageOptions[viewModel.selectedLanguage.value] ?: "",
             onSelectedOption = { displayedOption ->
                 val newLanguage = languageOptions.entries.find { it.value == displayedOption }?.key
                     ?: PreferenceConstants.LANGUAGE_ENGLISH
-                selectedLanguage = newLanguage
-                sharedPreference.saveToSharedPreference(context, "language", newLanguage)
-                sharedPreference.saveToSharedPreference(context, "tempUnit", selectedTempUnit)
-                sharedPreference.saveToSharedPreference(context, "location", selectedLocation)
-                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit)
-
-                setLocale(context, newLanguage)
-
-                val activity = context as Activity
-                activity.finish()
-                activity.startActivity(Intent(activity, MainActivity::class.java))
+                viewModel.updateLanguage(newLanguage)
             },
             iconRes = R.drawable.language
         )
@@ -164,12 +110,11 @@ fun SettingsScreen(location: MutableState<Location>) {
         SettingsCard(
             title = stringResource(R.string.temp_unit),
             options = tempUnitOptions.values.toList(),
-            selectedOption = tempUnitOptions[selectedTempUnit] ?: "",
+            selectedOption = tempUnitOptions[viewModel.selectedTempUnit.value] ?: "",
             onSelectedOption = { displayedOption ->
                 val newTempUnit = tempUnitOptions.entries.find { it.value == displayedOption }?.key
                     ?: PreferenceConstants.TEMP_UNIT_CELSIUS
-                selectedTempUnit = newTempUnit
-                sharedPreference.saveToSharedPreference(context, "tempUnit", newTempUnit)
+                viewModel.updateTempUnit(newTempUnit)
             },
             iconRes = R.drawable.thermometer
         )
@@ -177,26 +122,11 @@ fun SettingsScreen(location: MutableState<Location>) {
         SettingsCard(
             title = stringResource(R.string.location),
             options = locationOptions.values.toList(),
-            selectedOption = locationOptions[selectedLocation] ?: "",
+            selectedOption = locationOptions[viewModel.selectedLocation.value] ?: "",
             onSelectedOption = { displayedOption ->
                 val newLocation = locationOptions.entries.find { it.value == displayedOption }?.key
                     ?: PreferenceConstants.LOCATION_GPS
-                selectedLocation = newLocation
-                sharedPreference.saveToSharedPreference(context, "location", newLocation)
-
-                if (newLocation == PreferenceConstants.LOCATION_MAP) {
-                    NavigationManager.navigateTo(ScreensRoute.MapScreen(isFavourite = false))
-                } else if (newLocation == PreferenceConstants.LOCATION_GPS) {
-                    sharedPreference.deleteSharedPreference(context, "latitude")
-                    sharedPreference.deleteSharedPreference(context, "longitude")
-                    if (!PermissionUtils.isLocationEnabled(context)) {
-                        PermissionUtils.enableLocationServices(context as Activity)
-                    } else {
-                        LocationHelper(context) { newLocation ->
-                            location.value = newLocation
-                        }.getLastKnownLocation()
-                    }
-                }
+                viewModel.updateLocation(newLocation, location)
             },
             iconRes = R.drawable.location
         )
@@ -204,12 +134,11 @@ fun SettingsScreen(location: MutableState<Location>) {
         SettingsCard(
             title = stringResource(R.string.wind_speed_unit),
             options = windSpeedOptions.values.toList(),
-            selectedOption = windSpeedOptions[selectedWindSpeedUnit] ?: "",
+            selectedOption = windSpeedOptions[viewModel.selectedWindSpeedUnit.value] ?: "",
             onSelectedOption = { displayedOption ->
                 val newWindSpeedUnit = windSpeedOptions.entries.find { it.value == displayedOption }?.key
                     ?: PreferenceConstants.WIND_SPEED_METER_SEC
-                selectedWindSpeedUnit = newWindSpeedUnit
-                sharedPreference.saveToSharedPreference(context, "windSpeedUnit", newWindSpeedUnit)
+                viewModel.updateWindSpeedUnit(newWindSpeedUnit)
             },
             iconRes = R.drawable.ic_wind
         )

@@ -29,13 +29,16 @@ class WeatherRepositoryTest {
 
     @Test
     fun `getCurrentWeather should call remoteDataSource and return current weather`() = runTest {
+        //Given
         val expectedWeather = mockk<CurrentWeather>()
         coEvery {
             remoteDataSource.getCurrentWeather(30.0, 31.0, "en", "metric", "api_key")
         } returns flowOf(expectedWeather)
 
+        //When
         val result = weatherRepository.getCurrentWeather(30.0, 31.0, "en", "metric", "api_key").first()
 
+        //Then
         assertEquals(expectedWeather, result)
         coVerify { remoteDataSource.getCurrentWeather(30.0, 31.0, "en", "metric", "api_key") }
 
@@ -43,10 +46,15 @@ class WeatherRepositoryTest {
 
     @Test
     fun `insertLocation should call localDataSource insertLocation`() = runTest {
+        //Given
         val location = LocationData(30.0, 31.0, mockk(), mockk(), "Egypt", "Cairo")
+        coEvery { localDataSource.insertLocation(location) } returns Unit
 
+        //When
         weatherRepository.insertLocation(location)
 
+        //Then
         coVerify { localDataSource.insertLocation(location) }
+
     }
 }

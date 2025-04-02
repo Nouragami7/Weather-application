@@ -73,7 +73,7 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
     )
 
     val notification = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.drawable.broken_clouds)
+        .setSmallIcon(R.drawable.app_logo)
         .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.notification))
         .setContentTitle(weather?.name ?: "Weather Update")
         .setContentText(weather?.weather?.firstOrNull()?.description ?: "No details available")
@@ -93,7 +93,7 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
 
 fun playNotificationSound(context: Context) {
     if (mediaPlayer == null) {
-        mediaPlayer = MediaPlayer.create(context, R.raw.notification).apply {
+        mediaPlayer = MediaPlayer.create(context, R.raw.calm_notification).apply {
             isLooping = true
             start()
         }

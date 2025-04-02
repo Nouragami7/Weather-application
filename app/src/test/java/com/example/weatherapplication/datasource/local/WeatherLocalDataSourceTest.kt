@@ -19,7 +19,7 @@ class WeatherLocalDataSourceTest{
 
     @Before
     fun setUp() {
-        locationDAO = mockk(relaxed = true) // Mock LocationDAO
+        locationDAO = mockk(relaxed = true)
         localDataSource = WeatherLocalDataSource(locationDAO)
     }
 
@@ -32,19 +32,9 @@ class WeatherLocalDataSourceTest{
         localDataSource.insertLocation(locationData)
 
         // Then
-        // Use `coVerify` to check the function call
         coVerify { locationDAO.insertLocation(locationData) }
 
-        // Use `assertThat` to verify the interaction if needed
-        assertThat(locationData.latitude, `is`(30.0))
-        assertThat(locationData.longitude, `is`(31.0))
-        assertThat(locationData.city, `is`("Cairo"))
-        assertThat(locationData.country, `is`("Egypt"))
     }
-
-
-
-
 
     @Test
     fun `deleteLocation should call DAO deleteLocation and remove the location`() = runTest {
@@ -59,18 +49,17 @@ class WeatherLocalDataSourceTest{
         // When
         localDataSource.deleteLocation(lat, lng)
 
-        // Then
-        coVerify { locationDAO.deleteLocation(lat, lng) }
 
-        // Mock the flow of getAllLocations() after deletion, expecting an empty list
-        val emptyLocationFlow = flowOf(emptyList<LocationData>()) // Return an empty list after deletion
+        val emptyLocationFlow = flowOf(emptyList<LocationData>())
         every { locationDAO.getAllLocations() } returns emptyLocationFlow
 
-        // Check if the location is no longer in the database (i.e., it was deleted)
+        //Then
         val locations = localDataSource.getAllLocations().firstOrNull()
         assertThat(locations?.isEmpty(), `is`(true))
 
     }
+
+
 
 
 

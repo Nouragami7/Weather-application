@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.favourite.favouritescreen
+package com.example.weatherapplication.ui.screen.favourite.favouritescreen.view
 
 import LottieAnimationView
 import android.widget.Toast
@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,8 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.LocationData
 import com.example.weatherapplication.navigation.NavigationManager
 import com.example.weatherapplication.navigation.ScreensRoute
-import com.example.weatherapplication.ui.screen.homescreen.LoadingIndicator
+import com.example.weatherapplication.ui.screen.favourite.favouritescreen.viewmodel.FavouriteViewModel
+import com.example.weatherapplication.ui.screen.homescreen.view.LoadingIndicator
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
@@ -144,7 +146,7 @@ fun FavouriteScreen(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = "Saved Locations",
+                            text = stringResource(R.string.saved_locations),
                             style = TextStyle(
                                 brush = Brush.verticalGradient(
                                     0f to primaryContainerDark,
@@ -187,7 +189,7 @@ fun FavouriteScreen(
                                     ) {
                                         LottieAnimationView(
                                             resId = R.raw.no_data,
-                                            modifier = Modifier.size(250.dp) // Reduced for balance
+                                            modifier = Modifier.size(250.dp)
                                         )
 
                                         Text(
@@ -248,10 +250,10 @@ fun FavouriteItem(
     SwipeToDeleteContainer(
         item = locationData,
         onDelete = { item ->
-            favViewModel.deleteFromFavourite(item.latitude, item.longitude)
+            favViewModel.deleteFromFavourite(item.latitude, item.longitude,context)
         },
         onRestore = {
-            favViewModel.addLastDeletedLocation()
+            favViewModel.addLastDeletedLocation(context)
         },
         snackbarHostState = snackbarHostState
     ) { item ->

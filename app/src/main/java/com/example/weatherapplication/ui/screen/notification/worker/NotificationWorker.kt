@@ -1,4 +1,4 @@
-package com.example.weatherapplication.worker
+package com.example.weatherapplication.ui.screen.notification.worker
 
 import android.content.Context
 import androidx.work.Worker

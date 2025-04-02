@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.notification
+package com.example.weatherapplication.ui.screen.notification.view
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -35,8 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapplication.R
 import com.example.weatherapplication.domain.model.AlertData
-import com.example.weatherapplication.viewmodel.AlertViewModel
-import com.example.weatherapplication.worker.scheduleNotification
+import com.example.weatherapplication.ui.theme.SkyBlue
+import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
+import com.example.weatherapplication.ui.screen.notification.scheduleNotification
 import java.util.Calendar
 
 @Composable
@@ -60,10 +61,12 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        DateTimePickerField(context, "Date", selectedDate, R.drawable.calendar) {
+        DateTimePickerField(context,
+            stringResource(R.string.select_date), selectedDate, R.drawable.calendar) {
             selectedDate = it
         }
-        DateTimePickerField(context, "Start Time", startTime, R.drawable.clock) {
+        DateTimePickerField(context,
+            stringResource(R.string.select_time), startTime, R.drawable.clock) {
             startTime = it
         }
 
@@ -105,8 +108,10 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
                         Toast.makeText(context, "Please select date and time", Toast.LENGTH_SHORT).show()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
-                modifier = Modifier.weight(1f).height(50.dp)
+                colors = ButtonDefaults.buttonColors(containerColor = SkyBlue),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
             ){
                 Text(stringResource(R.string.save), fontSize = 18.sp)
             }
@@ -115,7 +120,9 @@ fun BottomSheetContent(alertViewModel: AlertViewModel, context: Context, onDismi
             Button(
                 onClick = { onDismiss() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-                modifier = Modifier.weight(1f).height(50.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
             ) {
                 Text(stringResource(R.string.cancel), fontSize = 18.sp)
             }

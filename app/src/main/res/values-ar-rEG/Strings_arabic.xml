@@ -50,5 +50,7 @@
     <string name="percentage">٪</string>
     <string name="sunrise">شروق الشمس</string>
     <string name="sunset">غروب الشمس</string>
+    <string name="saved_locations">الأماكن المحفوظة</string>
+
 
 </resources>

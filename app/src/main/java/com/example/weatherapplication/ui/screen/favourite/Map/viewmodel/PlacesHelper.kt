@@ -1,4 +1,4 @@
-package com.example.weatherapplication.ui.screen.favourite.Map
+package com.example.weatherapplication.ui.screen.favourite.Map.viewmodel
 
 import android.content.Context
 import com.google.android.gms.maps.model.LatLngBounds

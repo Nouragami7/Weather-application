@@ -1,10 +1,11 @@
-package com.example.weatherapplication.worker
+package com.example.weatherapplication.ui.screen.notification
 
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.weatherapplication.ui.screen.notification.worker.NotificationWorker
 import java.util.concurrent.TimeUnit
 
 fun scheduleNotification(context: Context, delayInMillis: Long, alertId: Int) {
