@@ -28,7 +28,7 @@ class WeatherRepositoryTest {
     }
 
     @Test
-    fun `getCurrentWeather should call remoteDataSource and return current weather`() = runTest {
+    fun getCurrentWeather_callsRemoteDataSource_returnsCurrentWeather() = runTest {
         //Given
         val expectedWeather = mockk<CurrentWeather>()
         coEvery {
@@ -45,9 +45,9 @@ class WeatherRepositoryTest {
     }
 
     @Test
-    fun `insertLocation should call localDataSource insertLocation`() = runTest {
+    fun insertLocation_callsLocalDataSourceInsertLocation() = runTest {
         //Given
-        val location = LocationData(30.0, 31.0, mockk(), mockk(), "Egypt", "Cairo")
+        val location = LocationData(30.0, 31.0, mockk(relaxed = true), mockk(relaxed = true), "Egypt", "Cairo")
         coEvery { localDataSource.insertLocation(location) } returns Unit
 
         //When

@@ -36,7 +36,7 @@ class FavouriteViewModelTest {
     }
 
     @Test
-    fun `deleteFromFavourite should call repository deleteLocation and emit toast message`() = runTest {
+    fun deleteFromFavourite_callsRepositoryDeleteLocation_emitsToastMessage() = runTest {
         // Given
         val lat = 30.0
         val lng = 31.0
@@ -55,7 +55,7 @@ class FavouriteViewModelTest {
     }
 
     @Test
-    fun `deleteFromFavourite should emit error message on failure`() = runTest {
+    fun deleteFromFavourite_emitsErrorMessage_onFailure() = runTest {
         // Given
         val lat = 30.0
         val lng = 31.0

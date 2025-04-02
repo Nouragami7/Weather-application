@@ -3,6 +3,19 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
+        <entry key="-354538652">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A125F" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="563124670">
           <value>
             <AndroidTestResultsTableState>
@@ -11,6 +24,7 @@
                   <entry key="Duration" value="90" />
                   <entry key="HUAWEI FRL-L22" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A125F" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

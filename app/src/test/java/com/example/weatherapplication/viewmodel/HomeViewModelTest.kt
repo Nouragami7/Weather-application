@@ -35,7 +35,7 @@ class HomeViewModelTest{
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `insertHomeData should update homeData state`() = runTest {
+    fun insertHomeData_updatesHomeDataState() = runTest {
         // Given
         val homeData: HomeData = mockk()
 
