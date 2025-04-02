@@ -9,15 +9,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,11 +65,11 @@ import com.example.weatherapplication.datasource.repository.WeatherRepository
 import com.example.weatherapplication.domain.model.AlertData
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.LoadingIndicator
 import com.example.weatherapplication.ui.screen.favourite.favouritescreen.view.SwipeToDeleteContainer
+import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
 import com.example.weatherapplication.ui.theme.SkyBlue
 import com.example.weatherapplication.ui.theme.onPrimaryDark
 import com.example.weatherapplication.ui.theme.primaryContainerDark
 import com.example.weatherapplication.utils.isAlertExpired
-import com.example.weatherapplication.ui.screen.notification.viewmodel.AlertViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,22 +120,34 @@ fun AlertScreen() {
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = stringResource(R.string.saved_alert),
-                    style = TextStyle(
-                        brush = Brush.verticalGradient(
-                            0f to primaryContainerDark,
-                            1f to onPrimaryDark
-                        ),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Black
-                    ),
-                    color = onPrimaryDark,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Location Icon",
+                        tint = primaryContainerDark,
+                        modifier = Modifier.size(28.dp)
+                    )
 
-                Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.saved_alert),
+                        style = TextStyle(
+                            brush = Brush.verticalGradient(
+                                0f to primaryContainerDark,
+                                1f to onPrimaryDark
+                            ),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Black
+                        ),
+                        color = onPrimaryDark,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
                 when (alertState) {
                     is ResponseState.Failure -> {
@@ -165,7 +181,7 @@ fun AlertScreen() {
                                     AlertItem(
                                         alerts[index],
                                         alertViewModel,
-                                         context,
+                                        context,
                                         snackbarHostState
                                     )
                                 }
@@ -184,7 +200,7 @@ fun AlertScreen() {
                         alertViewModel = alertViewModel,
                         context = context,
 
-                    ) { isSheetOpen = false }
+                        ) { isSheetOpen = false }
                 }
             }
         }
@@ -267,6 +283,20 @@ fun AlertItem(
                             color = Color.White.copy(alpha = 0.85f),
                             letterSpacing = 0.5.sp,
                             textAlign = TextAlign.Start
+                        )
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(end = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Arrow Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp)
                         )
                     }
                 }

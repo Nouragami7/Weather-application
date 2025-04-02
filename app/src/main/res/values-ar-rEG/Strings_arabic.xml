@@ -51,6 +51,10 @@
     <string name="sunrise">شروق الشمس</string>
     <string name="sunset">غروب الشمس</string>
     <string name="saved_locations">الأماكن المحفوظة</string>
+    <string name="select_date">اختيار التاريخ</string>
+    <string name="select_time">اختيار الوقت</string>
+    <string name="location_is_selected">تم اختيار الموقع</string>
+
 
 
 </resources>

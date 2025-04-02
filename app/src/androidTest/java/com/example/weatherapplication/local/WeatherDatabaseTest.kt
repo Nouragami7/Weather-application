@@ -1,9 +1,11 @@
-package com.example.weatherapplication.datasource.local
+package com.example.weatherapplication.local
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.weatherapplication.datasource.local.LocationDAO
+import com.example.weatherapplication.datasource.local.WeatherDatabase
 import com.example.weatherapplication.domain.model.AlertData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -14,10 +16,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@Config(manifest = Config.NONE)
 class WeatherDatabaseTest {
 
     private lateinit var database: WeatherDatabase

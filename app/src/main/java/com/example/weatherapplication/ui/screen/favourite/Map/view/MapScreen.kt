@@ -204,7 +204,14 @@ fun MapScreen(
                                 "longitude",
                                 selectedPoint.longitude.toString()
                             )
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.location_is_selected),
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                             getLocation(selectedPoint.latitude, selectedPoint.longitude)
+
                         }
                     }
                 )
