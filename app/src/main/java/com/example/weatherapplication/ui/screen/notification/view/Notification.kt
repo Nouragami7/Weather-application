@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.weatherapplication.R
 import com.example.weatherapplication.domain.model.CurrentWeather
+import com.example.weatherapplication.ui.screen.notification.SnoozeReceiver
 import com.example.weatherapplication.ui.screen.notification.StopSoundReceiver
 
 private var mediaPlayer: MediaPlayer? = null
@@ -58,18 +59,20 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
         putExtra("notification_id", 1)
     }
 
+    val snoozeIntent = Intent(context, SnoozeReceiver::class.java).apply {
+        putExtra("notification_id", 1)
+    }
+
     val openPendingIntent = PendingIntent.getBroadcast(
-        context,
-        1,
-        openIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        context, 1, openIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     val cancelPendingIntent = PendingIntent.getBroadcast(
-        context,
-        2,
-        cancelIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        context, 2, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val snoozePendingIntent = PendingIntent.getBroadcast(
+        context, 3, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     val notification = NotificationCompat.Builder(context, channelId)
@@ -82,6 +85,7 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
         .setVibrate(longArrayOf(500, 1000, 500, 1000))
         .addAction(R.drawable.clear_night, "Open", openPendingIntent)
         .addAction(R.drawable.snowy, "Cancel", cancelPendingIntent)
+        .addAction(R.drawable.snowy, "Snooze", snoozePendingIntent)
         .setAutoCancel(true)
         .build()
 
@@ -89,6 +93,7 @@ fun showNotification(context: Context, weather: CurrentWeather?) {
         notify(1, notification)
     }
 }
+
 
 
 fun playNotificationSound(context: Context) {

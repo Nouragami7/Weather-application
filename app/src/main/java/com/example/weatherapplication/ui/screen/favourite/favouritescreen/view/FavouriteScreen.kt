@@ -265,11 +265,6 @@ fun FavouriteItem(
                 .padding(12.dp)
                 .shadow(12.dp, RoundedCornerShape(24.dp))
                 .clickable {
-                    Toast.makeText(
-                        context,
-                        "Clicked on ${item.latitude}, ${item.longitude}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                     goToDetails(item)
                 },
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -309,6 +304,7 @@ fun FavouriteItem(
                             .replace(" County", "")
                             .replace(" Province", "")
                             .replace(" District", "")
+                            .replace( "محافظة", "")
                             .substringBefore(" ")
 
                         Text(

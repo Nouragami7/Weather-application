@@ -26,7 +26,6 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         sharedPreference.getFromSharedPreference(context, "language") ?: "system"
     )
 
-
     var selectedTempUnit = mutableStateOf(
         sharedPreference.getFromSharedPreference(context, "tempUnit")
             ?: PreferenceConstants.TEMP_UNIT_CELSIUS
@@ -45,8 +44,6 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
     fun updateLanguage(newLanguage: String) {
         selectedLanguage.value = newLanguage
         sharedPreference.saveToSharedPreference(context, "language", newLanguage)
-
-        // Apply the selected language immediately
         applyLanguage(newLanguage)
     }
 
@@ -87,10 +84,12 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
 
     private fun adjustWindSpeedUnit() {
         viewModelScope.launch {
-            if (selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_FAHRENHEIT && selectedWindSpeedUnit.value != PreferenceConstants.WIND_SPEED_MILE_HOUR) {
+            if (selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_FAHRENHEIT
+                && selectedWindSpeedUnit.value != PreferenceConstants.WIND_SPEED_MILE_HOUR) {
                 selectedWindSpeedUnit.value = PreferenceConstants.WIND_SPEED_MILE_HOUR
                 sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit.value)
-            } else if ((selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_CELSIUS || selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_KELVIN) && selectedWindSpeedUnit.value == PreferenceConstants.WIND_SPEED_MILE_HOUR) {
+            } else if ((selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_CELSIUS || selectedTempUnit.value == PreferenceConstants.TEMP_UNIT_KELVIN)
+                && selectedWindSpeedUnit.value == PreferenceConstants.WIND_SPEED_MILE_HOUR) {
                 selectedWindSpeedUnit.value = PreferenceConstants.WIND_SPEED_METER_SEC
                 sharedPreference.saveToSharedPreference(context, "windSpeedUnit", selectedWindSpeedUnit.value)
             }
@@ -102,7 +101,6 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
         activity.finish()
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
-
 
 
     fun applyLanguage(language: String) {
@@ -119,8 +117,6 @@ class SettingsViewModel(private val context: Context) : ViewModel() {
 
         restartApp()
     }
-
-
 
 
     class SettingsViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
